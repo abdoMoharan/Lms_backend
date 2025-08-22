@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Auth\Role\RoleController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
@@ -12,13 +13,13 @@ Route::middleware(['auth:sanctum','setLocale'])->group(function () {
     ########################################## Start  admin #################################################
     Route::prefix('admin')->group(function () {
         //role route
-        // Route::prefix('roles')->name('roles.')->controller(RoleController::class)->group(function () {
-        //     Route::get('/', 'index')->name('index');
-        //     Route::post('/', 'store')->name('store');
-        //     Route::get('/{role}', 'show')->name('show');
-        //     Route::put('/update/{role}', 'update')->name('update');
-        //     Route::delete('/delete/{role}', 'delete')->name('delete');
-        // });
+        Route::prefix('roles')->name('roles.')->controller(RoleController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{role}', 'show')->name('show');
+            Route::put('/update/{role}', 'update')->name('update');
+            Route::delete('/delete/{role}', 'delete')->name('delete');
+        });
         // Route::prefix('permissions')->name('permissions.')->controller(PermissionController::class)->group(function () {
         //     Route::get('/', 'index')->name('index');
         //     Route::get('/{permission}', 'show')->name('show');

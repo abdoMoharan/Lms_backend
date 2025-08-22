@@ -25,12 +25,8 @@ function getAdminRoutes()
             array_shift($segments); // يشيل أول عنصر
         }
 
-        // استخراج أول جزء بعد 'api' كـ section
-        $section = $segments[0] ?? 'general';
-
         $permissions[] = [
             'name' => $name,
-            'section' => $section,
         ];
     }
 
@@ -38,13 +34,12 @@ function getAdminRoutes()
 }
 
 
-function syncPermisions($model = null)
+function syncPermissions($model = null)
 {
     $routes = getAdminRoutes();
 
     foreach ($routes as $route) {
         $routeName = $route['name'];
-        $sectionName = $route['section'];
         $groupName = explode('.', $routeName)[0] ?? 'general';
 
         $permissionExist = (clone $model)->where('name', $routeName)->first();
@@ -53,7 +48,6 @@ function syncPermisions($model = null)
                 'name' => $routeName,
                 'trans_name' => $routeName,
                 'group_name' => $groupName,
-                'section_name' => $sectionName,
                 'guard_name' => 'web',
             ]);
         }

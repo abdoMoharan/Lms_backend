@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Api\Student\Auth;
+namespace App\Http\Controllers\Api\Admin\Auth;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    const TOKEN_NAME = 'student-token';
+    const TOKEN_NAME = 'token';
     public User $model;
     public function __construct(User $model)
     {

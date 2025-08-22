@@ -13,17 +13,17 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = Admin::where('email', 'admin@admin.com')->exists();
+        $admin = User::where('email', 'admin@admin.com')->exists();
         if (! $admin) {
-            Admin::create([
+            User::create([
                 'name'     => 'Administrator',
                 'email'    => 'admin@admin.com',
                 'password' => 'password',
             ]);
         }
-        $teacher = Teacher::where('email', 'teacher@t.com')->exists();
+        $teacher = User::where('email', 'teacher@t.com')->exists();
         if (! $teacher) {
-            Teacher::create([
+            User::create([
                 'name'     => 'teacher',
                 'email'    => 'teacher@t.com',
                 'password' => 'password',

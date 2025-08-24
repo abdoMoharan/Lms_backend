@@ -1,0 +1,14 @@
+<?php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class EducationalStageTranslation extends Model
+{
+    protected $table    = 'educational_stage_translations';
+    protected $fillable = [
+        'educational_stage_id',
+        'locale',
+        'title',
+    ];
+}

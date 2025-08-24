@@ -1,5 +1,6 @@
 <?php
-namespace App\Http\Controllers\Api\Auth\Permission;
+namespace App\Http\Controllers\Api\Permission;
+
 
 
 use App\Helpers\ApiResponse;
@@ -13,7 +14,7 @@ class PermissionController extends Controller
     public function __construct()
     {
         $model = CustomPermission::query()->get();
-        syncPermissions($model);
+        syncPermisions($model);
     }
 
     public function index()
@@ -24,7 +25,6 @@ class PermissionController extends Controller
             if ($permissions->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No permissions found', []);
             }
-
             $result = [];
 
             foreach ($permissions as $permission) {
@@ -32,7 +32,7 @@ class PermissionController extends Controller
                 $nameParts = explode('.', $permission->name);
 
                 // إذا كان الاسم يحتوي على 'api.' في بدايته
-                if (strpos($permission->name, 'api.') === 0) {
+                if (strpos($permission->name, 'admin.') === 0) {
                     // إذا كان يحتوي على 'api.'، نأخذ الجزء الذي بعد 'api.'
                     $group = $nameParts[1] ?? 'general';
                 } else {
@@ -45,16 +45,12 @@ class PermissionController extends Controller
                 $namePartTrans   = explode('.', $permission->trans_name);
                 $simpleNameTrans = end($namePartTrans); // يأخد آخر جزء بعد النقطة
 
-                // استخدام القسم كـ key ديناميكي
-                if (! isset($result[$section])) {
-                    $result[$section] = [];
+
+                if (! isset($result[$group])) {
+                    $result[$group] = [];
                 }
 
-                if (! isset($result[$section][$group])) {
-                    $result[$section][$group] = [];
-                }
-
-                $result[$section][$group][] = [
+                $result[$group][] = [
                     'id'         => $permission->id,
                     'name'       => $simpleName,
                     'trans_name' => $simpleNameTrans,
@@ -135,21 +131,18 @@ public function getAuthPermissions(Request $request)
                 $nameParts = explode('.', $perm->name);
 
                 // تحديد المجموعة بناءً على الاسم
-                $group = (strpos($perm->name, 'api.') === 0) ? $nameParts[1] ?? 'general' : $nameParts[0] ?? 'general';
+                $group = (strpos($perm->name, 'admin.') === 0) ? $nameParts[1] ?? 'general' : $nameParts[0] ?? 'general';
                 $action = end($nameParts); // استخراج آخر جزء من الاسم كـ action
 
-                // تنظيم البيانات في هيكل هرمي
-                if (!isset($permissions[$section])) {
-                    $permissions[$section] = [];
-                }
 
-                if (!isset($permissions[$section][$group])) {
-                    $permissions[$section][$group] = [];
+
+                if (!isset($permissions[$group])) {
+                    $permissions[$group] = [];
                 }
 
                 // التأكد من أن الإجراء غير مكرر
-                if (!in_array($action, $permissions[$section][$group], true)) {
-                    $permissions[$section][$group][] = $action;
+                if (!in_array($action, $permissions[$group], true)) {
+                    $permissions[$group][] = $action;
                 }
             }
 

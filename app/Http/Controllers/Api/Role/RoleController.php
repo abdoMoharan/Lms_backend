@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Api\Auth\Role;
+namespace App\Http\Controllers\Api\Role;
 
 
 use App\Helpers\ApiResponse;
@@ -19,7 +19,7 @@ class RoleController extends Controller
     public function __construct()
     {
         $model = CustomPermission::query()->get();
-        syncPermissions($model);
+        syncPermisions($model);
     }
     /**
      * Display a listing of the resource.
@@ -49,7 +49,7 @@ class RoleController extends Controller
                     $nameParts = explode('.', $perm->name);
 
                     // إذا كان الاسم يحتوي على 'api.' في بدايته
-                    if (strpos($perm->name, 'api.') === 0) {
+                    if (strpos($perm->name, 'admin.') === 0) {
                         // إذا كان يحتوي على 'api.'، نأخذ الجزء الذي بعد 'api.'
                         $group = $nameParts[1] ?? 'general';
                     } else {
@@ -154,7 +154,7 @@ class RoleController extends Controller
             $nameParts = explode('.', $perm->name);
 
             // إذا كان الاسم يحتوي على 'api.' في بدايته
-            if (strpos($perm->name, 'api.') === 0) {
+            if (strpos($perm->name, 'admin.') === 0) {
                 // إذا كان يحتوي على 'api.'، نأخذ الجزء الذي بعد 'api.'
                 $group = $nameParts[1] ?? 'general';
             } else {
@@ -169,15 +169,19 @@ class RoleController extends Controller
 
             // استخدام القسم كـ key ديناميكي
 
-
-
             $permissions[$group][] = [
                 'id'         => $perm->id,
                 'name'       => $simpleName,
                 'trans_name' => $simpleNameTrans,
             ];
         }
-        $roleData['permissions'] = $permissions;
+        $roleData = [
+            'id'          => $role->id,
+            'name'        => $role->name,
+            'guard_name'  => $role->guard_name,
+            'created_at'  => $role->created_at,
+            'permissions' => $permissions,
+        ];
         return $roleData;
 
         return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Roles fetched successfully', ['roles' => $rolesData]);

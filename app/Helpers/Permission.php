@@ -4,58 +4,48 @@ use App\Models\CustomPermission;
 use Illuminate\Support\Facades\Route;
 
 //Get All Route And filter
-function getAdminRoutes()
-{
-    $routeCollection = Route::getRoutes();
-    $permissions = [];
+if (!function_exists('getAdminRoutes')) {
+    function getAdminRoutes()
+    {
+        $routeCollection = Route::getRoutes();
 
-    foreach ($routeCollection as $route) {
-        $name = $route->getName();
 
-        // نتأكد إن الراوت له اسم
-        if (!$name) {
-            continue;
+        $routes = [];
+        $permissions = [];
+        foreach ($routeCollection as $value) {
+            $routes[] = $value->getName();
         }
-
-        $fullPrefix = $route->getAction('prefix') ?? 'general';
-        $segments = explode('/', $fullPrefix);
-
-        // حذف جزء 'api' من البداية لو موجود
-        if (!empty($segments) && $segments[0] === 'api') {
-            array_shift($segments); // يشيل أول عنصر
+        $routes = array_filter($routes);
+        foreach ($routes as $route) {
+            if (str_contains($route, "admin") == true) {
+                $permissions[] = $route;
+            }
         }
-
-        $permissions[] = [
-            'name' => $name,
-        ];
-    }
-
-    return $permissions;
-}
-
-
-function syncPermissions($model = null)
-{
-    $routes = getAdminRoutes();
-
-    foreach ($routes as $route) {
-        $routeName = $route['name'];
-        $groupName = explode('.', $routeName)[0] ?? 'general';
-
-        $permissionExist = (clone $model)->where('name', $routeName)->first();
-        if ($permissionExist == null) {
-            CustomPermission::create([
-                'name' => $routeName,
-                'trans_name' => $routeName,
-                'group_name' => $groupName,
-                'guard_name' => 'web',
-            ]);
-        }
+        return $permissions;
     }
 }
 
 
-if (! function_exists('transPermission')) {
+if (!function_exists('syncPermisions')) {
+    function syncPermisions($model = null)
+    {
+        $routes = getAdminRoutes();
+        foreach ($routes as $route) {
+            $groupName = explode('.', $route)[1] ?? 'general'; // صنف الصلاحيات حسب الجزء الثاني من الـ route
+            $permissionExist = (clone $model)->where('name', $route)->first();
+            if ($permissionExist == null) {
+                CustomPermission::create([
+                    'name' => $route,
+                    'trans_name' => $route,
+                    'group_name' => $groupName,
+                    'guard_name' => 'web',
+                ]);
+            }
+        }
+    }
+}
+
+if (!function_exists('transPermission')) {
     function transPermission($val)
     {
         $val = str_replace('admin.', '', $val);
@@ -64,4 +54,22 @@ if (! function_exists('transPermission')) {
         return $val;
     }
 
+    if (!function_exists('renderWithPermission')) {
+        function renderWithPermission($permission, $htmlContent)
+        {
+            if (auth()->user()->can($permission)) {
+                return $htmlContent;
+            }
+            return '';
+        }
+    }
+
+
 }
+
+
+
+
+
+
+

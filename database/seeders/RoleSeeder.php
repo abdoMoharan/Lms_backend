@@ -12,16 +12,15 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        // جلب جميع الصلاحيات الحالية وإنشاء أي صلاحيات مفقودة
+        // جلب جميع الصلاحيات الحالية وإنشاء أي صلاحيات مفقودة`
         $permissions = CustomPermission::query()->get();
-        syncPermissions($permissions); // تزامن الصلاحيات مع النظام
+     syncPermisions($permissions); // تزامن الصلاحيات مع النظام
 
         // إنشاء دور "administrator" مع guard_name = 'admin' إذا لم يكن موجودًا
-        $administrator = Role::firstOrCreate(
+        $role = Role::firstOrCreate(
             ['name' => 'administrator', 'guard_name' => 'web'],
             ['name' => 'administrator', 'guard_name' => 'web']
         );
-
-        $administrator->syncPermissions(CustomPermission::where('guard_name', 'web')->get()->pluck('id')->toArray());
+        $role->syncPermissions(CustomPermission::where('guard_name', 'web')->get()->pluck('id')->toArray());
     }
 }

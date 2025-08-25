@@ -12,7 +12,7 @@ Route::controller(AuthController::class)->group(function () {
 });
  Route::get('get-auth-permissions',[PermissionController::class ,'getAuthPermissions'])->name('get-permissions-auth')->middleware('auth:sanctum');
 // ملف routes.php
-Route::prefix('admin')->name('admin.')->middleware([ 'auth:sanctum','setLocale'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth:sanctum','setLocale'])->group(function () {
     Route::prefix('roles')->name('roles.')->controller(RoleController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/', 'store')->name('store');

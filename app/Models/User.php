@@ -6,13 +6,15 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens , HasRoles;
+    use HasFactory, Notifiable, HasApiTokens, SoftDeletes, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -57,5 +59,33 @@ class User extends Authenticatable
         if ($password) {
             $this->attributes['password'] = Hash::make($password);
         }
+    }
+
+
+public function scopeFilter(Builder $builder, $filters)
+    {
+        $builder->when(isset($filters['query']) && $filters['query'] !== '', function ($builder) use ($filters) {
+            $builder->where('first_name', 'like', "%{$filters['query']}%")
+                ->orWhere('last_name', 'like', "%{$filters['query']}%")
+                ->orWhere('email', 'like', "%{$filters['query']}%")
+                ->orWhere('phone', 'like', "%{$filters['query']}%");
+        });
+
+        $builder->when(isset($filters['email']) && $filters['email'] !== '', function ($builder) use ($filters) {
+            $builder->where('email', 'like', "%{$filters['email']}%");
+        });
+
+        $builder->when(isset($filters['phone']) && $filters['phone'] !== '', function ($builder) use ($filters) {
+            $builder->where('phone', 'like', "%{$filters['phone']}%");
+        });
+
+        $builder->when(isset($filters['status']), function ($builder) use ($filters) {
+            $statusValue = $filters['status'] == '0' ? 0 : $filters['status'];
+            $builder->where('status', $statusValue);
+        });
+
+        $builder->when(!empty($filters['start_date']) && !empty($filters['end_date']), function ($builder) use ($filters) {
+            $builder->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+        });
     }
 }

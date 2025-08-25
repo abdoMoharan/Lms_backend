@@ -29,7 +29,7 @@ class UserRepository implements UserInterface
             }
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'users retrieved successfully', UserResource::collection($users)->response()->getData(true));
         } catch (\Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No users found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No users found', $e->getMessage());
         }
     }
     public function store($request)

@@ -23,7 +23,6 @@ class UserResource extends JsonResource
             "phone"  => $this->phone,
             "image"  => $this->image,
             "status" => $this->status,
-            "last_login" => $this->last_login,
             "roles"  => RolesResource::collection($this->whenLoaded('roles')),
         ];
     }

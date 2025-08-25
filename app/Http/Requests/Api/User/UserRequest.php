@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api\User;
 
-use App\Http\Requests\Api\Base\ApiRequest;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Http\Requests\Base\ApiRequest;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Email; // أضف هذا السطر
 
 class UserRequest extends ApiRequest
@@ -23,8 +23,10 @@ class UserRequest extends ApiRequest
             $userID = is_object($routeUser) ? $routeUser->id : $routeUser;
         }
         return [
+            'username' => 'required|string|max:50',
             'first_name' => 'required|string|max:50',
             'last_name'  => 'required|string|max:50',
+            'user_type'  => 'nullable|in:student,teacher,admin',
             'email' => [
                 'required',
                 Rule::email()                             // يبني قاعدة تحقق ديناميكية للبريد
@@ -39,10 +41,8 @@ class UserRequest extends ApiRequest
                 'nullable',
                 Rule::unique('users', 'phone')->ignore($userID),
             ],
-            'image'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'status'     => 'nullable|in:1,0',
             'roles'      => 'required|exists:roles,name',
-            'last_login' => 'nullable|date',
         ];
     }
 

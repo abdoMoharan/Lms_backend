@@ -3,13 +3,13 @@ namespace App\Repositories\EducationalStage;
 
 
 use Exception;
-use App\Models\User;
 use App\Helpers\ApiResponse;
+use App\Models\eduction_stage;
 use App\Models\EducationalStage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use App\Http\Resources\User\UserResource;
 use App\Interfaces\EducationalStage\EducationalStageInterface;
+use App\Http\Resources\EducationalStage\EducationalStageResource;
 
 class EducationalStageRepository implements EducationalStageInterface
 {
@@ -22,11 +22,11 @@ class EducationalStageRepository implements EducationalStageInterface
     public function index($request)
     {
         try {
-            $eduction_stage = $this->model->query()->with('createdBy')->filter($request->query())->get();
+            $eduction_stage = $this->model->query()->with(['createdBy','transLocale'])->filter($request->query())->get();
             if ($eduction_stage->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No eduction_stage found', []);
             }
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage retrieved successfully', UserResource::collection($eduction_stage)->response()->getData(true));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage retrieved successfully', EducationalStageResource::collection($eduction_stage)->response()->getData(true));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', $e->getMessage());
         }
@@ -36,43 +36,42 @@ class EducationalStageRepository implements EducationalStageInterface
         try {
             DB::beginTransaction();
             $data = $request->getData();
-            $user = $this->model->create($data);
-            $user->syncRoles($data['roles']);
-            // dd($user);
+            $eduction_stage = $this->model->create($data);
             DB::commit();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'User created successfully', new UserResource($user));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage created successfully', new EducationalStageResource($eduction_stage));
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', $e->getMessage());
         }
     }
 
-    public function update($local, $request, $user)
+    public function update($local, $request, $model)
     {
 
         try {
             $data = $request->getData();
-            $user->update($data);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'User updated successfully', new UserResource($user));
+            $model->update($data);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new EducationalStageResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', []);
         }
     }
-    public function delete($local, $user)
+    public function delete($local, $model)
     {
         try {
-            $user->delete();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'User deleted successfully', []);
+            $model->delete();
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage deleted successfully', []);
         } catch (\Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction found', []);
         }
     }
 
-    public function show($local, $user)
+
+    public function show($local, $model)
     {
         try {
-            $user->load('roles');
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'User retrieved successfully', new UserResource($user));
+            $model->load('eduction_stage');
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage retrieved successfully', new EducationalStageResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', []);
         }
@@ -83,13 +82,13 @@ class EducationalStageRepository implements EducationalStageInterface
         if ($eduction_stage->isEmpty()) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted eduction_stage found', []);
         }
-        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted eduction_stage retrieved successfully', UserResource::collection($eduction_stage));
+        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted eduction_stage retrieved successfully', EducationalStageResource::collection($eduction_stage));
     }
     public function restore($local, $id)
     {
         try {
             $this->model->restoreSoft($id);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'User restored successfully');
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage restored successfully');
         } catch (Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', []);
         }
@@ -99,7 +98,7 @@ class EducationalStageRepository implements EducationalStageInterface
     {
         try {
             $this->model->forceDeleteById($id);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'User force deleted successfully');
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage force deleted successfully');
         } catch (Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', []);
         }

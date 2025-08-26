@@ -1,11 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
-use App\Http\Controllers\Api\Permission\PermissionController;
-use App\Http\Controllers\Api\Profile\ProfileUserController;
 use App\Http\Controllers\Api\Role\RoleController;
 use App\Http\Controllers\Api\User\UserController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Profile\ProfileUserController;
+use App\Http\Controllers\Api\Permission\PermissionController;
+use App\Http\Controllers\Api\EducationalStage\EducationalStageController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
@@ -39,6 +40,17 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::put('/update/{user}', 'update')->name('update');
             Route::delete('/delete/{user}', 'delete')->name('delete');
             Route::get('/show/{user}', 'show')->name('show');
+            Route::get('/deleted', 'showDeleted')->name('deleted');
+            Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
+            Route::post('/restore/{id}', 'restore')->name('restore');
+            Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
+        });
+        Route::prefix('eduction-stages')->name('eduction-stages.')->controller(EducationalStageController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/update/{model}', 'update')->name('update');
+            Route::delete('/delete/{model}', 'delete')->name('delete');
+            Route::get('/show/{model}', 'show')->name('show');
             Route::get('/deleted', 'showDeleted')->name('deleted');
             Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
             Route::post('/restore/{id}', 'restore')->name('restore');

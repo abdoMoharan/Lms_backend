@@ -15,24 +15,20 @@ class EducationalStageController extends Controller
     {
         $this->interface = $interface;
     }
-
     public function index(Request $request)
     {
         return $this->interface->index($request);
     }
-
     public function store(EducationalStageRequest $request)
     {
         return $this->interface->store($request);
     }
-
     public function update($local,EducationalStageRequest $request,EducationalStage $model)
     {
         return $this->interface->update($local,$request,$model);
     }
     public function delete($local,EducationalStage $model)
     {
-
         return $this->interface->delete($local,$model);
     }
     public function show($local,EducationalStage $model)
@@ -43,7 +39,6 @@ class EducationalStageController extends Controller
     {
         return $this->interface->showDeleted();
     }
-
     public function restore($local,$id)
     {
         return $this->interface->restore($local,$id);

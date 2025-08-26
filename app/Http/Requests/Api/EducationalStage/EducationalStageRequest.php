@@ -39,7 +39,7 @@ class EducationalStageRequest extends ApiRequest
             ]);
         }
         $req = array_merge($req, [
-            'status' => 'nullable',
+            'status' => 'nullable|in:1,0',
         ]);
 
 
@@ -57,7 +57,6 @@ class EducationalStageRequest extends ApiRequest
     public function getData()
     {
         $data = $this->validated();
-        $data['status'] = isset($data['status']) ? true : false;
         if ($this->isMethod('POST')) {
             $data['created_by'] = Auth::user()->id;
         } else {

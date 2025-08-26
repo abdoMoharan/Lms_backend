@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\Models\EducationalStageTranslation;
@@ -16,7 +15,7 @@ class EducationalStage extends Model implements TranslatableContract
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ['created_by', 'updated_by', 'status'];
+    protected $fillable          = ['created_by', 'updated_by', 'status'];
     public $translatedAttributes = [
         'stage_id',
         'locale',
@@ -38,7 +37,7 @@ class EducationalStage extends Model implements TranslatableContract
             });
         }
         $builder->when(isset($filters['status']), function ($builder) use ($filters) {
-            $statusValue = intval($filters['status']) == 0 ? 0 : $filters['status'];  // استخدام `intval` لتحويل النصوص للأرقام
+            $statusValue = intval($filters['status']) == 0 ? 0 : $filters['status']; // استخدام `intval` لتحويل النصوص للأرقام
             $builder->where('status', $statusValue);
         });
         return $builder;
@@ -78,4 +77,6 @@ class EducationalStage extends Model implements TranslatableContract
         }
         return $model;
     }
+
+
 }

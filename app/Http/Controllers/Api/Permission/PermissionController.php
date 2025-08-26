@@ -71,7 +71,7 @@ class PermissionController extends Controller
         }
     }
 
-    public function show(CustomPermission $permission)
+    public function show($local,CustomPermission $permission)
     {
         try {
             $section = $permission->section_name ?? 'general';
@@ -108,7 +108,7 @@ class PermissionController extends Controller
         }
     }
 
-    public function update(Request $request, CustomPermission $permission)
+    public function update($local,Request $request, CustomPermission $permission)
     {
         $data = $request->validate([
             'trans_name' => 'required|string|max:255',

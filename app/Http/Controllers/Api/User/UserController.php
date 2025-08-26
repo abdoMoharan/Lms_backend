@@ -26,34 +26,34 @@ class UserController extends Controller
         return $this->user->store($request);
     }
 
-    public function update(UserRequest $request,User $user)
+    public function update($local,UserRequest $request,User $user)
     {
-        return $this->user->update($request,$user);
+        return $this->user->update($local,$request,$user);
     }
-    public function delete(User $user)
+    public function delete($local,User $user)
     {
 
-        return $this->user->delete($user);
+        return $this->user->delete($local,$user);
     }
-    public function show(User $user)
+    public function show($local,User $user)
     {
-        return $this->user->show($user);
+        return $this->user->show($local,$user);
     }
     public function showDeleted()
     {
         return $this->user->showDeleted();
     }
 
-    public function restore($id)
+    public function restore($local,$id)
     {
-        return $this->user->restore($id);
+        return $this->user->restore($local,$id);
     }
-    public function forceDelete($id)
+    public function forceDelete($local,$id)
     {
-        return $this->user->forceDelete($id);
+        return $this->user->forceDelete($local,$id);
     }
-    public function multi_actions(Request $request)
+    public function multi_actions($local,Request $request)
     {
-        return $this->user->multi_actions($request);
+        return $this->user->multi_actions($local,$request);
     }
 }

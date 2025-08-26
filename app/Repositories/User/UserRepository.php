@@ -1,16 +1,13 @@
 <?php
 namespace App\Repositories\User;
 
-
-
-use Exception;
-use App\Models\User;
 use App\Helpers\ApiResponse;
+use App\Http\Resources\User\UserResource;
+use App\Interfaces\User\UserInterface;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use App\Interfaces\User\UserInterface;
-use App\Http\Resources\User\UserResource;
-use Illuminate\Support\Facades\Validator;
 
 class UserRepository implements UserInterface
 {
@@ -23,7 +20,7 @@ class UserRepository implements UserInterface
     public function index($request)
     {
         try {
-            $users   = $this->model->query()->with('roles')->filter($request->query())->get();
+            $users = $this->model->query()->with('roles')->filter($request->query())->get();
             if ($users->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No users found', []);
             }
@@ -48,7 +45,7 @@ class UserRepository implements UserInterface
         }
     }
 
-    public function update($request, $user)
+    public function update($local, $request, $user)
     {
 
         try {
@@ -59,7 +56,7 @@ class UserRepository implements UserInterface
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No users found', []);
         }
     }
-    public function delete($user)
+    public function delete($local, $user)
     {
         try {
             $user->delete();
@@ -69,10 +66,10 @@ class UserRepository implements UserInterface
         }
     }
 
-    public function show($user)
+    public function show($local, $user)
     {
         try {
-$user->load('roles');
+            $user->load('roles');
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'User retrieved successfully', new UserResource($user));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No users found', []);
@@ -86,7 +83,7 @@ $user->load('roles');
         }
         return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted users retrieved successfully', UserResource::collection($users));
     }
-    public function restore($id)
+    public function restore($local, $id)
     {
         try {
             $this->model->restoreSoft($id);
@@ -96,7 +93,7 @@ $user->load('roles');
         }
     }
 
-    public function forceDelete($id)
+    public function forceDelete($local, $id)
     {
         try {
             $this->model->forceDeleteById($id);
@@ -105,10 +102,10 @@ $user->load('roles');
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No users found', []);
         }
     }
-    public function multi_actions($request)
+    public function multi_actions($local, $request)
     {
         $data = $request->validate([
-            'type' => 'required',
+            'type'    => 'required',
             'records' => 'required|array',
         ]);
 
@@ -141,7 +138,7 @@ $user->load('roles');
                 }
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Records restored successfully');
                 break;
-            case  'force-delete':
+            case 'force-delete':
                 $models = $this->model->onlyTrashed()->findMany($request['records']);
                 foreach ($models as $item) {
                     $item->forceDelete();

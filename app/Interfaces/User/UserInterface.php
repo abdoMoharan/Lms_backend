@@ -6,11 +6,11 @@ interface UserInterface
 
     public function index($request);
     public function store($request);
-    public function update($request, $user);
-    public function delete($user);
-    public function show($user);
+    public function update($local,$request, $user);
+    public function delete($local,$user);
+    public function show($local,$user);
     public function showDeleted();
-    public function restore($id);
-    public function forceDelete($id);
-    public function multi_actions($request);
+    public function restore($local,$id);
+    public function forceDelete($local,$id);
+    public function multi_actions($local,$request);
 }

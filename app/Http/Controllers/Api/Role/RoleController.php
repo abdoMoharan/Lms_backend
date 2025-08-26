@@ -92,7 +92,7 @@ class RoleController extends Controller
         }
     }
 
-    public function update(Request $request, Role $role)
+    public function update($local,Request $request, Role $role)
     {
         try {
             DB::beginTransaction();
@@ -145,7 +145,7 @@ class RoleController extends Controller
         }
     }
 
-    public function show(Role $role)
+    public function show($local,Role $role)
     {
         $rolesData              = $role;
         $rolesData->permissions = $role->permissions;
@@ -187,7 +187,7 @@ class RoleController extends Controller
         return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Roles fetched successfully', ['roles' => $rolesData]);
     }
 
-    public function delete(Role $role)
+    public function delete($local,Role $role)
     {
         $role->delete();
         return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Role deleted successfully');

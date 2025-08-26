@@ -7,7 +7,7 @@ class EducationalStageTranslation extends Model
 {
     protected $table    = 'educational_stage_translations';
     protected $fillable = [
-        'educational_stage_id',
+        'stage_id',
         'locale',
         'title',
     ];

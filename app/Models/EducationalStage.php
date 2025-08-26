@@ -18,16 +18,16 @@ class EducationalStage extends Model implements TranslatableContract
      */
     protected $fillable = ['created_by', 'updated_by', 'status'];
     public $translatedAttributes = [
-        'educational_stage_id',
+        'stage_id',
         'locale',
         'title',
     ];
-    protected $translationForeignKey = 'educational_stage_id';
+    protected $translationForeignKey = 'stage_id';
 
     public function transLocale()
     {
         $locale = app()->getLocale();
-        return $this->hasMany(EducationalStageTranslation::class, 'educational_stage_id')->where('locale', $locale);
+        return $this->hasMany(EducationalStageTranslation::class, 'stage_id')->where('locale', $locale);
     }
 
     public function scopeFilter(Builder $builder, array $filters): Builder

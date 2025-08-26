@@ -5,11 +5,11 @@ interface EducationalStageInterface
 {
     public function index($request);
     public function store($request);
-    public function update($request, $educationStage);
-    public function delete($educationStage);
-    public function show($educationStage);
+    public function update($local,$request, $model);
+    public function delete($local,$model);
+    public function show($local,$model);
     public function showDeleted();
-    public function restore($id);
-    public function forceDelete($id);
-    public function multi_actions($request);
+    public function restore($local,$id);
+    public function forceDelete($local,$id);
+    public function multi_actions($local,$request);
 }

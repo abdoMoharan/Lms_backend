@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('educational_stage_translations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('educational_stage_id');
+            $table->unsignedBigInteger('stage_id');
             $table->string('locale')->index();
             $table->string('title')->nullable();
-            $table->unique(['educational_stage_id', 'locale']);
-            $table->foreign('educational_stage_id')->references('id')->on('educational_stages')->onDelete('cascade');
+            $table->unique(['stage_id', 'locale']);
+            $table->foreign('stage_id')->references('id')->on('educational_stages')->onDelete('cascade');
             $table->timestamps();
         });
     }

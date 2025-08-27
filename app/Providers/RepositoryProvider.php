@@ -1,10 +1,12 @@
 <?php
 namespace App\Providers;
 
+use App\Interfaces\ClassRoom\ClassRoomInterface;
 use App\Interfaces\User\UserInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\User\UserRepository;
 use App\Interfaces\EducationalStage\EducationalStageInterface;
+use App\Repositories\ClassRoom\ClassRoomRepository;
 use App\Repositories\EducationalStage\EducationalStageRepository;
 
 class RepositoryProvider extends ServiceProvider
@@ -24,5 +26,6 @@ class RepositoryProvider extends ServiceProvider
     {
         $this->app->singleton(UserInterface::class, UserRepository::class);
         $this->app->singleton(EducationalStageInterface::class, EducationalStageRepository::class);
+        $this->app->singleton(ClassRoomInterface::class, ClassRoomRepository::class);
     }
 }

@@ -88,4 +88,31 @@ public function scopeFilter(Builder $builder, $filters)
             $builder->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         });
     }
+
+
+
+   public static function getAllDeleted()
+    {
+        return self::onlyTrashed()->get();
+    }
+
+    // Restore a Deleted Record
+    public static function restoreSoft($id)
+    {
+        $model = self::onlyTrashed()->find($id);
+        if ($model) {
+            $model->restore();
+        }
+        return $model;
+    }
+
+    // Force Delete a Record
+    public static function forceDeleteById($id)
+    {
+        $model = self::onlyTrashed()->find($id);
+        if ($model) {
+            $model->forceDelete();
+        }
+        return $model;
+    }
 }

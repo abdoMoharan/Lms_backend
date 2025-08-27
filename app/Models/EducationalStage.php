@@ -19,7 +19,7 @@ class EducationalStage extends Model implements TranslatableContract
     public $translatedAttributes = [
         'stage_id',
         'locale',
-        'title',
+        'name',
     ];
     protected $translationForeignKey = 'stage_id';
 
@@ -31,9 +31,9 @@ class EducationalStage extends Model implements TranslatableContract
 
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
-        if (isset($filters['title'])) {
+        if (isset($filters['name'])) {
             $builder->whereHas('transLocale', function ($q) use ($filters) {
-                $q->where('title', 'like', '%' . $filters['title'] . '%');
+                $q->where('name', 'like', '%' . $filters['name'] . '%');
             });
         }
         $builder->when(isset($filters['status']), function ($builder) use ($filters) {

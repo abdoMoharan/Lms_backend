@@ -45,7 +45,7 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::post('/restore/{id}', 'restore')->name('restore');
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
         });
-        Route::prefix('eduction-stages')->name('eduction-stages.')->controller(EducationalStageController::class)->group(function () {
+        Route::prefix('education-stages')->name('education-stages.')->controller(EducationalStageController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::put('/update/{model}', 'update')->name('update');

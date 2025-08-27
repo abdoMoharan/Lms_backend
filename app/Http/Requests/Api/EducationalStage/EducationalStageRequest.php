@@ -20,7 +20,7 @@ class EducationalStageRequest extends ApiRequest
         $attr = [];
         foreach (config('translatable.locales') as $locale) {
             $attr = array_merge($attr, [
-                "{$locale}.title" => "Title " . Lang::get($locale),
+                "{$locale}.name" => "name" . Lang::get($locale),
             ]);
         }
         return $attr;
@@ -35,7 +35,7 @@ class EducationalStageRequest extends ApiRequest
         $req = [];
         foreach (config('translatable.locales') as $locale) {
             $req = array_merge($req, [
-                "{$locale}.title" => 'nullable',
+                "{$locale}.name" => 'nullable',
             ]);
         }
         $req = array_merge($req, [
@@ -48,9 +48,9 @@ class EducationalStageRequest extends ApiRequest
     public function withValidator(Validator $validator)
     {
         $validator->after(function ($validator) {
-            // Check if both ar.title and en.title are empty
-            if (empty($this->ar['title']) && empty($this->en['title'])) {
-                $validator->errors()->add('locales', __('At least one title must be provided in Arabic or English'));
+            // Check if both ar.name and en.name are empty
+            if (empty($this->ar['name']) && empty($this->en['name'])) {
+                $validator->errors()->add('locales', __('At least one name must be provided in Arabic or English'));
             }
         });
     }
@@ -64,13 +64,13 @@ class EducationalStageRequest extends ApiRequest
         }
         // Translate automatically from Arabic to other languages
         foreach (config('translatable.locales') as $locale) {
-            if ($locale !== 'ar' && empty($data[$locale]['title'])) {
-                $data[$locale]['title'] = $this->translateAutomatically($data['ar']['title'], $locale);
+            if ($locale !== 'ar' && empty($data[$locale]['name'])) {
+                $data[$locale]['name'] = $this->translateAutomatically($data['ar']['name'], $locale);
             }
         }
         // Automatic translation from English to Arabic if Arabic is empty
-        if (empty($data['ar']['title']) && !empty($data['en']['title'])) {
-            $data['ar']['title'] = $this->translateAutomatically($data['en']['title'], 'ar');
+        if (empty($data['ar']['name']) && !empty($data['en']['name'])) {
+            $data['ar']['name'] = $this->translateAutomatically($data['en']['name'], 'ar');
         }
         return $data;
     }

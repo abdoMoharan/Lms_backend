@@ -9,6 +9,6 @@ class EducationalStageTranslation extends Model
     protected $fillable = [
         'stage_id',
         'locale',
-        'title',
+        'name',
     ];
 }

@@ -16,7 +16,7 @@ class EducationalStageResource extends JsonResource
         $transLocale = $this->transLocale()->first();
         return [
             "id"     => $this->id,
-            'title'  => $transLocale ? $transLocale->title : null,
+            'name'   => $transLocale ? $transLocale->name : null,
             'status' => $this->status,
 
         ];

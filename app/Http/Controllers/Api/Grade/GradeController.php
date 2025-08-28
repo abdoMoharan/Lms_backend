@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Api\Chapter;
+namespace App\Http\Controllers\Api\Grade;
 
-use App\Models\Chapter;
+use App\Models\Grade;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Interfaces\Chapter\ChapterInterface;
-use App\Http\Requests\Api\Chapter\ChapterRequest;
+use App\Interfaces\Grade\GradeInterface;
+use App\Http\Requests\Api\Grade\GradeRequest;
 
-class ChapterController extends Controller
+class GradeController extends Controller
 {
-    public ChapterInterface $interface;
-    public function __construct(ChapterInterface $interface)
+    public GradeInterface $interface;
+    public function __construct(GradeInterface $interface)
     {
         $this->interface = $interface;
     }
@@ -19,19 +19,19 @@ class ChapterController extends Controller
 {
         return $this->interface->index($request);
     }
-    public function store(ChapterRequest $request)
+    public function store(GradeRequest $request)
     {
         return $this->interface->store($request);
     }
-    public function update($local,ChapterRequest $request,Chapter $model)
+    public function update($local,GradeRequest $request,Grade $model)
     {
         return $this->interface->update($local,$request,$model);
     }
-    public function delete($local,Chapter $model)
+    public function delete($local,Grade $model)
     {
         return $this->interface->delete($local,$model);
     }
-    public function show($local,Chapter $model)
+    public function show($local,Grade $model)
     {
         return $this->interface->show($local,$model);
     }

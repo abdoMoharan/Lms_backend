@@ -4,9 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Role\RoleController;
 use App\Http\Controllers\Api\User\UserController;
-use App\Http\Controllers\Api\Chapter\ChapterController;
+use App\Http\Controllers\Api\Grade\GradeController;
 use App\Http\Controllers\Api\Semester\SemesterController;
-use App\Http\Controllers\Api\ClassRoom\ClassRoomController;
 use App\Http\Controllers\Api\Profile\ProfileUserController;
 use App\Http\Controllers\Api\Permission\PermissionController;
 use App\Http\Controllers\Api\EducationalStage\EducationalStageController;
@@ -16,7 +15,6 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('logout', 'logout')->middleware('auth:sanctum');
 });
 Route::get('get-auth-permissions', [PermissionController::class, 'getAuthPermissions'])->name('get-permissions-auth')->middleware('auth:sanctum');
-// ملف routes.php
 Route::prefix('{locale}')->middleware('setLocale')->group(function () {
     Route::prefix('admin')->name('admin.')->middleware(['auth:sanctum'])->group(function () {
         Route::prefix('roles')->name('roles.')->controller(RoleController::class)->group(function () {
@@ -70,7 +68,7 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::post('/restore/{id}', 'restore')->name('restore');
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
         });
-        Route::prefix('chapters')->name('chapters.')->controller(ChapterController::class)->group(function () {
+        Route::prefix('grades')->name('grades.')->controller(GradeController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::put('/update/{model}', 'update')->name('update');

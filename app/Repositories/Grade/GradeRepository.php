@@ -1,45 +1,46 @@
 <?php
-namespace App\Repositories\Chapter;
+namespace App\Repositories\Grade;
 
 use App\Helpers\ApiResponse;
-use App\Http\Resources\Chapter\ChapterResource;
-use App\Interfaces\Chapter\ChapterInterface;
-use App\Models\ClassRoom;
+use App\Http\Resources\Grade\GradeResource;
+use App\Interfaces\Grade\GradeInterface;
+use App\Models\Grade;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
-class ChapterRepository implements ChapterInterface
+class GradeRepository implements GradeInterface
 {
-    public ClassRoom $model;
+    public Grade $model;
 
-    public function __construct(ClassRoom $model)
+    public function __construct(Grade $model)
     {
         $this->model = $model;
     }
     public function index($request)
     {
         try {
-            $chapters = $this->model->query()->with(['createdBy', 'transLocale', 'educationalStage'])->filter($request->query())->get();
-            if ($chapters->isEmpty()) {
-                return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No chapters found', []);
+            $Grades = $this->model->query()->with(['createdBy', 'transLocale', 'educationalStage'])->filter($request->query())->get();
+            if ($Grades->isEmpty()) {
+                return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Grades found', []);
             }
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'chapters retrieved successfully', ChapterResource::collection($chapters)->response()->getData(true));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grades retrieved successfully', GradeResource::collection($Grades)->response()->getData(true));
         } catch (\Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No chapters found', $e->getMessage());
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Grades found', $e->getMessage());
         }
     }
     public function store($request)
     {
         try {
             DB::beginTransaction();
-            $data     = $request->getData();
-            $chapters = $this->model->create($data);
+            $data   = $request->getData();
+            $Grades = $this->model->create($data);
+            $Grades->load(['transLocale', 'educationalStage']);
             DB::commit();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'chapters created successfully', new ChapterResource($chapters));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grades created successfully', new GradeResource($Grades));
         } catch (\Exception $e) {
             DB::rollBack();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No chapters found', $e->getMessage());
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Grades found', $e->getMessage());
         }
     }
 
@@ -49,16 +50,17 @@ class ChapterRepository implements ChapterInterface
         try {
             $data = $request->getData();
             $model->update($data);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new ChapterResource($model));
+            $model->load(['transLocale', 'educationalStage']);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new GradeResource($model));
         } catch (\Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No chapters found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Grades found', []);
         }
     }
     public function delete($local, $model)
     {
         try {
             $model->delete();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'chapters deleted successfully', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grades deleted successfully', []);
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction found', []);
         }
@@ -68,26 +70,26 @@ class ChapterRepository implements ChapterInterface
     {
         try {
             $model->load(['createdBy', 'transLocale', 'educationalStage']);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'chapters retrieved successfully', new ChapterResource($model));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grades retrieved successfully', new GradeResource($model));
         } catch (\Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No chapters found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Grades found', []);
         }
     }
     public function showDeleted()
     {
-        $chapters = $this->model->getAllDeleted();
-        if ($chapters->isEmpty()) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted chapters found', []);
+        $Grades = $this->model->getAllDeleted();
+        if ($Grades->isEmpty()) {
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted Grades found', []);
         }
-        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted chapters retrieved successfully', ChapterResource::collection($chapters));
+        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted Grades retrieved successfully', GradeResource::collection($Grades));
     }
     public function restore($local, $id)
     {
         try {
             $this->model->restoreSoft($id);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'chapters restored successfully');
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grades restored successfully');
         } catch (Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No chapters found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Grades found', []);
         }
     }
 
@@ -95,9 +97,9 @@ class ChapterRepository implements ChapterInterface
     {
         try {
             $this->model->forceDeleteById($id);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'chapters force deleted successfully');
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grades force deleted successfully');
         } catch (Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No chapters found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Grades found', []);
         }
     }
     public function multi_actions($local, $request)

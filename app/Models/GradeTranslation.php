@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ChapterTranslation extends Model
+class GradeTranslation extends Model
 {
-    protected $table    = 'chapter_translations';
+     protected $table    = 'grade_translations';
     protected $fillable = [
-        'chapter_id',
+        'grade_id',
         'locale',
         'name',
     ];

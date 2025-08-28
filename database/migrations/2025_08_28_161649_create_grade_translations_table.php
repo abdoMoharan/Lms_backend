@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chapter_translations', function (Blueprint $table) {
+        Schema::create('grade_translations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('chapter_id');
+            $table->unsignedBigInteger('grade_id');
             $table->string('locale')->index();
             $table->string('name')->nullable();
-            $table->unique(['chapter_id', 'locale']);
-            $table->foreign('chapter_id')->references('id')->on('chapters')->onDelete('cascade');
+            $table->unique(['grade_id', 'locale']);
+            $table->foreign('grade_id')->references('id')->on('grades')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chapter_translations');
+        Schema::dropIfExists('grade_translations');
     }
 };

@@ -1,9 +1,9 @@
 <?php
-namespace App\Interfaces\Chapter;
+namespace App\Interfaces\Grade;
 
 
 
-interface ChapterInterface
+interface GradeInterface
 {
     public function index($request);
     public function store($request);

@@ -3,7 +3,9 @@ namespace App\Providers;
 
 use App\Interfaces\User\UserInterface;
 use Illuminate\Support\ServiceProvider;
+use App\Interfaces\Grade\GradeInterface;
 use App\Repositories\User\UserRepository;
+use App\Repositories\Grade\GradeRepository;
 use App\Interfaces\Semester\SemesterInterface;
 use App\Repositories\Semester\SemesterRepository;
 use App\Interfaces\EducationalStage\EducationalStageInterface;
@@ -27,5 +29,6 @@ class RepositoryProvider extends ServiceProvider
         $this->app->singleton(UserInterface::class, UserRepository::class);
         $this->app->singleton(EducationalStageInterface::class, EducationalStageRepository::class);
         $this->app->singleton(SemesterInterface::class, SemesterRepository::class);
+        $this->app->singleton(GradeInterface::class, GradeRepository::class);
     }
 }

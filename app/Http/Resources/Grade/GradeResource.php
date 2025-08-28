@@ -1,11 +1,11 @@
 <?php
-namespace App\Http\Resources\Chapter;
+namespace App\Http\Resources\Grade;
 
 use App\Http\Resources\EducationalStage\EducationalStageResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ChapterResource extends JsonResource
+class GradeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

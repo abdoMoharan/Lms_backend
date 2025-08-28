@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Api\Chapter;
+namespace App\Http\Requests\Api\Grade;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Lang;
@@ -8,7 +8,7 @@ use Illuminate\Validation\Validator;
 use App\Http\Requests\Base\ApiRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ChapterRequest extends ApiRequest
+class GradeRequest extends ApiRequest
 {
     public function authorize(): bool
     {
@@ -39,6 +39,7 @@ class ChapterRequest extends ApiRequest
         }
         $req = array_merge($req, [
             'status' => 'nullable|in:1,0',
+            'stage_id' => 'required|exists:educational_stages,id',
         ]);
 
 

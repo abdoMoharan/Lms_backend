@@ -1,34 +1,39 @@
 <?php
 namespace App\Models;
 
+use App\Models\ChapterTranslation;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
-class ClassRoom extends Model implements TranslatableContract
+class Chapter extends Model implements TranslatableContract
 {
     use SoftDeletes, Translatable;
 
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable          = ['created_by', 'updated_by', 'status'];
+    protected $fillable          = ['created_by', 'updated_by', 'status', 'stage_id'];
     public $translatedAttributes = [
-        'class_room_id',
+        'chapter_id',
         'locale',
         'name',
     ];
-    protected $ClassRoomTranslation = 'class_room_id';
+    protected $ClassRoomTranslation = 'chapter_id';
 
     public function transLocale()
     {
         $locale = app()->getLocale();
-        return $this->hasMany(ClassRoomTranslation::class, 'class_room_id')->where('locale', $locale);
+        return $this->hasMany(ChapterTranslation::class, 'chapter_id')->where('locale', $locale);
     }
 
+    public function educationalStage()
+    {
+        return $this->belongsTo(EducationalStage::class, 'stage_id')->with('transLocale');
+    }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
         if (isset($filters['name'])) {
@@ -37,7 +42,7 @@ class ClassRoom extends Model implements TranslatableContract
             });
         }
         $builder->when(isset($filters['status']), function ($builder) use ($filters) {
-            $statusValue = intval($filters['status']) == 0 ? 0 : $filters['status']; // استخدام `intval` لتحويل النصوص للأرقام
+            $statusValue = intval($filters['status']) == 0 ? 0 : $filters['status'];
             $builder->where('status', $statusValue);
         });
         return $builder;

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Chapter\ChapterController;
 use App\Http\Controllers\Api\Role\RoleController;
 use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\ClassRoom\ClassRoomController;
@@ -58,6 +59,17 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
         });
         Route::prefix('class-rooms')->name('class-rooms.')->controller(ClassRoomController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/update/{model}', 'update')->name('update');
+            Route::delete('/delete/{model}', 'delete')->name('delete');
+            Route::get('/show/{model}', 'show')->name('show');
+            Route::get('/deleted', 'showDeleted')->name('deleted');
+            Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
+            Route::post('/restore/{id}', 'restore')->name('restore');
+            Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
+        });
+        Route::prefix('chapters')->name('chapters.')->controller(ChapterController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::put('/update/{model}', 'update')->name('update');

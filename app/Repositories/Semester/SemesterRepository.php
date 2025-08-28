@@ -1,47 +1,45 @@
 <?php
-namespace App\Repositories\ClassRoom;
+namespace App\Repositories\Semester;
 
-
-use Exception;
 use App\Helpers\ApiResponse;
-use App\Models\class_room;
-use App\Models\ClassRoom;
+use App\Http\Resources\Semester\SemesterResource;
+use App\Interfaces\Semester\SemesterInterface;
+use App\Models\Semester;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use App\Interfaces\ClassRoom\ClassRoomInterface;
-use App\Http\Resources\ClassRoom\ClassRoomResource;
 
-class ClassRoomRepository implements ClassRoomInterface
+class SemesterRepository implements SemesterInterface
 {
-    public ClassRoom $model;
+    public Semester $model;
 
-    public function __construct(ClassRoom $model)
+    public function __construct(Semester $model)
     {
         $this->model = $model;
     }
     public function index($request)
     {
         try {
-            $class_room = $this->model->query()->with(['createdBy','transLocale'])->filter($request->query())->get();
-            if ($class_room->isEmpty()) {
-                return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No class_room found', []);
+            $semester = $this->model->query()->with(['createdBy', 'transLocale'])->filter($request->query())->get();
+            if ($semester->isEmpty()) {
+                return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No semester found', []);
             }
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'class_room retrieved successfully', ClassRoomResource::collection($class_room)->response()->getData(true));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester retrieved successfully', SemesterResource::collection($semester)->response()->getData(true));
         } catch (\Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No class_room found', $e->getMessage());
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No semester found', $e->getMessage());
         }
     }
     public function store($request)
     {
         try {
             DB::beginTransaction();
-            $data = $request->getData();
-            $class_room = $this->model->create($data);
+            $data       = $request->getData();
+            $semester = $this->model->create($data);
             DB::commit();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'class_room created successfully', new ClassRoomResource($class_room));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester created successfully', new SemesterResource($semester));
         } catch (\Exception $e) {
             DB::rollBack();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No class_room found', $e->getMessage());
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No semester found', $e->getMessage());
         }
     }
 
@@ -51,46 +49,45 @@ class ClassRoomRepository implements ClassRoomInterface
         try {
             $data = $request->getData();
             $model->update($data);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new ClassRoomResource($model));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new SemesterResource($model));
         } catch (\Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No class_room found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No semester found', []);
         }
     }
     public function delete($local, $model)
     {
         try {
             $model->delete();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'class_room deleted successfully', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester deleted successfully', []);
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction found', []);
         }
     }
 
-
     public function show($local, $model)
     {
         try {
-            $model->load('class_room');
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'class_room retrieved successfully', new ClassRoomResource($model));
+            $model->load('semester');
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester retrieved successfully', new SemesterResource($model));
         } catch (\Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No class_room found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No semester found', []);
         }
     }
     public function showDeleted()
     {
-        $class_room = $this->model->getAllDeleted();
-        if ($class_room->isEmpty()) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted class_room found', []);
+        $semester = $this->model->getAllDeleted();
+        if ($semester->isEmpty()) {
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted semester found', []);
         }
-        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted class_room retrieved successfully', ClassRoomResource::collection($class_room));
+        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted semester retrieved successfully', SemesterResource::collection($semester));
     }
     public function restore($local, $id)
     {
         try {
             $this->model->restoreSoft($id);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'class_room restored successfully');
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester restored successfully');
         } catch (Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No class_room found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No semester found', []);
         }
     }
 
@@ -98,9 +95,9 @@ class ClassRoomRepository implements ClassRoomInterface
     {
         try {
             $this->model->forceDeleteById($id);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'class_room force deleted successfully');
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester force deleted successfully');
         } catch (Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No class_room found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No semester found', []);
         }
     }
     public function multi_actions($local, $request)

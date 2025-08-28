@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Api\ClassRoom;
+namespace App\Http\Requests\Api\Semester;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -9,7 +9,7 @@ use Illuminate\Validation\Validator;
 use App\Http\Requests\Base\ApiRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ClassRoomRequest extends ApiRequest
+class SemesterRequest extends ApiRequest
 {
     public function authorize(): bool
     {

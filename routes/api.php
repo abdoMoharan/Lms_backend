@@ -2,9 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
-use App\Http\Controllers\Api\Chapter\ChapterController;
 use App\Http\Controllers\Api\Role\RoleController;
 use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\Chapter\ChapterController;
+use App\Http\Controllers\Api\Semester\SemesterController;
 use App\Http\Controllers\Api\ClassRoom\ClassRoomController;
 use App\Http\Controllers\Api\Profile\ProfileUserController;
 use App\Http\Controllers\Api\Permission\PermissionController;
@@ -58,7 +59,7 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::post('/restore/{id}', 'restore')->name('restore');
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
         });
-        Route::prefix('class-rooms')->name('class-rooms.')->controller(ClassRoomController::class)->group(function () {
+        Route::prefix('semesters')->name('semesters.')->controller(SemesterController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::put('/update/{model}', 'update')->name('update');

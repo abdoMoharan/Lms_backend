@@ -2,13 +2,13 @@
 namespace App\Models;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
-class ClassRoom extends Model implements TranslatableContract
+class Semester extends Model implements TranslatableContract
 {
     use SoftDeletes, Translatable;
 
@@ -17,16 +17,16 @@ class ClassRoom extends Model implements TranslatableContract
      */
     protected $fillable          = ['created_by', 'updated_by', 'status'];
     public $translatedAttributes = [
-        'class_room_id',
+        'semester_id',
         'locale',
         'name',
     ];
-    protected $ClassRoomTranslation = 'class_room_id';
+    protected $ClassRoomTranslation = 'semester_id';
 
     public function transLocale()
     {
         $locale = app()->getLocale();
-        return $this->hasMany(ClassRoomTranslation::class, 'class_room_id')->where('locale', $locale);
+        return $this->hasMany(SemesterTranslation::class, 'semester_id')->where('locale', $locale);
     }
 
     public function scopeFilter(Builder $builder, array $filters): Builder

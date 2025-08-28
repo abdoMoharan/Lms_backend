@@ -1,8 +1,8 @@
 <?php
-namespace App\Interfaces\ClassRoom;
+namespace App\Interfaces\Semester;
 
 
-interface ClassRoomInterface
+interface SemesterInterface
 {
     public function index($request);
     public function store($request);

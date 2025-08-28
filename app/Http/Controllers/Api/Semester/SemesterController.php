@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Api\ClassRoom;
+namespace App\Http\Controllers\Api\Semester;
 
 use Illuminate\Http\Request;
-use App\Models\ClassRoom;
+use App\Models\Semester;
 use App\Http\Controllers\Controller;
-use App\Interfaces\ClassRoom\ClassRoomInterface;
-use App\Http\Requests\Api\ClassRoom\ClassRoomRequest;
+use App\Interfaces\Semester\SemesterInterface;
+use App\Http\Requests\Api\Semester\SemesterRequest;
 
-class ClassRoomController extends Controller
+class SemesterController extends Controller
 {
-    public ClassRoomInterface $interface;
-    public function __construct(ClassRoomInterface $interface)
+    public SemesterInterface $interface;
+    public function __construct(SemesterInterface $interface)
     {
         $this->interface = $interface;
     }
@@ -19,19 +19,19 @@ class ClassRoomController extends Controller
     {
         return $this->interface->index($request);
     }
-    public function store(ClassRoomRequest $request)
+    public function store(SemesterRequest $request)
     {
         return $this->interface->store($request);
     }
-    public function update($local,ClassRoomRequest $request,ClassRoom $model)
+    public function update($local,SemesterRequest $request,Semester $model)
     {
         return $this->interface->update($local,$request,$model);
     }
-    public function delete($local,ClassRoom $model)
+    public function delete($local,Semester $model)
     {
         return $this->interface->delete($local,$model);
     }
-    public function show($local,ClassRoom $model)
+    public function show($local,Semester $model)
     {
         return $this->interface->show($local,$model);
     }

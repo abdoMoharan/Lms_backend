@@ -1,15 +1,13 @@
 <?php
 namespace App\Repositories\EducationalStage;
 
-
-use Exception;
 use App\Helpers\ApiResponse;
-use App\Models\eduction_stage;
+use App\Http\Resources\EducationalStage\EducationalStageResource;
+use App\Interfaces\EducationalStage\EducationalStageInterface;
 use App\Models\EducationalStage;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use App\Interfaces\EducationalStage\EducationalStageInterface;
-use App\Http\Resources\EducationalStage\EducationalStageResource;
 
 class EducationalStageRepository implements EducationalStageInterface
 {
@@ -22,7 +20,7 @@ class EducationalStageRepository implements EducationalStageInterface
     public function index($request)
     {
         try {
-            $eduction_stage = $this->model->query()->with(['createdBy','transLocale'])->filter($request->query())->get();
+            $eduction_stage = $this->model->query()->with(['createdBy', 'transLocale'])->filter($request->query())->get();
             if ($eduction_stage->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No eduction_stage found', []);
             }
@@ -35,10 +33,11 @@ class EducationalStageRepository implements EducationalStageInterface
     {
         try {
             DB::beginTransaction();
-            $data = $request->getData();
-            $eduction_stage = $this->model->create($data);
+            $data  = $request->getData();
+            $model = $this->model->create($data);
+            $model->load(['trans', 'createdBy']);
             DB::commit();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage created successfully', new EducationalStageResource($eduction_stage));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage created successfully', new EducationalStageResource($model));
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', $e->getMessage());
@@ -51,6 +50,7 @@ class EducationalStageRepository implements EducationalStageInterface
         try {
             $data = $request->getData();
             $model->update($data);
+            $model->load(['trans', 'createdBy']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new EducationalStageResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', []);
@@ -66,11 +66,10 @@ class EducationalStageRepository implements EducationalStageInterface
         }
     }
 
-
     public function show($local, $model)
     {
         try {
-            $model->load('eduction_stage');
+            $model->load(['trans', 'createdBy']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage retrieved successfully', new EducationalStageResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', []);
@@ -78,11 +77,12 @@ class EducationalStageRepository implements EducationalStageInterface
     }
     public function showDeleted()
     {
-        $eduction_stage = $this->model->getAllDeleted();
-        if ($eduction_stage->isEmpty()) {
+        $model = $this->model->getAllDeleted();
+        if ($model->isEmpty()) {
+            $model->load(['transLocale', 'createdBy']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted eduction_stage found', []);
         }
-        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted eduction_stage retrieved successfully', EducationalStageResource::collection($eduction_stage));
+        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted eduction_stage retrieved successfully', EducationalStageResource::collection($model));
     }
     public function restore($local, $id)
     {

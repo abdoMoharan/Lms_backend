@@ -19,7 +19,16 @@ class SubjectResource extends JsonResource
         $transLocale = $this->transLocale()->first();
         return [
             "id"               => $this->id,
-            'name'             => $transLocale ? $transLocale->name : null,
+            'name'             => $this->whenLoaded('transLocale', function () {
+                return $this->transLocale->first()->name ?? null;
+            }, function () {
+                return $this->whenLoaded('trans', function () {
+                    return [
+                        'en' => $this->trans->firstWhere('locale', 'en')->name ?? null,
+                        'ar' => $this->trans->firstWhere('locale', 'ar')->name ?? null,
+                    ];
+                });
+            }),
             'status'           => $this->status,
             'educationalStage' => new EducationalStageResource($this->whenLoaded('educationalStage')),
             'semester'         => new SemesterResource($this->whenLoaded('semester')),

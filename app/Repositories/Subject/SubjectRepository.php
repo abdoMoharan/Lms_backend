@@ -20,7 +20,7 @@ class SubjectRepository implements SubjectInterface
     public function index($request)
     {
         try {
-            $subject = $this->model->query()->with(['createdBy', 'transLocale', 'educationalStage','semester','grade'])->filter($request->query())->get();
+            $subject = $this->model->query()->with(['createdBy', 'transLocale', 'educationalStage', 'semester', 'grade'])->filter($request->query())->get();
             if ($subject->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Subjects found', []);
             }
@@ -33,11 +33,11 @@ class SubjectRepository implements SubjectInterface
     {
         try {
             DB::beginTransaction();
-            $data   = $request->getData();
-            $subject = $this->model->create($data);
-            $subject->load(['transLocale', 'educationalStage','semester','grade']);
+            $data    = $request->getData();
+            $model = $this->model->create($data);
+            $model->load(['trans', 'educationalStage', 'semester', 'grade']);
             DB::commit();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subjects created successfully', new SubjectResource($subject));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subjects created successfully', new SubjectResource($model));
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Subjects found', $e->getMessage());
@@ -50,7 +50,7 @@ class SubjectRepository implements SubjectInterface
         try {
             $data = $request->getData();
             $model->update($data);
-            $model->load(['transLocale', 'educationalStage','semester','grade']);
+            $model->load(['trans', 'educationalStage', 'semester', 'grade']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new SubjectResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Subjects found', []);
@@ -69,7 +69,7 @@ class SubjectRepository implements SubjectInterface
     public function show($local, $model)
     {
         try {
-            $model->load(['createdBy', 'transLocale', 'educationalStage','semester','grade']);
+            $model->load(['createdBy', 'trans', 'educationalStage', 'semester', 'grade']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subjects retrieved successfully', new SubjectResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Subjects found', []);
@@ -77,11 +77,12 @@ class SubjectRepository implements SubjectInterface
     }
     public function showDeleted()
     {
-        $subject = $this->model->getAllDeleted();
-        if ($subject->isEmpty()) {
+        $model = $this->model->getAllDeleted();
+        $model->load(['transLocale', 'createdBy']);
+        if ($model->isEmpty()) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted Subjects found', []);
         }
-        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted Subjects retrieved successfully', SubjectResource::collection($subject));
+        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted Subjects retrieved successfully', SubjectResource::collection($model));
     }
     public function restore($local, $id)
     {

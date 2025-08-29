@@ -34,10 +34,10 @@ class GradeRepository implements GradeInterface
         try {
             DB::beginTransaction();
             $data   = $request->getData();
-            $Grades = $this->model->create($data);
-            $Grades->load(['transLocale', 'educationalStage']);
+            $model = $this->model->create($data);
+      $model->load(['trans', 'createdBy','educationalStage']);
             DB::commit();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grades created successfully', new GradeResource($Grades));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grades created successfully', new GradeResource($model));
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Grades found', $e->getMessage());
@@ -50,7 +50,8 @@ class GradeRepository implements GradeInterface
         try {
             $data = $request->getData();
             $model->update($data);
-            $model->load(['transLocale', 'educationalStage']);
+          $model->load(['trans', 'createdBy','educationalStage']);
+
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new GradeResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Grades found', []);
@@ -69,7 +70,8 @@ class GradeRepository implements GradeInterface
     public function show($local, $model)
     {
         try {
-            $model->load(['createdBy', 'transLocale', 'educationalStage']);
+             $model->load(['trans', 'createdBy','educationalStage']);
+
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grades retrieved successfully', new GradeResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Grades found', []);
@@ -77,11 +79,13 @@ class GradeRepository implements GradeInterface
     }
     public function showDeleted()
     {
-        $Grades = $this->model->getAllDeleted();
-        if ($Grades->isEmpty()) {
+        $model = $this->model->getAllDeleted();
+      $model->load(['transLocale', 'createdBy','educationalStage']);
+
+        if ($model->isEmpty()) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted Grades found', []);
         }
-        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted Grades retrieved successfully', GradeResource::collection($Grades));
+        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted Grades retrieved successfully', GradeResource::collection($model));
     }
     public function restore($local, $id)
     {

@@ -28,7 +28,10 @@ class Semester extends Model implements TranslatableContract
         $locale = app()->getLocale();
         return $this->hasMany(SemesterTranslation::class, 'semester_id')->where('locale', $locale);
     }
-
+    public function trans()
+    {
+        return $this->hasMany(SemesterTranslation::class, 'semester_id');
+    }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
         if (isset($filters['name'])) {

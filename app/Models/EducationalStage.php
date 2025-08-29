@@ -28,6 +28,10 @@ class EducationalStage extends Model implements TranslatableContract
         $locale = app()->getLocale();
         return $this->hasMany(EducationalStageTranslation::class, 'stage_id')->where('locale', $locale);
     }
+    public function trans()
+    {
+        return $this->hasMany(EducationalStageTranslation::class, 'stage_id');
+    }
 
     public function scopeFilter(Builder $builder, array $filters): Builder
     {

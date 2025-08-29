@@ -1,16 +1,12 @@
 <?php
-
 namespace App\Models;
 
-use App\Models\User;
 use App\Models\GradeTranslation;
-use App\Models\ChapterTranslation;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
-
 
 class Grade extends Model
 {
@@ -32,7 +28,10 @@ class Grade extends Model
         $locale = app()->getLocale();
         return $this->hasMany(GradeTranslation::class, 'grade_id')->where('locale', $locale);
     }
-
+    public function trans()
+    {
+        return $this->hasMany(GradeTranslation::class, 'grade_id');
+    }
     public function educationalStage()
     {
         return $this->belongsTo(EducationalStage::class, 'stage_id')->with('transLocale');

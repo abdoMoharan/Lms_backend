@@ -33,10 +33,11 @@ class SemesterRepository implements SemesterInterface
     {
         try {
             DB::beginTransaction();
-            $data       = $request->getData();
-            $semester = $this->model->create($data);
+            $data  = $request->getData();
+            $model = $this->model->create($data);
             DB::commit();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester created successfully', new SemesterResource($semester));
+            $model->load(['trans', 'createdBy']);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester created successfully', new SemesterResource($model));
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No semester found', $e->getMessage());
@@ -49,6 +50,8 @@ class SemesterRepository implements SemesterInterface
         try {
             $data = $request->getData();
             $model->update($data);
+            $model->load(['trans', 'createdBy']);
+
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new SemesterResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No semester found', []);
@@ -67,7 +70,7 @@ class SemesterRepository implements SemesterInterface
     public function show($local, $model)
     {
         try {
-            $model->load('semester');
+            $model->load(['trans', 'createdBy']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester retrieved successfully', new SemesterResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No semester found', []);
@@ -75,11 +78,12 @@ class SemesterRepository implements SemesterInterface
     }
     public function showDeleted()
     {
-        $semester = $this->model->getAllDeleted();
-        if ($semester->isEmpty()) {
+        $model = $this->model->getAllDeleted();
+        $model->load(['transLocale', 'createdBy']);
+        if ($model->isEmpty()) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted semester found', []);
         }
-        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted semester retrieved successfully', SemesterResource::collection($semester));
+        return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted semester retrieved successfully', SemesterResource::collection($model));
     }
     public function restore($local, $id)
     {

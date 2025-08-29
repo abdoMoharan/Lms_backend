@@ -31,6 +31,10 @@ class Subject extends Model implements TranslatableContract
         $locale = app()->getLocale();
         return $this->hasMany(SubjectTranslation::class, 'subject_id')->where('locale', $locale);
     }
+    public function trans()
+    {
+        return $this->hasMany(SubjectTranslation::class, 'subject_id');
+    }
     public function educationalStage()
     {
         return $this->belongsTo(EducationalStage::class, 'stage_id')->with('transLocale');

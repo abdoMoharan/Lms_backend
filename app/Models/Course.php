@@ -1,41 +1,56 @@
 <?php
 namespace App\Models;
 
-use App\Models\GradeTranslation;
 use App\Models\User;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use App\Models\Subject;
+use Illuminate\Database\Eloquent\Model;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
-class Grade extends Model implements TranslatableContract
+class Course extends Model implements TranslatableContract
 {
     use SoftDeletes, Translatable;
 
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ['created_by', 'updated_by', 'status', 'stage_id'];
+    protected $fillable =
+        [
+        'subject_id',
+        'user_id',
+        'created_by',
+        'updated_by',
+        'status',
+    ];
     public $translatedAttributes = [
-        'grade_id',
+        'course_id',
         'locale',
         'name',
+        'desorption',
     ];
-    protected $ClassRoomTranslation = 'grade_id';
+    protected $translationForeignKey = 'course_id';
 
     public function transLocale()
     {
         $locale = app()->getLocale();
-        return $this->hasMany(GradeTranslation::class, 'grade_id')->where('locale', $locale);
+        return $this->hasMany(CourseTranslation::class, 'course_id')->where('locale', $locale);
     }
     public function trans()
     {
-        return $this->hasMany(GradeTranslation::class, 'grade_id');
+        return $this->hasMany(CourseTranslation::class, 'course_id');
     }
-    public function educationalStage()
+
+    public function teacher()
     {
-        return $this->belongsTo(EducationalStage::class, 'stage_id')->with('transLocale');
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class, 'subject_id');
+
     }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
@@ -45,7 +60,7 @@ class Grade extends Model implements TranslatableContract
             });
         }
         $builder->when(isset($filters['status']), function ($builder) use ($filters) {
-            $statusValue = intval($filters['status']) == 0 ? 0 : $filters['status'];
+            $statusValue = intval($filters['status']) == 0 ? 0 : $filters['status']; // استخدام `intval` لتحويل النصوص للأرقام
             $builder->where('status', $statusValue);
         });
         return $builder;

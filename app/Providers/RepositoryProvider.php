@@ -1,6 +1,7 @@
 <?php
 namespace App\Providers;
 
+use App\Interfaces\Course\CourseInterface;
 use App\Interfaces\User\UserInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Interfaces\Grade\GradeInterface;
@@ -11,6 +12,7 @@ use App\Interfaces\Semester\SemesterInterface;
 use App\Repositories\Subject\SubjectRepository;
 use App\Repositories\Semester\SemesterRepository;
 use App\Interfaces\EducationalStage\EducationalStageInterface;
+use App\Repositories\Course\CourseRepository;
 use App\Repositories\EducationalStage\EducationalStageRepository;
 
 class RepositoryProvider extends ServiceProvider
@@ -33,5 +35,6 @@ class RepositoryProvider extends ServiceProvider
         $this->app->singleton(SemesterInterface::class, SemesterRepository::class);
         $this->app->singleton(GradeInterface::class, GradeRepository::class);
         $this->app->singleton(SubjectInterface::class, SubjectRepository::class);
+        $this->app->singleton(CourseInterface::class,CourseRepository::class);
     }
 }

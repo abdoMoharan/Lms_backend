@@ -1,13 +1,13 @@
 <?php
-
 namespace App\Http\Requests\Api\Coures;
 
+use App\Http\Requests\Base\ApiRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Validation\Validator;
-use App\Http\Requests\Base\ApiRequest;
-class CourseRequest extends  ApiRequest
+
+class CourseRequest extends ApiRequest
 {
     public function authorize(): bool
     {
@@ -33,14 +33,15 @@ class CourseRequest extends  ApiRequest
         $req = [];
         foreach (config('translatable.locales') as $locale) {
             $req = array_merge($req, [
-                "{$locale}.name" => 'nullable',
+                "{$locale}.name"       => 'nullable',
                 "{$locale}.desorption" => 'nullable',
             ]);
         }
         $req = array_merge($req, [
-            'status' => 'nullable|in:1,0',
+            'status'     => 'nullable|in:1,0',
+            'subject_id' => 'required|exists:subjects,id',
+            'user_id'    => 'required|exists:users,id',
         ]);
-
 
         return $req;
     }
@@ -74,10 +75,10 @@ class CourseRequest extends  ApiRequest
             }
         }
         // Automatic translation from English to Arabic if Arabic is empty
-        if (empty($data['ar']['name']) && !empty($data['en']['name'])) {
+        if (empty($data['ar']['name']) && ! empty($data['en']['name'])) {
             $data['ar']['name'] = $this->translateAutomatically($data['en']['name'], 'ar');
         }
-        if (empty($data['ar']['desorption']) && !empty($data['en']['desorption'])) {
+        if (empty($data['ar']['desorption']) && ! empty($data['en']['desorption'])) {
             $data['ar']['desorption'] = $this->translateAutomatically($data['en']['desorption'], 'ar');
         }
         return $data;
@@ -91,7 +92,7 @@ class CourseRequest extends  ApiRequest
         $sourceLang = $locale === 'ar' ? 'en' : 'ar';
 
         $response = Http::get('https://api.mymemory.translated.net/get', [
-            'q' => $text,
+            'q'        => $text,
             'langpair' => "{$sourceLang}|{$locale}",
         ]);
 

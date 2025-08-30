@@ -1,7 +1,6 @@
 <?php
 namespace App\Models;
 
-use App\Models\GradeTranslation;
 use App\Models\User;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
@@ -9,34 +8,36 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Grade extends Model implements TranslatableContract
+class Unit extends Model implements TranslatableContract
 {
     use SoftDeletes, Translatable;
 
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ['created_by', 'updated_by', 'status', 'stage_id'];
+    protected $fillable          = ['created_by', 'updated_by', 'status', 'course_id','sort'];
     public $translatedAttributes = [
-        'grade_id',
+        'unit_id',
         'locale',
         'name',
     ];
-    protected $ClassRoomTranslation = 'grade_id';
+    protected $ClassRoomTranslation = 'unit_id';
 
     public function transLocale()
     {
         $locale = app()->getLocale();
-        return $this->hasMany(GradeTranslation::class, 'grade_id')->where('locale', $locale);
+        return $this->hasMany(UnitTranslation::class, 'unit_id')->where('locale', $locale);
     }
     public function trans()
     {
-        return $this->hasMany(GradeTranslation::class, 'grade_id');
+        return $this->hasMany(UnitTranslation::class, 'unit_id');
     }
-    public function educationalStage()
+
+    public function course()
     {
-        return $this->belongsTo(EducationalStage::class, 'stage_id')->with('transLocale');
+        return $this->belongsTo(Course::class, 'course_id');
     }
+
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
         if (isset($filters['name'])) {
@@ -44,8 +45,13 @@ class Grade extends Model implements TranslatableContract
                 $q->where('name', 'like', '%' . $filters['name'] . '%');
             });
         }
+        if (isset($filters['course_id'])) {
+            $builder->whereHas('course', function ($q) use ($filters) {
+                $q->where('id', $filters['course_id']);
+            });
+        }
         $builder->when(isset($filters['status']), function ($builder) use ($filters) {
-            $statusValue = intval($filters['status']) == 0 ? 0 : $filters['status'];
+            $statusValue = intval($filters['status']) == 0 ? 0 : $filters['status']; // استخدام `intval` لتحويل النصوص للأرقام
             $builder->where('status', $statusValue);
         });
         return $builder;
@@ -61,10 +67,11 @@ class Grade extends Model implements TranslatableContract
         return $this->belongsTo(User::class, 'updated_by');
     }
 
-     public static function getAllDeleted()
+    public static function getAllDeleted()
     {
-        return self::onlyTrashed()->with(['transLocale','educationalStage'])->get();
+        return self::onlyTrashed()->with(['transLocale','course','createdBy'])->get();
     }
+
     // Restore a Deleted Record
     public static function restoreSoft($id)
     {

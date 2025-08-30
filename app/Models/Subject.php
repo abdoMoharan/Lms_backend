@@ -74,7 +74,7 @@ class Subject extends Model implements TranslatableContract
 
     public static function getAllDeleted()
     {
-        return self::onlyTrashed()->with('transLocale')->get();
+        return self::onlyTrashed()->with(['transLocale','educationalStage','semester','grade','createdBy'])->get();
     }
 
     // Restore a Deleted Record

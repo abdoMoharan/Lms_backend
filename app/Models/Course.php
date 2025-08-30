@@ -78,7 +78,7 @@ class Course extends Model implements TranslatableContract
 
  public static function getAllDeleted()
     {
-        return self::onlyTrashed()->with('transLocale')->get();
+        return self::onlyTrashed()->with(['transLocale','teacher','subject','createdBy'])->get();
     }
 
     // Restore a Deleted Record

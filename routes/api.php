@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Profile\ProfileUserController;
 use App\Http\Controllers\Api\Permission\PermissionController;
 use App\Http\Controllers\Api\EducationalStage\EducationalStageController;
 use App\Http\Controllers\Api\Subject\SubjectController;
+use App\Http\Controllers\Api\Unit\UnitController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
@@ -93,6 +94,17 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
         });
         Route::prefix('courses')->name('courses.')->controller(CourseController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/update/{model}', 'update')->name('update');
+            Route::delete('/delete/{model}', 'delete')->name('delete');
+            Route::get('/show/{model}', 'show')->name('show');
+            Route::get('/deleted', 'showDeleted')->name('deleted');
+            Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
+            Route::post('/restore/{id}', 'restore')->name('restore');
+            Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
+        });
+        Route::prefix('units')->name('units.')->controller(UnitController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::put('/update/{model}', 'update')->name('update');

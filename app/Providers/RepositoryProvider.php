@@ -12,8 +12,10 @@ use App\Interfaces\Semester\SemesterInterface;
 use App\Repositories\Subject\SubjectRepository;
 use App\Repositories\Semester\SemesterRepository;
 use App\Interfaces\EducationalStage\EducationalStageInterface;
+use App\Interfaces\Unit\UnitInterface;
 use App\Repositories\Course\CourseRepository;
 use App\Repositories\EducationalStage\EducationalStageRepository;
+use App\Repositories\Unit\UnitRepository;
 
 class RepositoryProvider extends ServiceProvider
 {
@@ -36,5 +38,6 @@ class RepositoryProvider extends ServiceProvider
         $this->app->singleton(GradeInterface::class, GradeRepository::class);
         $this->app->singleton(SubjectInterface::class, SubjectRepository::class);
         $this->app->singleton(CourseInterface::class,CourseRepository::class);
+        $this->app->singleton(UnitInterface::class,UnitRepository::class);
     }
 }

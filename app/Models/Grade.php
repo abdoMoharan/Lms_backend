@@ -61,11 +61,10 @@ class Grade extends Model implements TranslatableContract
         return $this->belongsTo(User::class, 'updated_by');
     }
 
-    public static function getAllDeleted()
+     public static function getAllDeleted()
     {
-        return self::onlyTrashed()->get();
+        return self::onlyTrashed()->with('transLocale')->get();
     }
-
     // Restore a Deleted Record
     public static function restoreSoft($id)
     {

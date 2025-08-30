@@ -79,7 +79,6 @@ class EducationalStageRepository implements EducationalStageInterface
     {
         $model = $this->model->getAllDeleted();
         if ($model->isEmpty()) {
-            $model->load(['transLocale', 'createdBy']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted eduction_stage found', []);
         }
         return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted eduction_stage retrieved successfully', EducationalStageResource::collection($model));

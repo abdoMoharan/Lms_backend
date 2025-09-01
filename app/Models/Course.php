@@ -28,7 +28,7 @@ class Course extends Model implements TranslatableContract
         'course_id',
         'locale',
         'name',
-        'desorption',
+        'description',
     ];
     protected $translationForeignKey = 'course_id';
 

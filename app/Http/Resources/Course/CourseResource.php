@@ -28,6 +28,16 @@ class CourseResource extends JsonResource
                     ];
                 });
             }),
+            'description'             => $this->whenLoaded('transLocale', function () {
+                return $this->transLocale->first()->description ?? null;
+            }, function () {
+                return $this->whenLoaded('trans', function () {
+                    return [
+                        'en' => $this->trans->firstWhere('locale', 'en')->description ?? null,
+                        'ar' => $this->trans->firstWhere('locale', 'ar')->description ?? null,
+                    ];
+                });
+            }),
             'status'           => $this->status,
             'teacher' => new UserResource($this->whenLoaded('teacher')),
             'subject'            => new SubjectResource($this->whenLoaded('subject')),

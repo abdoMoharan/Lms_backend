@@ -34,7 +34,7 @@ class CourseRequest extends ApiRequest
         foreach (config('translatable.locales') as $locale) {
             $req = array_merge($req, [
                 "{$locale}.name"       => 'nullable',
-                "{$locale}.desorption" => 'nullable',
+                "{$locale}.description" => 'nullable',
             ]);
         }
         $req = array_merge($req, [
@@ -52,8 +52,8 @@ class CourseRequest extends ApiRequest
             if (empty($this->ar['name']) && empty($this->en['name'])) {
                 $validator->errors()->add('locales', __('At least one name must be provided in Arabic or English'));
             }
-            if (empty($this->ar['desorption']) && empty($this->en['desorption'])) {
-                $validator->errors()->add('locales', __('At least one desorption must be provided in Arabic or English'));
+            if (empty($this->ar['description']) && empty($this->en['description'])) {
+                $validator->errors()->add('locales', __('At least one description must be provided in Arabic or English'));
             }
         });
     }
@@ -70,16 +70,16 @@ class CourseRequest extends ApiRequest
             if ($locale !== 'ar' && empty($data[$locale]['name'])) {
                 $data[$locale]['name'] = $this->translateAutomatically($data['ar']['name'], $locale);
             }
-            if ($locale !== 'ar' && empty($data[$locale]['desorption'])) {
-                $data[$locale]['desorption'] = $this->translateAutomatically($data['ar']['desorption'], $locale);
+            if ($locale !== 'ar' && empty($data[$locale]['description'])) {
+                $data[$locale]['description'] = $this->translateAutomatically($data['ar']['description'], $locale);
             }
         }
         // Automatic translation from English to Arabic if Arabic is empty
         if (empty($data['ar']['name']) && ! empty($data['en']['name'])) {
             $data['ar']['name'] = $this->translateAutomatically($data['en']['name'], 'ar');
         }
-        if (empty($data['ar']['desorption']) && ! empty($data['en']['desorption'])) {
-            $data['ar']['desorption'] = $this->translateAutomatically($data['en']['desorption'], 'ar');
+        if (empty($data['ar']['description']) && ! empty($data['en']['description'])) {
+            $data['ar']['description'] = $this->translateAutomatically($data['en']['description'], 'ar');
         }
         return $data;
     }

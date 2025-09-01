@@ -10,6 +10,6 @@ class CourseTranslation extends Model
         'course_id',
         'locale',
         'name',
-        'desorption',
+        'description',
     ];
 }

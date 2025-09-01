@@ -78,6 +78,9 @@ public function scopeFilter(Builder $builder, $filters)
         $builder->when(isset($filters['phone']) && $filters['phone'] !== '', function ($builder) use ($filters) {
             $builder->where('phone', 'like', "%{$filters['phone']}%");
         });
+        $builder->when(isset($filters['type']) && $filters['type'] !== '', function ($builder) use ($filters) {
+            $builder->where('user_type', $filters['type']);
+        });
 
         $builder->when(isset($filters['status']), function ($builder) use ($filters) {
             $statusValue = $filters['status'] == '0' ? 0 : $filters['status'];

@@ -24,7 +24,7 @@ class Subject extends Model implements TranslatableContract
         'locale',
         'name',
     ];
-    protected $ClassRoomTranslation = 'subject_id';
+    protected $translationForeignKey = 'subject_id';
 
     public function transLocale()
     {

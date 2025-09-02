@@ -21,7 +21,7 @@ class Unit extends Model implements TranslatableContract
         'locale',
         'name',
     ];
-    protected $ClassRoomTranslation = 'unit_id';
+    protected $translationForeignKey = 'unit_id';
 
     public function transLocale()
     {

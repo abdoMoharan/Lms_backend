@@ -1,0 +1,125 @@
+<?php
+namespace App\Http\Requests\Api\Lessons;
+
+use App\Http\Requests\Base\ApiRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Validation\Validator;
+
+class LessonsRequest extends ApiRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+    public function attributes()
+    {
+        $attr = [];
+        foreach (config('translatable.locales') as $locale) {
+            $attr = array_merge($attr, [
+                "{$locale}.name"        => "name" . Lang::get($locale),
+                "{$locale}.description" => "description" . Lang::get($locale),
+                "{$locale}.content"     => "content" . Lang::get($locale),
+            ]);
+        }
+        return $attr;
+    }
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules()
+    {
+        $req = [];
+        foreach (config('translatable.locales') as $locale) {
+            $req = array_merge($req, [
+                "{$locale}.name"        => 'nullable|string|max:255',
+                "{$locale}.description" => 'nullable|string',
+                "{$locale}.content"     => 'nullable|string',
+            ]);
+        }
+
+        $req = array_merge($req, [
+            'status'                    => 'nullable|in:1,0',
+            'unit_id'                   => 'required|exists:units,id',
+            'sort'                      => 'nullable|integer',
+            'cover_image'               => 'nullable|image|mimes:jpg,jpeg,png',
+            'url'                       => 'nullable|active_url',
+            'zoom_url'                  => 'nullable|active_url',
+            'created_by'                => 'nullable|exists:users,id',
+            'updated_by'                => 'nullable|exists:users,id',
+            'attachment'                => 'nullable|array',
+            'attachment.*'              => 'nullable',
+            'attachment.*.file'         => 'nullable|mimes:pdf,docx,doc,xls,xlsx,ppt,pptx,zip,rar',
+            'attachment.*.type'         => 'nullable|in:upload_video,youtube_link,vimeo_link',
+            'attachment.*.video_upload' => 'nullable|mimes:mp4,mov,avi,wmv',
+            'attachment.*.link'         => 'nullable|active_url',
+            'attachment.*.image'        => 'nullable|mimes:jpg,jpeg,png',
+        ]);
+
+        return $req;
+    }
+
+    public function withValidator(Validator $validator)
+    {
+        $validator->after(function ($validator) {
+            // Check if both ar.name and en.name are empty
+            if (empty($this->ar['name']) && empty($this->en['name'])) {
+                $validator->errors()->add('locales', __('At least one name must be provided in Arabic or English'));
+            }
+        });
+    }
+    public function getData()
+    {
+        $data = $this->validated();
+        if ($this->isMethod('POST')) {
+            $data['created_by'] = Auth::user()->id;
+        } else {
+            $data['updated_by'] = Auth::user()->id;
+        }
+        // Translate automatically from Arabic to other languages
+        foreach (config('translatable.locales') as $locale) {
+            if ($locale !== 'ar' && empty($data[$locale]['name'])) {
+                $data[$locale]['name'] = $this->translateAutomatically($data['ar']['name'], $locale);
+            }
+            if ($locale !== 'ar' && empty($data[$locale]['description'])) {
+                $data[$locale]['description'] = $this->translateAutomatically($data['ar']['description'], $locale);
+            }
+            if ($locale !== 'ar' && empty($data[$locale]['content'])) {
+                $data[$locale]['content'] = $this->translateAutomatically($data['ar']['content'], $locale);
+            }
+        }
+        // Automatic translation from English to Arabic if Arabic is empty
+        if (empty($data['ar']['name']) && ! empty($data['en']['name'])) {
+            $data['ar']['name'] = $this->translateAutomatically($data['en']['name'], 'ar');
+        }
+        if (empty($data['ar']['description']) && ! empty($data['en']['description'])) {
+            $data['ar']['description'] = $this->translateAutomatically($data['en']['description'], 'ar');
+        }
+        if (empty($data['ar']['content']) && ! empty($data['en']['content'])) {
+            $data['ar']['content'] = $this->translateAutomatically($data['en']['content'], 'ar');
+        }
+        return $data;
+    }
+    public function translateAutomatically($text, $locale)
+    {
+        // Avoid sending empty text for translation
+        if (empty($text)) {
+            return '';
+        }
+        $sourceLang = $locale === 'ar' ? 'en' : 'ar';
+
+        $response = Http::get('https://api.mymemory.translated.net/get', [
+            'q'        => $text,
+            'langpair' => "{$sourceLang}|{$locale}",
+        ]);
+
+        if ($response->successful() && isset($response->json()['responseData']['translatedText'])) {
+            return $response->json()['responseData']['translatedText'];
+        }
+
+        return $text; // Return the original text if translation fails
+    }
+}

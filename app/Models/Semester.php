@@ -21,7 +21,7 @@ class Semester extends Model implements TranslatableContract
         'locale',
         'name',
     ];
-    protected $ClassRoomTranslation = 'semester_id';
+    protected $translationForeignKey = 'semester_id';
 
     public function transLocale()
     {

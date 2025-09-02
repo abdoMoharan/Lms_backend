@@ -22,7 +22,7 @@ class Grade extends Model implements TranslatableContract
         'locale',
         'name',
     ];
-    protected $ClassRoomTranslation = 'grade_id';
+    protected $translationForeignKey = 'grade_id';
 
     public function transLocale()
     {

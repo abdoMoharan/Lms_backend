@@ -1,15 +1,15 @@
 <?php
 namespace App\Models;
 
-use App\Models\User;
 use App\Models\LessonsAttachment;
 use App\Models\LessonsTranslation;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Illuminate\Support\Facades\Storage;
 
 class Lessons extends Model implements TranslatableContract
 {
@@ -80,45 +80,27 @@ class Lessons extends Model implements TranslatableContract
         }
         return $model;
     }
-
-    // Force Delete a Record
-    // public static function forceDeleteById($id)
-    // {
-    //     $model = self::onlyTrashed()->find($id);
-    //     if ($model) {
-    //         $model->forceDelete();
-    //     }
-    //     return $model;
-    // }
-public static function forceDeleteById($id)
-{
-    $model = self::find($id);
-    if ($model) {
-        // حذف المرفقات من التخزين
-        foreach ($model->attachments as $attachment) {
-            if ($attachment->image) {
-                Storage::delete('attachments/lesson/image/' . $attachment->image);
+    public static function forceDeleteById($id)
+    {
+        $model = self::onlyTrashed()->find($id);
+        if ($model) {
+            foreach ($model->attachments as $attachment) {
+                if ($attachment->image) {
+                    Storage::disk('attachment')->delete($attachment->image);
+                }
+                if ($attachment->file) {
+                    Storage::disk('attachment')->delete($attachment->file);
+                }
+                if ($attachment->video_upload) {
+                    Storage::disk('attachment')->delete($attachment->video_upload);
+                }
             }
-            if ($attachment->file) {
-                Storage::delete('attachments/lesson/file/' . $attachment->file);
-            }
-            if ($attachment->video_upload) {
-                Storage::delete('attachments/lesson/video/' . $attachment->video_upload);
-            }
+            Storage::disk('attachment')->delete($model->cover_image);
+            $model->attachments()->delete();
+            $model->forceDelete();
         }
-        if ($model->cover_image) {
-            Storage::delete('attachments/lesson/cover_image/' . $model->cover_image);
-        }
-
-        // حذف المرفقات من قاعدة البيانات
-        $model->attachments()->delete();
-
-        // حذف الـ lesson نفسه من قاعدة البيانات
-        $model->forceDelete();
+        return $model;
     }
-
-    return $model;
-}
 
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
@@ -139,12 +121,12 @@ public static function forceDeleteById($id)
         return $builder;
     }
 
-    public function getCoverImageAttribute($value)
+    public static function getPath($path)
     {
-        if ($value) {
-            $path = asset('attachments/lesson/cover_image/' . $value);
-            return $path;
+        if ($path) {
+            return asset('attachments/' . $path); // تأكد من أنك تستخدم المسار الصحيح
         }
+        return null;
     }
     public function setCoverImageAttribute($value)
     {

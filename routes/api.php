@@ -119,7 +119,7 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
         Route::prefix('lessons')->name('lessons.')->controller(LessonsController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
-            Route::put('/update/{model}', 'update')->name('update');
+            Route::post('/update/{model}', 'update')->name('update');
             Route::delete('/delete/{model}', 'delete')->name('delete');
             Route::get('/show/{model}', 'show')->name('show');
             Route::get('/deleted', 'showDeleted')->name('deleted');

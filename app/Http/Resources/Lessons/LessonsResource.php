@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Resources\Lessons;
 
-
-
 use Illuminate\Http\Request;
+use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Lessons\AttachmentResource;
 
 class LessonsResource extends JsonResource
 {
@@ -15,6 +15,47 @@ class LessonsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "id"          => $this->id,
+            'name'        => $this->whenLoaded('transLocale', function () {
+                return $this->transLocale->first()->name ?? null;
+            }, function () {
+                return $this->whenLoaded('trans', function () {
+                    return [
+                        'en' => $this->trans->firstWhere('locale', 'en')->name ?? null,
+                        'ar' => $this->trans->firstWhere('locale', 'ar')->name ?? null,
+                    ];
+                });
+            }),
+            'description' => $this->whenLoaded('transLocale', function () {
+                return $this->transLocale->first()->description ?? null;
+            }, function () {
+                return $this->whenLoaded('trans', function () {
+                    return [
+                        'en' => $this->trans->firstWhere('locale', 'en')->description ?? null,
+                        'ar' => $this->trans->firstWhere('locale', 'ar')->description ?? null,
+                    ];
+                });
+            }),
+            'content'     => $this->whenLoaded('transLocale', function () {
+                return $this->transLocale->first()->content ?? null;
+            }, function () {
+                return $this->whenLoaded('trans', function () {
+                    return [
+                        'en' => $this->trans->firstWhere('locale', 'en')->content ?? null,
+                        'ar' => $this->trans->firstWhere('locale', 'ar')->content ?? null,
+                    ];
+                });
+            }),
+            'status'      => $this->status,
+            'sort'        => $this->sort,
+            'cover_image' => $this->getPath($this->cover_image),
+            'url'         => $this->url,
+            'zoom_url'    => $this->zoom_url,
+            'unit_id'     => $this->unit_id,
+            'created_by'  => new UserResource($this->whenLoaded('createdBy')),
+            'updated_by'  => new UserResource($this->whenLoaded('updatedBy')),
+            'attachments' => AttachmentResource::collection($this->whenLoaded('attachments')),
+        ];
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LessonsAttachment extends Model
 {
-    protected $table = 'lessons_attachments';
+    protected $table    = 'lessons_attachments';
     protected $fillable = [
         'lesson_id',
         'video_upload',
@@ -20,12 +20,12 @@ class LessonsAttachment extends Model
     {
         return $this->belongsTo(Lessons::class, 'lesson_id')->with(['transLocale']);
     }
-    public function getImageAttribute($value)
+    public static function getPath($path)
     {
-        if ($value) {
-            $path = asset('attachments/lesson/image/' . $value);
-            return $path;
+        if ($path) {
+            return asset('attachments/' . $path); // تأكد من أنك تستخدم المسار الصحيح
         }
+        return null;
     }
     public function setImageAttribute($value)
     {
@@ -33,24 +33,11 @@ class LessonsAttachment extends Model
             $this->attributes['image'] = $value->store('lesson/image', 'attachment');
         }
     }
-    public function getFileAttribute($value)
-    {
-        if ($value) {
-            $path = asset('attachments/lesson/file/' . $value);
-            return $path;
-        }
-    }
+
     public function setFileAttribute($value)
     {
         if ($value) {
             $this->attributes['file'] = $value->store('lesson/file', 'attachment');
-        }
-    }
-    public function getVideoUploadAttribute($value)
-    {
-        if ($value) {
-            $path = asset('attachments/lesson/video/' . $value);
-            return $path;
         }
     }
     public function setVideoUploadAttribute($value)

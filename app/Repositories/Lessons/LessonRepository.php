@@ -8,6 +8,7 @@ use App\Models\Lessons;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class LessonRepository implements LessonInterface
 {
@@ -36,8 +37,9 @@ class LessonRepository implements LessonInterface
             $data = $request->getData();
             // dd($data);
             $model = $this->model->create($data);
-// if($request->attachment)
-            $model->attachments()->createMany($request->attachment);
+            if ($request->attachment) {
+                $model->attachments()->createMany($request->attachment);
+            }
             $model->load(['createdBy', 'transLocale', 'unit', 'attachments']);
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'lesson created successfully', new LessonsResource($model));
@@ -56,13 +58,18 @@ class LessonRepository implements LessonInterface
         try {
             DB::beginTransaction();
             $data = $request->getData();
+            if ($request->hasFile('cover_image')) {
+                Storage::disk('attachment')->delete($model->cover_image);
+
+            }
             $model->update($data);
+
             $model->load(['createdBy', 'transLocale', 'unit', 'attachments']);
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'lesson updated successfully', new LessonsResource($model));
         } catch (\Exception $e) {
             DB::rollBack();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No lesson found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No lesson found', $e->getMessage());
         }
     }
     public function delete($local, $model)
@@ -105,6 +112,7 @@ class LessonRepository implements LessonInterface
 
     public function forceDelete($local, $id)
     {
+
         try {
             $this->model->forceDeleteById($id);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'lesson force deleted successfully');

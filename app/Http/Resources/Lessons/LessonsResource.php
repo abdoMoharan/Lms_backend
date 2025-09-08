@@ -1,10 +1,11 @@
 <?php
 namespace App\Http\Resources\Lessons;
 
-use Illuminate\Http\Request;
-use App\Http\Resources\User\UserResource;
-use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Lessons\AttachmentResource;
+use App\Http\Resources\Unit\UnitResource;
+use App\Http\Resources\User\UserResource;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class LessonsResource extends JsonResource
 {
@@ -52,7 +53,7 @@ class LessonsResource extends JsonResource
             'cover_image' => $this->getPath($this->cover_image),
             'url'         => $this->url,
             'zoom_url'    => $this->zoom_url,
-            'unit_id'     => $this->unit_id,
+            'unit'        => new UnitResource($this->whenLoaded('unit')),
             'created_by'  => new UserResource($this->whenLoaded('createdBy')),
             'updated_by'  => new UserResource($this->whenLoaded('updatedBy')),
             'attachments' => AttachmentResource::collection($this->whenLoaded('attachments')),

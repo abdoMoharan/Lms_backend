@@ -5,6 +5,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Resources\Lessons\LessonsResource;
 use App\Interfaces\Lessons\LessonInterface;
 use App\Models\Lessons;
+use App\Models\LessonsAttachment;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -171,8 +172,62 @@ class LessonRepository implements LessonInterface
 
     public function updateAttachment($local, $model, $request)
     {
+        $data = $request->validated([
+            'file'         => 'nullable|mimes:pdf,docx,doc,xls,xlsx,ppt,pptx,zip,rar',
+            'type'         => 'nullable|in:upload_video,youtube_link,vimeo_link',
+            'video_upload' => 'nullable|mimes:mp4,mov,avi,wmv',
+            'link'         => 'nullable|active_url',
+            'image'        => 'nullable|mimes:jpg,jpeg,png',
+        ]);
+        $data['lesson_id'] = $model->id;
+        try {
+            DB::beginTransaction();
+
+            $attachment = LessonsAttachment::where('lesson_id', $model->id)->first();
+            if ($attachment) {
+                if ($data['type'] == 'upload_video' || $data['type'] == 'youtube_link' || $data['type'] == 'vimeo_link') {
+                    $data['link'] = null;
+                }
+                if ($request->hasFile('file')) {
+                    Storage::disk('attachment')->delete($attachment->file);
+                }
+                if ($request->hasFile('video_upload')) {
+                    Storage::disk('attachment')->delete($attachment->video_upload);
+                }
+                if ($request->hasFile('video_upload')) {
+                    Storage::disk('attachment')->delete($attachment->video_upload);
+                }
+            }
+            $attachment->update($data);
+            DB::commit();
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'attachment updated successfully');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No attachment found', []);
+        }
     }
     public function deleteAttachment($local, $model)
     {
+        try {
+            DB::beginTransaction();
+            $attachment = LessonsAttachment::where('lesson_id', $model->id)->first();
+            if ($attachment) {
+                if ($attachment->file) {
+                    Storage::disk('attachment')->delete($attachment->file);
+                }
+                if ($attachment->video_upload) {
+                    Storage::disk('attachment')->delete($attachment->video_upload);
+                }
+                if ($attachment->image) {
+                    Storage::disk('attachment')->delete($attachment->image);
+                }
+                $attachment->delete();
+            }
+            DB::commit();
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'attachment deleted successfully');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No attachment found', []);
+        }
     }
 }

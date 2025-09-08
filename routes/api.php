@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Course\CourseController;
 use App\Http\Controllers\Api\EducationalStage\EducationalStageController;
 use App\Http\Controllers\Api\Grade\GradeController;
+use App\Http\Controllers\Api\Lessons\AttachmentLessonController;
 use App\Http\Controllers\Api\Lessons\LessonsController;
 use App\Http\Controllers\Api\Permission\PermissionController;
 use App\Http\Controllers\Api\Profile\ProfileUserController;
@@ -128,6 +129,15 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
             Route::post('/update-attachment/{model}', 'updateAttachment')->name('update-attachment');
             Route::delete('/delete-attachment/{model}', 'deleteAttachment')->name('delete-attachment');
+        });
+        Route::prefix('attachment-lessons')->name('attachment-lessons.')->controller(AttachmentLessonController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::post('/update/{model}', 'update')->name('update');
+            Route::delete('/delete/{model}', 'delete')->name('delete');
+            Route::get('/show/{model}', 'show')->name('show');
+            Route::get('/deleted', 'showDeleted')->name('deleted');
+            Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
         });
     });
 });

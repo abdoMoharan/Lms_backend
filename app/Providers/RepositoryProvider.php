@@ -17,7 +17,9 @@ use App\Repositories\Lessons\LessonRepository;
 use App\Repositories\Subject\SubjectRepository;
 use App\Repositories\Semester\SemesterRepository;
 use App\Interfaces\EducationalStage\EducationalStageInterface;
+use App\Interfaces\Lessons\AttachmentLessonInterface;
 use App\Repositories\EducationalStage\EducationalStageRepository;
+use App\Repositories\Lessons\AttachmentLessonRepository;
 
 class RepositoryProvider extends ServiceProvider
 {
@@ -42,5 +44,6 @@ class RepositoryProvider extends ServiceProvider
         $this->app->singleton(CourseInterface::class,CourseRepository::class);
         $this->app->singleton(UnitInterface::class,UnitRepository::class);
         $this->app->singleton(LessonInterface::class,LessonRepository::class);
+        $this->app->singleton(AttachmentLessonInterface::class,AttachmentLessonRepository::class);
     }
 }

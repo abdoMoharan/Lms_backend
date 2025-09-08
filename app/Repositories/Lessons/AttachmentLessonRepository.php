@@ -23,7 +23,7 @@ class AttachmentLessonRepository implements AttachmentLessonInterface
     public function index($request)
     {
         try {
-            $model = $this->model->query()->with('lesson')->filter($request->query())->get();
+            $model = $this->model->query()->with('lesson')->get();
             if ($model->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No attachment found', []);
             }

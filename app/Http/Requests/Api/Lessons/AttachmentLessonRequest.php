@@ -18,6 +18,7 @@ class AttachmentLessonRequest extends ApiRequest
     public function rules()
     {
         return [
+            'lesson_id'    => 'required',
             'file'         => 'nullable|mimes:pdf,docx,doc,xls,xlsx,ppt,pptx,zip,rar',
             'type'         => 'nullable|in:upload_video,youtube_link,vimeo_link',
             'video_upload' => 'nullable|mimes:mp4,mov,avi,wmv',

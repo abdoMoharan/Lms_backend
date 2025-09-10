@@ -19,11 +19,11 @@ class AttachmentLessonRequest extends ApiRequest
     {
         return [
             'lesson_id'    => 'required',
-            'file'         => 'nullable|mimes:pdf,docx,doc,xls,xlsx,ppt,pptx,zip,rar',
+            'file'         => 'nullable',
             'type'         => 'nullable|in:upload_video,youtube_link,vimeo_link',
-            'video_upload' => 'nullable|mimes:mp4,mov,avi,wmv',
+            'video_upload' => 'nullable',
             'link'         => 'nullable|active_url',
-            'image'        => 'nullable|mimes:jpg,jpeg,png',
+            'image'        => 'nullable',
         ];
     }
     public function messages()

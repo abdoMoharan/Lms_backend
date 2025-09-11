@@ -1,20 +1,21 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
-use App\Http\Controllers\Api\Course\CourseController;
-use App\Http\Controllers\Api\EducationalStage\EducationalStageController;
 use App\Http\Controllers\Api\Exam\ExamController;
-use App\Http\Controllers\Api\Grade\GradeController;
-use App\Http\Controllers\Api\Lessons\AttachmentLessonController;
-use App\Http\Controllers\Api\Lessons\LessonsController;
-use App\Http\Controllers\Api\Permission\PermissionController;
-use App\Http\Controllers\Api\Profile\ProfileUserController;
 use App\Http\Controllers\Api\Role\RoleController;
-use App\Http\Controllers\Api\Semester\SemesterController;
-use App\Http\Controllers\Api\Subject\SubjectController;
 use App\Http\Controllers\Api\Unit\UnitController;
 use App\Http\Controllers\Api\User\UserController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Grade\GradeController;
+use App\Http\Controllers\Api\Course\CourseController;
+use App\Http\Controllers\Api\Lessons\LessonsController;
+use App\Http\Controllers\Api\Subject\SubjectController;
+use App\Http\Controllers\Api\Semester\SemesterController;
+use App\Http\Controllers\Api\Profile\ProfileUserController;
+use App\Http\Controllers\Api\Permission\PermissionController;
+use App\Http\Controllers\Api\Lessons\AttachmentLessonController;
+use App\Http\Controllers\Api\QuestionType\QuestionTypeController;
+use App\Http\Controllers\Api\EducationalStage\EducationalStageController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
@@ -150,6 +151,17 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
             Route::post('/restore/{id}', 'restore')->name('restore');
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
-    });
+        });
+        Route::prefix('question_types')->name('question_types.')->controller(QuestionTypeController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/update/{model}', 'update')->name('update');
+            Route::delete('/delete/{model}', 'delete')->name('delete');
+            Route::get('/show/{model}', 'show')->name('show');
+            Route::get('/deleted', 'showDeleted')->name('deleted');
+            Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
+            Route::post('/restore/{id}', 'restore')->name('restore');
+            Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
+        });
     });
 });

@@ -1,10 +1,13 @@
 <?php
 namespace App\Providers;
 
+use App\Models\QuestionType;
+use App\Interfaces\Exam\ExamInterface;
 use App\Interfaces\Unit\UnitInterface;
 use App\Interfaces\User\UserInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Interfaces\Grade\GradeInterface;
+use App\Repositories\Exam\ExamRepository;
 use App\Repositories\Unit\UnitRepository;
 use App\Repositories\User\UserRepository;
 use App\Interfaces\Course\CourseInterface;
@@ -16,12 +19,12 @@ use App\Interfaces\Semester\SemesterInterface;
 use App\Repositories\Lessons\LessonRepository;
 use App\Repositories\Subject\SubjectRepository;
 use App\Repositories\Semester\SemesterRepository;
-use App\Interfaces\EducationalStage\EducationalStageInterface;
-use App\Interfaces\Exam\ExamInterface;
 use App\Interfaces\Lessons\AttachmentLessonInterface;
-use App\Repositories\EducationalStage\EducationalStageRepository;
-use App\Repositories\Exam\ExamRepository;
+use App\Interfaces\QuestionType\QuestionTypeInterface;
 use App\Repositories\Lessons\AttachmentLessonRepository;
+use App\Repositories\QuestionType\QuestionTypeRepository;
+use App\Interfaces\EducationalStage\EducationalStageInterface;
+use App\Repositories\EducationalStage\EducationalStageRepository;
 
 class RepositoryProvider extends ServiceProvider
 {
@@ -48,5 +51,6 @@ class RepositoryProvider extends ServiceProvider
         $this->app->singleton(LessonInterface::class,LessonRepository::class);
         $this->app->singleton(AttachmentLessonInterface::class,AttachmentLessonRepository::class);
         $this->app->singleton(ExamInterface::class,ExamRepository::class);
+        $this->app->singleton(QuestionTypeInterface::class,QuestionTypeRepository::class);
     }
 }

@@ -1,39 +1,52 @@
 <?php
 namespace App\Models;
 
-use App\Models\QuestionTypeTranslation;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
-class QuestionType extends Model implements TranslatableContract
+class Question extends Model implements TranslatableContract
 {
-    use SoftDeletes, Translatable;
+    use Translatable;
 
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable          = ['created_by', 'updated_by', 'status'];
-    public $translatedAttributes = [
+    protected $fillable = [
         'question_type_id',
+        'exam_id',
+        'created_by',
+        'updated_by',
+        'status',
+    ];
+    public $translatedAttributes = [
+        'question_id',
         'locale',
         'name',
     ];
-    protected $translationForeignKey = 'question_type_id';
+    protected $translationForeignKey = 'question_id';
 
     public function transLocale()
     {
         $locale = app()->getLocale();
-        return $this->hasMany(QuestionTypeTranslation::class, 'question_type_id')->where('locale', $locale);
+        return $this->hasMany(QuestionTranslation::class, 'question_id')->where('locale', $locale);
     }
     public function trans()
     {
-        return $this->hasMany(QuestionTypeTranslation::class, 'question_type_id');
+        return $this->hasMany(QuestionTranslation::class, 'question_id');
     }
 
+    public function exam()
+    {
+        return $this->belongsTo(Exam::class, 'exam_ids')->with('transLocale');
+    }
+    public function question_type()
+    {
+        return $this->belongsTo(QuestionType::class, 'question_type_id')->with('transLocale');
+    }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
         if (isset($filters['name'])) {
@@ -56,30 +69,6 @@ class QuestionType extends Model implements TranslatableContract
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
-    }
-
-    public static function getAllDeleted()
-    {
-        return self::onlyTrashed()->with(['transLocale'])->get();
-    }
-    // Restore a Deleted Record
-    public static function restoreSoft($id)
-    {
-        $model = self::onlyTrashed()->find($id);
-        if ($model) {
-            $model->restore();
-        }
-        return $model;
-    }
-
-    // Force Delete a Record
-    public static function forceDeleteById($id)
-    {
-        $model = self::onlyTrashed()->find($id);
-        if ($model) {
-            $model->forceDelete();
-        }
-        return $model;
     }
 
 }

@@ -15,9 +15,11 @@ use App\Interfaces\Lessons\LessonInterface;
 use App\Repositories\Grade\GradeRepository;
 use App\Interfaces\Subject\SubjectInterface;
 use App\Repositories\Course\CourseRepository;
+use App\Interfaces\Question\QuestionInterface;
 use App\Interfaces\Semester\SemesterInterface;
 use App\Repositories\Lessons\LessonRepository;
 use App\Repositories\Subject\SubjectRepository;
+use App\Repositories\Question\QuestionRepository;
 use App\Repositories\Semester\SemesterRepository;
 use App\Interfaces\Lessons\AttachmentLessonInterface;
 use App\Interfaces\QuestionType\QuestionTypeInterface;
@@ -52,5 +54,6 @@ class RepositoryProvider extends ServiceProvider
         $this->app->singleton(AttachmentLessonInterface::class,AttachmentLessonRepository::class);
         $this->app->singleton(ExamInterface::class,ExamRepository::class);
         $this->app->singleton(QuestionTypeInterface::class,QuestionTypeRepository::class);
+        $this->app->singleton(QuestionInterface::class,QuestionRepository::class);
     }
 }

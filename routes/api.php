@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Grade\GradeController;
 use App\Http\Controllers\Api\Course\CourseController;
 use App\Http\Controllers\Api\Lessons\LessonsController;
 use App\Http\Controllers\Api\Subject\SubjectController;
+use App\Http\Controllers\Api\Question\QuestionController;
 use App\Http\Controllers\Api\Semester\SemesterController;
 use App\Http\Controllers\Api\Profile\ProfileUserController;
 use App\Http\Controllers\Api\Permission\PermissionController;
@@ -152,7 +153,7 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::post('/restore/{id}', 'restore')->name('restore');
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
         });
-        Route::prefix('question_types')->name('question_types.')->controller(QuestionTypeController::class)->group(function () {
+        Route::prefix('question-types')->name('question-types.')->controller(QuestionTypeController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::put('/update/{model}', 'update')->name('update');
@@ -162,6 +163,13 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
             Route::post('/restore/{id}', 'restore')->name('restore');
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
+        });
+        Route::prefix('questions')->name('questions.')->controller(QuestionController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/update/{model}', 'update')->name('update');
+            Route::delete('/delete/{model}', 'delete')->name('delete');
+            Route::get('/show/{model}', 'show')->name('show');
         });
     });
 });

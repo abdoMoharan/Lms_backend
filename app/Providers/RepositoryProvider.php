@@ -10,10 +10,12 @@ use App\Interfaces\Grade\GradeInterface;
 use App\Repositories\Exam\ExamRepository;
 use App\Repositories\Unit\UnitRepository;
 use App\Repositories\User\UserRepository;
+use App\Interfaces\Answer\AnswerInterface;
 use App\Interfaces\Course\CourseInterface;
 use App\Interfaces\Lessons\LessonInterface;
 use App\Repositories\Grade\GradeRepository;
 use App\Interfaces\Subject\SubjectInterface;
+use App\Repositories\Answer\AnswerRepository;
 use App\Repositories\Course\CourseRepository;
 use App\Interfaces\Question\QuestionInterface;
 use App\Interfaces\Semester\SemesterInterface;
@@ -55,5 +57,6 @@ class RepositoryProvider extends ServiceProvider
         $this->app->singleton(ExamInterface::class,ExamRepository::class);
         $this->app->singleton(QuestionTypeInterface::class,QuestionTypeRepository::class);
         $this->app->singleton(QuestionInterface::class,QuestionRepository::class);
+        $this->app->singleton(AnswerInterface::class,AnswerRepository::class);
     }
 }

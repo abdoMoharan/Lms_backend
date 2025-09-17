@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Answer\AnswerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Exam\ExamController;
@@ -165,6 +166,13 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
         });
         Route::prefix('questions')->name('questions.')->controller(QuestionController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/update/{model}', 'update')->name('update');
+            Route::delete('/delete/{model}', 'delete')->name('delete');
+            Route::get('/show/{model}', 'show')->name('show');
+        });
+        Route::prefix('answers')->name('answers.')->controller(AnswerController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::put('/update/{model}', 'update')->name('update');

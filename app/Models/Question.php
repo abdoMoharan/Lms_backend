@@ -2,15 +2,11 @@
 namespace App\Models;
 
 use App\Models\User;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
-use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Question extends Model implements TranslatableContract
+class Question extends Model
 {
-    use Translatable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,23 +17,8 @@ class Question extends Model implements TranslatableContract
         'created_by',
         'updated_by',
         'status',
-    ];
-    public $translatedAttributes = [
-        'question_id',
-        'locale',
         'name',
     ];
-    protected $translationForeignKey = 'question_id';
-
-    public function transLocale()
-    {
-        $locale = app()->getLocale();
-        return $this->hasMany(QuestionTranslation::class, 'question_id')->where('locale', $locale);
-    }
-    public function trans()
-    {
-        return $this->hasMany(QuestionTranslation::class, 'question_id');
-    }
 
     public function exam()
     {
@@ -50,9 +31,7 @@ class Question extends Model implements TranslatableContract
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
         if (isset($filters['name'])) {
-            $builder->whereHas('transLocale', function ($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['name'] . '%');
-            });
+            $builder->where('name', 'like', '%' . $filters['name'] . '%');
         }
         $builder->when(isset($filters['status']), function ($builder) use ($filters) {
             $statusValue = intval($filters['status']) == 0 ? 0 : $filters['status'];

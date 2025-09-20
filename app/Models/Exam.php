@@ -42,6 +42,10 @@ class Exam extends Model implements TranslatableContract
         return $this->hasMany(ExamTranslation::class, 'exam_id');
     }
 
+    public function questions()
+    {
+        $this->hasMany(Question::class, 'exam_id');
+    }
     public function course()
     {
         return $this->belongsTo(Course::class, 'course_id')->with('transLocale');

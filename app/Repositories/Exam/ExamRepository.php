@@ -4,7 +4,6 @@ namespace App\Repositories\Exam;
 use App\Helpers\ApiResponse;
 use App\Http\Resources\Exam\ExamResource;
 use App\Interfaces\Exam\ExamInterface;
-
 use App\Models\Exam;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +20,7 @@ class ExamRepository implements ExamInterface
     public function index($request)
     {
         try {
-            $Exams = $this->model->query()->with(['transLocale', 'teacher','course'])->filter($request->query())->get();
+            $Exams = $this->model->query()->with(['transLocale', 'teacher', 'course'])->filter($request->query())->get();
             if ($Exams->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Exams found', []);
             }
@@ -30,18 +29,72 @@ class ExamRepository implements ExamInterface
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Exams found', $e->getMessage());
         }
     }
-    public function store($request)
+    // public function store($request)
+    // {
+    //     try {
+    //         DB::beginTransaction();
+    //         $data  = $request->getData();
+    //         $model = $this->model->create($data);
+    //         $model->load(['trans', 'teacher','course']);
+    //         DB::commit();
+    //         return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Exams created successfully', new ExamResource($model));
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Exams found', $e->getMessage());
+    //     }
+    // }
+
+  public function store($request)
     {
         try {
             DB::beginTransaction();
-            $data  = $request->getData();
-            $model = $this->model->create($data);
-            $model->load(['trans', 'teacher','course']);
+
+            // معالجة بيانات الامتحان
+            $data = $request->getData();
+            $exam = $this->model->create([
+                'course_id' => $data['course_id'],
+                'teacher_id' => $data['teacher_id'],
+                'time' => $data['time'],
+                'start_date' => $data['start_date'],
+                'end_date' => $data['end_date'],
+                'total' => $data['total'],
+            ]);
+
+            // إضافة الأسئلة والإجابات مع الترجمات
+            foreach ($data['questions'] as $questionData) {
+                // إنشاء السؤال
+                $question = $exam->questions()->create([
+                    'question_type_id' => $questionData['question_type_id'],
+                    'created_by' => auth()->id(),
+                    'updated_by' => auth()->id(),
+                    'status' => 1,  // تعديل حسب الحاجة
+                ]);
+
+                // إضافة الترجمة للسؤال
+                foreach (config('translatable.locales') as $locale) {
+                    $question->translateOrNew($locale)->name = $questionData['name'][$locale];
+                }
+
+                // إضافة الإجابات لكل سؤال
+                foreach ($questionData['answers'] as $answerData) {
+                    $answer = $question->answers()->create([
+                        'name' => $answerData['name'],
+                        'correct_answer' => $answerData['correct_answer'],
+                    ]);
+
+                    // إضافة الترجمة للإجابات
+                    foreach (config('translatable.locales') as $locale) {
+                        $answer->translateOrNew($locale)->name = $answerData['name'][$locale];
+                    }
+                }
+            }
+
             DB::commit();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Exams created successfully', new ExamResource($model));
+
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Exam created successfully', $exam);
         } catch (\Exception $e) {
             DB::rollBack();
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Exams found', $e->getMessage());
+            return ApiResponse::apiResponse(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, 'Error creating exam', $e->getMessage());
         }
     }
 
@@ -51,7 +104,7 @@ class ExamRepository implements ExamInterface
         try {
             $data = $request->getData();
             $model->update($data);
-            $model->load(['trans', 'teacher','course']);
+            $model->load(['trans', 'teacher', 'course']);
 
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new ExamResource($model));
         } catch (\Exception $e) {
@@ -71,7 +124,7 @@ class ExamRepository implements ExamInterface
     public function show($local, $model)
     {
         try {
-            $model->load(['trans', 'teacher','course']);
+            $model->load(['trans', 'teacher', 'course']);
 
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Exams retrieved successfully', new ExamResource($model));
         } catch (\Exception $e) {
@@ -81,7 +134,7 @@ class ExamRepository implements ExamInterface
     public function showDeleted()
     {
         $model = $this->model->getAllDeleted();
-        $model->load(['transLocale', 'teacher','course']);
+        $model->load(['transLocale', 'teacher', 'course']);
 
         if ($model->isEmpty()) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted Exams found', []);

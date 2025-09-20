@@ -2,7 +2,6 @@
 namespace App\Http\Requests\Api\Exam;
 
 use App\Http\Requests\Base\ApiRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Validation\Validator;
@@ -13,6 +12,7 @@ class ExamRequest extends ApiRequest
     {
         return true;
     }
+
     public function attributes()
     {
         $attr = [];
@@ -20,48 +20,58 @@ class ExamRequest extends ApiRequest
             $attr = array_merge($attr, [
                 "{$locale}.name" => "name" . Lang::get($locale),
                 "{$locale}.description" => "description" . Lang::get($locale),
+                "{$locale}.question" => "question" . Lang::get($locale),
+                "{$locale}.answer" => "answer" . Lang::get($locale),
             ]);
         }
         return $attr;
     }
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+
     public function rules()
     {
-        $req = [];
+        $rules = [];
         foreach (config('translatable.locales') as $locale) {
-            $req = array_merge($req, [
+            $rules = array_merge($rules, [
                 "{$locale}.name" => 'nullable',
                 "{$locale}.description" => 'nullable',
             ]);
+            $rules["questions.*.name.{$locale}.name"]           = 'required|string'; // الترجمة للسؤال
+            $rules["questions.*.answers.*.name.{$locale}.name"] = 'required|string';
         }
-        $req = array_merge($req, [
-            'course_id' =>'required|exists:courses,id',
-            'teacher_id' => 'required|exists:users,id',
-            'time' => 'required',
-            'start_date' => 'required|date',
-            'end_date'=>'required|date',
-            'total' => 'required',
+
+        // قواعد البيانات الأساسية للامتحان والأسئلة والإجابات
+        $rules = array_merge($rules, [
+            'course_id'                            => 'required|exists:courses,id',
+            'teacher_id'                           => 'required|exists:users,id',
+            'time'                                 => 'required',
+            'start_date'                           => 'required|date',
+            'end_date'                             => 'required|date',
+            'total'                                => 'required',
+            'questions'                            => 'required|array',                    // الأسئلة كمصفوفة
+            'questions.*.question_type_id'         => 'required|exists:question_types,id', // نوع السؤال
+            'questions.*.name'                     => 'required|string',                   // نص السؤال
+            'questions.*.answers'                  => 'required|array',                    // مجموعة الإجابات
+            'questions.*.answers.*.name'           => 'required|string',                   // نص الإجابة
+            'questions.*.answers.*.correct_answer' => 'required|boolean',                  // الإجابة الصحيحة
         ]);
 
-        return $req;
+        return $rules;
     }
+
     public function withValidator(Validator $validator)
     {
         $validator->after(function ($validator) {
-            // Check if both ar.name and en.name are empty
+            // تحقق إذا كان الاسم بالعربية أو الإنجليزية مفقود
             if (empty($this->ar['name']) && empty($this->en['name'])) {
                 $validator->errors()->add('locales', __('At least one name must be provided in Arabic or English'));
             }
         });
     }
+
     public function getData()
     {
         $data = $this->validated();
-        // Translate automatically from Arabic to other languages
+        // الترجمة التلقائية من العربية للغات الأخرى
         foreach (config('translatable.locales') as $locale) {
             if ($locale !== 'ar' && empty($data[$locale]['name'])) {
                 $data[$locale]['name'] = $this->translateAutomatically($data['ar']['name'], $locale);
@@ -70,7 +80,7 @@ class ExamRequest extends ApiRequest
                 $data[$locale]['description'] = $this->translateAutomatically($data['ar']['description'], $locale);
             }
         }
-        // Automatic translation from English to Arabic if Arabic is empty
+        // الترجمة التلقائية من الإنجليزية للعربية إذا كانت العربية فارغة
         if (empty($data['ar']['name']) && ! empty($data['en']['name'])) {
             $data['ar']['name'] = $this->translateAutomatically($data['en']['name'], 'ar');
         }
@@ -82,7 +92,7 @@ class ExamRequest extends ApiRequest
 
     public function translateAutomatically($text, $locale)
     {
-        // Avoid sending empty text for translation
+        // تجنب إرسال نص فارغ للترجمة
         if (empty($text)) {
             return '';
         }
@@ -97,6 +107,6 @@ class ExamRequest extends ApiRequest
             return $response->json()['responseData']['translatedText'];
         }
 
-        return $text; // Return the original text if translation fails
+        return $text; // إذا فشلت الترجمة، سيتم إرجاع النص الأصلي
     }
 }

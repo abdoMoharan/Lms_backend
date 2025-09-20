@@ -20,7 +20,7 @@ class QuestionRepository implements QuestionInterface
     public function index($request)
     {
         try {
-            $model = $this->model->query()->with(['createdBy', 'transLocale','exam','question_type'])->filter($request->query())->get();
+            $model = $this->model->query()->with(['createdBy', 'exam','question_type'])->filter($request->query())->get();
             if ($model->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Question found', []);
             }
@@ -35,7 +35,7 @@ class QuestionRepository implements QuestionInterface
             DB::beginTransaction();
             $data  = $request->getData();
             $model = $this->model->create($data);
-            $model->load(['trans','createdBy','exam','question_type']);
+            $model->load(['createdBy','exam','question_type']);
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Question created successfully', new QuestionResource($model));
         } catch (\Exception $e) {
@@ -50,7 +50,7 @@ class QuestionRepository implements QuestionInterface
         try {
             $data = $request->getData();
             $model->update($data);
-            $model->load(['trans','createdBy','exam','question_type']);
+            $model->load(['createdBy','exam','question_type']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new QuestionResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Question found', []);
@@ -69,7 +69,7 @@ class QuestionRepository implements QuestionInterface
     public function show($local, $model)
     {
         try {
-            $model->load(['trans', 'createdBy','exam','question_type']);
+            $model->load([ 'createdBy','exam','question_type']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Question retrieved successfully', new QuestionResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Question found', []);

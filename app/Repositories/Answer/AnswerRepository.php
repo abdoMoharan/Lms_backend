@@ -20,7 +20,7 @@ class AnswerRepository implements AnswerInterface
     public function index($request)
     {
         try {
-            $model = $this->model->query()->with([ 'transLocale','question'])->filter($request->query())->get();
+            $model = $this->model->query()->with([ 'question'])->filter($request->query())->get();
             if ($model->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Answer found', []);
             }
@@ -35,7 +35,7 @@ class AnswerRepository implements AnswerInterface
             DB::beginTransaction();
             $data  = $request->getData();
             $model = $this->model->create($data);
-            $model->load(['trans','question']);
+            $model->load(['question']);
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Answer created successfully', new AnswerResource($model));
         } catch (\Exception $e) {
@@ -50,7 +50,7 @@ class AnswerRepository implements AnswerInterface
         try {
             $data = $request->getData();
             $model->update($data);
-            $model->load(['trans','question']);
+            $model->load(['question']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new AnswerResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Answer found', []);
@@ -69,13 +69,10 @@ class AnswerRepository implements AnswerInterface
     public function show($local, $model)
     {
         try {
-            $model->load(['trans', 'question']);
+            $model->load([ 'question']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Answer retrieved successfully', new AnswerResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Answer found', []);
         }
     }
-
-
-
 }

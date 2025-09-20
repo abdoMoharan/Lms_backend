@@ -17,16 +17,7 @@ class AnswerResource extends JsonResource
         $transLocale = $this->transLocale()->first();
         return [
             "id"             => $this->id,
-            'name'           => $this->whenLoaded('transLocale', function () {
-                return $this->transLocale->first()->name ?? null;
-            }, function () {
-                return $this->whenLoaded('trans', function () {
-                    return [
-                        'en' => $this->trans->firstWhere('locale', 'en')->name ?? null,
-                        'ar' => $this->trans->firstWhere('locale', 'ar')->name ?? null,
-                    ];
-                });
-            }),
+            'name'           => $this->name,
             'correct_answer' => $this->correct_answer,
             'question'       => new QuestionResource($this->whenLoaded('question')),
         ];

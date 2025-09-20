@@ -14,7 +14,6 @@ class AnswerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $transLocale = $this->transLocale()->first();
         return [
             "id"             => $this->id,
             'name'           => $this->name,

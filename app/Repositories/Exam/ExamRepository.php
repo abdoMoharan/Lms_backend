@@ -4,7 +4,9 @@ namespace App\Repositories\Exam;
 use App\Helpers\ApiResponse;
 use App\Http\Resources\Exam\ExamResource;
 use App\Interfaces\Exam\ExamInterface;
+use App\Models\Answer;
 use App\Models\Exam;
+use App\Models\Question;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -44,54 +46,43 @@ class ExamRepository implements ExamInterface
     //     }
     // }
 
-  public function store($request)
+    public function store($request)
     {
         try {
             DB::beginTransaction();
 
             // معالجة بيانات الامتحان
             $data = $request->getData();
-            $exam = $this->model->create([
-                'course_id' => $data['course_id'],
-                'teacher_id' => $data['teacher_id'],
-                'time' => $data['time'],
-                'start_date' => $data['start_date'],
-                'end_date' => $data['end_date'],
-                'total' => $data['total'],
-            ]);
+            $exam = $this->model->create($data);
 
             // إضافة الأسئلة والإجابات مع الترجمات
             foreach ($data['questions'] as $questionData) {
-                // إنشاء السؤال
-                $question = $exam->questions()->create([
-                    'question_type_id' => $questionData['question_type_id'],
-                    'created_by' => auth()->id(),
-                    'updated_by' => auth()->id(),
-                    'status' => 1,  // تعديل حسب الحاجة
-                ]);
 
-                // إضافة الترجمة للسؤال
-                foreach (config('translatable.locales') as $locale) {
-                    $question->translateOrNew($locale)->name = $questionData['name'][$locale];
-                }
+                $question                   = new Question();
+                $question->name             = $questionData['name'];
+                $question->exam_id          = $exam->id;
+                $question->question_type_id = $questionData['question_type_id'];
+                $question->created_by       = auth()->id();
+                $question->status           = 1;
+                $question->save();
 
-                // إضافة الإجابات لكل سؤال
                 foreach ($questionData['answers'] as $answerData) {
-                    $answer = $question->answers()->create([
-                        'name' => $answerData['name'],
-                        'correct_answer' => $answerData['correct_answer'],
-                    ]);
-
-                    // إضافة الترجمة للإجابات
-                    foreach (config('translatable.locales') as $locale) {
-                        $answer->translateOrNew($locale)->name = $answerData['name'][$locale];
-                    }
+                    $answer                 = new Answer();
+                    $answer->question_id    = $question->id;
+                    $answer->name           = $answerData['name'];
+                    $answer->correct_answer = $answerData['correct_answer'];
+                    $answer->save();
                 }
+                DB::commit();
             }
-
-            DB::commit();
-
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Exam created successfully', $exam);
+            $exam->load([
+                'trans',
+                'questions',
+                'course',
+                'teacher',
+                'createdBy'
+            ]);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Exam created successfully', new ExamResource($exam));
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::apiResponse(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, 'Error creating exam', $e->getMessage());

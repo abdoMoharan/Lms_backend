@@ -2,6 +2,7 @@
 namespace App\Http\Resources\Exam;
 
 use App\Http\Resources\Course\CourseResource;
+use App\Http\Resources\Question\QuestionResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -40,6 +41,7 @@ class ExamResource extends JsonResource
             }),
             'course'      => new CourseResource($this->whenLoaded('course')),
             'teacher'     => new UserResource($this->whenLoaded('teacher')),
+            'questions'     =>  QuestionResource::collection($this->whenLoaded('questions')),
             'time'        => $this->time,
             'start_date'  => $this->start_date,
             'end_date'    => $this->end_date,

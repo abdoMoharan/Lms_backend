@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Course;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Coures\CourseRequest;
+use App\Http\Requests\Api\Course\CourseRequest;
 use App\Interfaces\Course\CourseInterface;
 use App\Models\Course;
 use Illuminate\Http\Request;

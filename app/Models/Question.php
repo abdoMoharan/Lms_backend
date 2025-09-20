@@ -28,6 +28,11 @@ class Question extends Model
     {
         return $this->belongsTo(QuestionType::class, 'question_type_id')->with('transLocale');
     }
+
+    public function answers()
+    {
+     return   $this->hasMany(Answer::class, 'question_id');
+    }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
         if (isset($filters['name'])) {

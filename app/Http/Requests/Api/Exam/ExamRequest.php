@@ -20,8 +20,6 @@ class ExamRequest extends ApiRequest
             $attr = array_merge($attr, [
                 "{$locale}.name" => "name" . Lang::get($locale),
                 "{$locale}.description" => "description" . Lang::get($locale),
-                "{$locale}.question" => "question" . Lang::get($locale),
-                "{$locale}.answer" => "answer" . Lang::get($locale),
             ]);
         }
         return $attr;
@@ -35,8 +33,6 @@ class ExamRequest extends ApiRequest
                 "{$locale}.name" => 'nullable',
                 "{$locale}.description" => 'nullable',
             ]);
-            $rules["questions.*.name.{$locale}.name"]           = 'required|string'; // الترجمة للسؤال
-            $rules["questions.*.answers.*.name.{$locale}.name"] = 'required|string';
         }
 
         // قواعد البيانات الأساسية للامتحان والأسئلة والإجابات
@@ -52,7 +48,7 @@ class ExamRequest extends ApiRequest
             'questions.*.name'                     => 'required|string',                   // نص السؤال
             'questions.*.answers'                  => 'required|array',                    // مجموعة الإجابات
             'questions.*.answers.*.name'           => 'required|string',                   // نص الإجابة
-            'questions.*.answers.*.correct_answer' => 'required|boolean',                  // الإجابة الصحيحة
+            'questions.*.answers.*.correct_answer' => 'required|in:1,0',                  // الإجابة الصحيحة
         ]);
 
         return $rules;

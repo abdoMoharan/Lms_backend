@@ -1,13 +1,14 @@
 <?php
 namespace App\Models;
 
-use App\Models\ExamTranslation;
 use App\Models\User;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use App\Models\Question;
+use App\Models\ExamTranslation;
+use Illuminate\Database\Eloquent\Model;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
 class Exam extends Model implements TranslatableContract
 {
@@ -44,7 +45,7 @@ class Exam extends Model implements TranslatableContract
 
     public function questions()
     {
-        $this->hasMany(Question::class, 'exam_id');
+  return      $this->hasMany(Question::class,'exam_id')->with(['answers','question_type']);
     }
     public function course()
     {

@@ -1,10 +1,11 @@
 <?php
-namespace App\Http\Requests\Api\Exam;
+namespace App\Http\Requests\Api\Course;
 
 use App\Http\Requests\Base\ApiRequest;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Validator;
 
-class ExamRequest extends ApiRequest
+class CourseRequest extends ApiRequest
 {
     public function authorize(): bool
     {
@@ -18,8 +19,6 @@ class ExamRequest extends ApiRequest
             $attr = array_merge($attr, [
                 "{$locale}.name" => "name " . ucfirst($locale),
                 "{$locale}.description" => "description " . ucfirst($locale),
-                "questions.*.name.{$locale}" => "question name " . ucfirst($locale), // السؤال
-                "questions.*.answers.*.name.{$locale}" => "answer name " . ucfirst($locale), // الإجابة
             ]);
         }
         return $attr;
@@ -31,23 +30,17 @@ class ExamRequest extends ApiRequest
 
         // التحقق من الترجمة لكل لغة
         foreach (config('translatable.locales') as $locale) {
-            $rules["questions.*.name.{$locale}"] = 'required|string'; // الترجمة للسؤال
-            $rules["questions.*.answers.*.name.{$locale}"] = 'required|string'; // الترجمة للإجابة
+            $rules = array_merge($rules, [
+                "{$locale}.name" => 'nullable',
+                "{$locale}.description" => 'nullable',
+            ]);
         }
 
         $rules = array_merge($rules, [
-            'course_id' => 'required|exists:courses,id',
-            'teacher_id' => 'required|exists:users,id',
-            'time' => 'required',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'total' => 'required',
-            'questions' => 'required|array',  // الأسئلة كمصفوفة
-            'questions.*.question_type_id' => 'required|exists:question_types,id',  // نوع السؤال
-            'questions.*.name' => 'required|string',  // نص السؤال
-            'questions.*.answers' => 'required|array',  // مجموعة الإجابات
-            'questions.*.answers.*.name' => 'required|string',  // نص الإجابة
-            'questions.*.answers.*.correct_answer' => 'required|boolean',  // الإجابة الصحيحة
+            'subject_id' => 'required|exists:subjects,id',
+            'user_id'    => 'required|exists:users,id',
+            'status'     => 'nullable|in:1,0',
+
         ]);
 
         return $rules;
@@ -95,7 +88,7 @@ class ExamRequest extends ApiRequest
         $sourceLang = $locale === 'ar' ? 'en' : 'ar';
 
         $response = Http::get('https://api.mymemory.translated.net/get', [
-            'q' => $text,
+            'q'        => $text,
             'langpair' => "{$sourceLang}|{$locale}",
         ]);
 

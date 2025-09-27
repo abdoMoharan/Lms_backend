@@ -181,3 +181,6 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
         });
     });
 });
+//include all routes website front
+require base_path('routes/api_web.php');
+

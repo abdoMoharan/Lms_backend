@@ -57,6 +57,10 @@ class EducationalStage extends Model implements TranslatableContract
         return $this->belongsTo(User::class, 'updated_by');
     }
 
+    public function grades()
+    {
+        return $this->hasMany(Grade::class, 'stage_id')->with('transLocale');
+    }
     public static function getAllDeleted()
     {
         return self::onlyTrashed()->with('transLocale')->get();

@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Resources\EducationalStage;
 
+use App\Http\Resources\Grade\GradeResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,6 +28,7 @@ class EducationalStageResource extends JsonResource
                 });
             }),
             'status' => $this->status,
+            'grades' => GradeResource::collection($this->whenLoaded('grades')),
         ];
     }
 }

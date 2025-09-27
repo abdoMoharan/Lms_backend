@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Controllers\Api\WebSite\Grade;
+
+use App\Models\Grade;
+use App\Helpers\ApiResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Grade\GradeResource;
+
+class GradeController extends Controller
+{
+    public Grade $model;
+    public function __construct(Grade $model)
+    {
+        $this->model = $model;
+    }
+    public function index(Request $request)
+    {
+        try {
+            $Grade = $this->model->query()->with(['transLocale','educationalStage'])->filter($request->query())->get();
+            if ($Grade->isEmpty()) {
+                return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Grade found', []);
+            }
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grade retrieved successfully', GradeResource::collection($Grade)->response()->getData(true));
+        } catch (\Exception $e) {
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Grade found', $e->getMessage());
+        }
+    }
+    public function show($local, $model)
+    {
+        try {
+            $model->load(['transLocale','educationalStage']);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grade retrieved successfully', new GradeResource($model));
+        } catch (\Exception $e) {
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Grade found', []);
+        }
+    }
+
+}

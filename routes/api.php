@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Answer\AnswerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Auth\SocialAuthController;
 use App\Http\Controllers\Api\Exam\ExamController;
 use App\Http\Controllers\Api\Role\RoleController;
 use App\Http\Controllers\Api\Unit\UnitController;
@@ -23,6 +24,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('logout', 'logout')->middleware('auth:sanctum');
 });
+Route::post('login-social',[SocialAuthController::class,'login']);
 Route::get('get-auth-permissions', [PermissionController::class, 'getAuthPermissions'])->name('get-permissions-auth')->middleware('auth:sanctum');
 Route::prefix('{locale}')->middleware('setLocale')->group(function () {
     Route::prefix('admin')->name('admin.')->middleware(['auth:sanctum'])->group(function () {

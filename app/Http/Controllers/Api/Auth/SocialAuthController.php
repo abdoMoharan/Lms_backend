@@ -1,67 +1,58 @@
 <?php
-
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-
-use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SocialAuthController extends Controller
 {
-  const TOKEN_NAME = 'token';
-    public function redirectToGoogle()
-    {
-        return Socialite::driver('google')->redirect();
-    }
+    const TOKEN_NAME = 'token';
 
     // التعامل مع الـ Callback من Google
-    public function handleGoogleCallback()
+    public function login(Request $request)
     {
-        $user = Socialite::driver('google')->user();
-
-        $existingUser = User::where('google_id', $user->getId())->first();
-
-        if ($existingUser) {
-            Auth::login($existingUser);
-            return response()->json(['token' => $existingUser->createToken(self::TOKEN_NAME)->plainTextToken]);
-        } else {
-            $newUser = User::create([
-                'name' => $user->getName(),
-                'email' => $user->getEmail(),
-                'google_id' => $user->getId(),
+        try {
+            $data = $request->validate([
+                'social_id' => 'required',
+                'first_name'      => 'nullable',
+                'last_name'      => 'nullable',
+                'email'     => 'nullable|email',
             ]);
-            Auth::login($newUser);
-            return response()->json(['token' => $newUser->createToken(self::TOKEN_NAME)->plainTextToken]);
-        }
-    }
+            $user = User::where('social_id', $request->social_id)->first();
+            if ($user) {
+                $token = $user->createToken('self::TOKEN_NAME')->plainTextToken;
+                return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'تم تسجيل الدخول بنجاح', [
+                    'token' => $token,
+                    'user'  => $user,
+                ]);
+            } else {
+                $userData = [
+                    'social_id'  => $data['social_id'],
+                    'username'    => $data['first_name'] .  $data['last_name'],
+                    'first_name'  => $data['first_name'] ?? 'غير محدد',
+                    'last_name'   => $data['last_name'] ?? 'غير محدد',
+                    'email'      => $data['email'] ?? null,
+                    'user_type'  =>'student',
+                    'password'   => Str::random(16), // يمكنك تخصيص كلمة مرور عشوائية هنا
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ];
+                $user = User::create($userData);
+                $token = $user->createToken('social-login')->plainTextToken;
+                return ApiResponse::apiResponse(JsonResponse::HTTP_CREATED, 'تم إنشاء المستخدم بنجاح', [
+                    'token' => $token,
+                    'user'  => $user,
+                ]);
+            }
 
-    // توجيه المستخدم إلى Facebook
-    public function redirectToFacebook()
-    {
-        return Socialite::driver('facebook')->redirect();
-    }
-
-    // التعامل مع الـ Callback من Facebook
-    public function handleFacebookCallback()
-    {
-        $user = Socialite::driver('facebook')->user();
-
-        $existingUser = User::where('facebook_id', $user->getId())->first();
-
-        if ($existingUser) {
-            Auth::login($existingUser);
-            return response()->json(['token' => $existingUser->createToken(self::TOKEN_NAME)->plainTextToken]);
-        } else {
-            $newUser = User::create([
-                'name' => $user->getName(),
-                'email' => $user->getEmail(),
-                'facebook_id' => $user->getId(),
-            ]);
-            Auth::login($newUser);
-            return response()->json(['token' => $newUser->createToken(self::TOKEN_NAME)->plainTextToken]);
+        } catch (\Exception $e) {
+            // في حالة حدوث خطأ
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'حدث خطأ في تسجيل الدخول', $e->getMessage());
         }
     }
 }

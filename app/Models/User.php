@@ -2,14 +2,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
@@ -62,8 +62,18 @@ class User extends Authenticatable
         }
     }
 
+//relations
+    public function profile()
+    {
+        return $this->hasOne(Profile::class, 'user_id');
+    }
 
-public function scopeFilter(Builder $builder, $filters)
+    public function userEductionStage()
+    {
+        return $this->hasMany(UserEducationalStage::class, 'user_id')->with(['educational_stage','subject']);
+    }
+
+    public function scopeFilter(Builder $builder, $filters)
     {
         $builder->when(isset($filters['query']) && $filters['query'] !== '', function ($builder) use ($filters) {
             $builder->where('first_name', 'like', "%{$filters['query']}%")
@@ -88,14 +98,12 @@ public function scopeFilter(Builder $builder, $filters)
             $builder->where('status', $statusValue);
         });
 
-        $builder->when(!empty($filters['start_date']) && !empty($filters['end_date']), function ($builder) use ($filters) {
+        $builder->when(! empty($filters['start_date']) && ! empty($filters['end_date']), function ($builder) use ($filters) {
             $builder->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         });
     }
 
-
-
-   public static function getAllDeleted()
+    public static function getAllDeleted()
     {
         return self::onlyTrashed()->get();
     }

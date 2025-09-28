@@ -1,16 +1,14 @@
 <?php
 namespace App\Http\Controllers\Api\Profile;
 
-
-
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Interfaces\ProfileInterface;
 use App\Http\Requests\Api\Profile\ProfileRequest;
+use App\Interfaces\ProfileInterface;
+use Illuminate\Http\Request;
 
 class ProfileUserController extends Controller
 {
-  public ProfileInterface $profile;
+    public ProfileInterface $profile;
     public function __construct(ProfileInterface $profile)
     {
         $this->profile = $profile;

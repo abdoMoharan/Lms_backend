@@ -18,7 +18,7 @@ class GradeController extends Controller
     public function index(Request $request)
     {
         try {
-            $Grade = $this->model->query()->with(['transLocale', 'educationalStage'])->filter($request->query())->get();
+            $Grade = $this->model->query()->with(['transLocale', 'educationalStage','subjects'])->filter($request->query())->get();
             if ($Grade->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Grade found', []);
             }

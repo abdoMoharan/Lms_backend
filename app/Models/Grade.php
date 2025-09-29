@@ -37,6 +37,10 @@ class Grade extends Model implements TranslatableContract
     {
         return $this->belongsTo(EducationalStage::class, 'stage_id')->with('transLocale');
     }
+public function subjects()
+{
+return $this->hasMany(Subject::class,'grade_id');
+}
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
         if (isset($filters['name'])) {

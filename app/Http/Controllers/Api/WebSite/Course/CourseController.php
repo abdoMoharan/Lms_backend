@@ -27,9 +27,13 @@ class CourseController extends Controller
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Course found', $e->getMessage());
         }
     }
-    public function show($local, $model)
+    public function show($local, $id)
     {
         try {
+    $model = $this->model->find($id);
+            if (! $model) {
+                return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Course not found', []);
+            }
             $model->load(['transLocale','teacher','subject']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Course retrieved successfully', new CourseResource($model));
         } catch (\Exception $e) {

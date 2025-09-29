@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Http\Controllers\Api\WebSite\EducationalStage;
 
 use App\Helpers\ApiResponse;
-use Illuminate\Http\Request;
-use App\Models\EducationalStage;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EducationalStage\EducationalStageResource;
+use App\Models\EducationalStage;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class EducationalStageController extends Controller
 {
@@ -20,7 +19,7 @@ class EducationalStageController extends Controller
     public function index(Request $request)
     {
         try {
-            $eduction_stage = $this->model->query()->with(['transLocale','grades'])->filter($request->query())->get();
+            $eduction_stage = $this->model->query()->with(['transLocale', 'grades'])->filter($request->query())->get();
             if ($eduction_stage->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No eduction_stage found', []);
             }
@@ -30,11 +29,14 @@ class EducationalStageController extends Controller
         }
     }
 
-
-    public function show($local, $model)
+    public function show($local, $id)
     {
         try {
-            $model->load(['transLocale','grades']);
+            $model = $this->model->find($id);
+            if (! $model) {
+                return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'eduction_stage not found', []);
+            }
+            $model->load(['transLocale', 'grades']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage retrieved successfully', new EducationalStageResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', []);

@@ -1,12 +1,12 @@
 <?php
-
 namespace App\Http\Controllers\Api\WebSite\Unit;
-use App\Models\Unit;
+
 use App\Helpers\ApiResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Unit\UnitResource;
+use App\Models\Unit;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class UnitController extends Controller
 {
@@ -19,7 +19,7 @@ class UnitController extends Controller
     public function index(Request $request)
     {
         try {
-            $Unit = $this->model->query()->with(['transLocale','course'])->filter($request->query())->get();
+            $Unit = $this->model->query()->with(['transLocale', 'course'])->filter($request->query())->get();
             if ($Unit->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Unit found', []);
             }
@@ -28,10 +28,14 @@ class UnitController extends Controller
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Unit found', $e->getMessage());
         }
     }
-    public function show($local, $model)
+    public function show($local, $id)
     {
         try {
-            $model->load(['transLocale','course']);
+            $model = $this->model->find($id);
+            if (! $model) {
+                return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Unit not found', []);
+            }
+            $model->load(['transLocale', 'course']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Unit retrieved successfully', new UnitResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Unit found', []);

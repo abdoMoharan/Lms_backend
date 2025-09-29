@@ -28,9 +28,13 @@ class SemesterController extends Controller
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No semester found', $e->getMessage());
         }
     }
-    public function show($local, $model)
+    public function show($local, $id)
     {
         try {
+ $model = $this->model->find($id);
+            if (! $model) {
+                return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'semester not found', []);
+            }
             $model->load('transLocale');
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester retrieved successfully', new SemesterResource($model));
         } catch (\Exception $e) {

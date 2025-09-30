@@ -28,18 +28,23 @@ class UnitController extends Controller
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Unit found', $e->getMessage());
         }
     }
-    public function show($local, $id)
+    public function show($locale, $id, $slug = null)
     {
         try {
-            $model = $this->model->find($id);
+            if ($slug) {
+                $model = $this->model->whereHas('transLocale', function ($query) use ($slug, $locale) {
+                    $query->where('slug', $slug)->where('locale', $locale);
+                })->first();
+            } else {
+                $model = $this->model->find($id);
+            }
             if (! $model) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Unit not found', []);
             }
             $model->load(['transLocale', 'course']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Unit retrieved successfully', new UnitResource($model));
         } catch (\Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Unit found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Unit  found', $e->getMessage());
         }
     }
-
 }

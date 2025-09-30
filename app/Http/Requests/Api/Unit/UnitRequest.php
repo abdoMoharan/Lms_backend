@@ -1,12 +1,13 @@
 <?php
-
 namespace App\Http\Requests\Api\Unit;
 
+use App\Http\Requests\Base\ApiRequest;
+use App\Models\UnitTranslation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
-use App\Http\Requests\Base\ApiRequest;
 
 class UnitRequest extends ApiRequest
 {
@@ -35,14 +36,14 @@ class UnitRequest extends ApiRequest
         foreach (config('translatable.locales') as $locale) {
             $req = array_merge($req, [
                 "{$locale}.name" => 'nullable',
+                "{$locale}.slug" => "name" . Lang::get($locale),
             ]);
         }
         $req = array_merge($req, [
-            'status' => 'nullable|in:1,0',
-            'sort' => 'nullable',
+            'status'    => 'nullable|in:1,0',
+            'sort'      => 'nullable',
             'course_id' => 'required|exists:courses,id',
         ]);
-
 
         return $req;
     }
@@ -58,6 +59,11 @@ class UnitRequest extends ApiRequest
     public function getData()
     {
         $data = $this->validated();
+        foreach (config('translatable.locales') as $locale) {
+            if (empty($data[$locale]['slug']) && ! empty($data[$locale]['name'])) {
+                $data[$locale]['slug'] = $this->generateUniqueSlug($data[$locale]['name'], $locale);
+            }
+        }
         if ($this->isMethod('POST')) {
             $data['created_by'] = Auth::user()->id;
         } else {
@@ -70,7 +76,7 @@ class UnitRequest extends ApiRequest
             }
         }
         // Automatic translation from English to Arabic if Arabic is empty
-        if (empty($data['ar']['name']) && !empty($data['en']['name'])) {
+        if (empty($data['ar']['name']) && ! empty($data['en']['name'])) {
             $data['ar']['name'] = $this->translateAutomatically($data['en']['name'], 'ar');
         }
         return $data;
@@ -84,7 +90,7 @@ class UnitRequest extends ApiRequest
         $sourceLang = $locale === 'ar' ? 'en' : 'ar';
 
         $response = Http::get('https://api.mymemory.translated.net/get', [
-            'q' => $text,
+            'q'        => $text,
             'langpair' => "{$sourceLang}|{$locale}",
         ]);
 
@@ -93,5 +99,27 @@ class UnitRequest extends ApiRequest
         }
 
         return $text; // Return the original text if translation fails
+    }
+    private function generateUniqueSlug($text, $locale)
+    {
+        // توليد slug باستخدام Str::slug
+        $slug = Str::slug($text);
+
+        // التحقق من وجود slug مكرر في قاعدة البيانات
+        $existingSlug = UnitTranslation::where('locale', $locale)
+            ->where('slug', $slug)
+            ->exists();
+
+        // إذا كان الـ slug مكررًا، أضف رقماً لتفادي التكرار
+        $counter = 1;
+        while ($existingSlug) {
+            $slug         = Str::slug($text) . '-' . $counter;
+            $existingSlug = UnitTranslation::where('locale', $locale)
+                ->where('slug', $slug)
+                ->exists();
+            $counter++;
+        }
+
+        return $slug;
     }
 }

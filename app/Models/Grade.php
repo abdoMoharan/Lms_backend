@@ -21,6 +21,7 @@ class Grade extends Model implements TranslatableContract
         'grade_id',
         'locale',
         'name',
+   'slug',
     ];
     protected $translationForeignKey = 'grade_id';
 

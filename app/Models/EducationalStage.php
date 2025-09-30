@@ -20,6 +20,7 @@ class EducationalStage extends Model implements TranslatableContract
         'stage_id',
         'locale',
         'name',
+   'slug',
     ];
     protected $translationForeignKey = 'stage_id';
 

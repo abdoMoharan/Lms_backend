@@ -21,6 +21,7 @@ class QuestionType extends Model implements TranslatableContract
         'question_type_id',
         'locale',
         'name',
+   'slug',
     ];
     protected $translationForeignKey = 'question_type_id';
 

@@ -34,6 +34,7 @@ class Lessons extends Model implements TranslatableContract
         'name',
         'description',
         'content',
+   'slug',
     ];
     protected $translationForeignKey = 'lesson_id';
 

@@ -30,6 +30,7 @@ class Exam extends Model implements TranslatableContract
         'locale',
         'name',
         'description',
+   'slug',
     ];
     protected $translationForeignKey = 'exam_id';
 

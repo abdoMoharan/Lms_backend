@@ -12,5 +12,6 @@ class ExamTranslation extends Model
         'locale',
         'name',
         'description',
+   'slug',
     ];
 }

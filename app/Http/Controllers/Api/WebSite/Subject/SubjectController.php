@@ -28,18 +28,24 @@ class SubjectController extends Controller
         }
     }
 
-    public function show($local, $id)
+
+ public function show($locale, $id, $slug = null)
     {
         try {
-            $model = $this->model->find($id);
+            if ($slug) {
+                $model = $this->model->whereHas('transLocale', function ($query) use ($slug, $locale) {
+                    $query->where('slug', $slug)->where('locale', $locale);
+                })->first();
+            } else {
+                $model = $this->model->find($id);
+            }
             if (! $model) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Subject not found', []);
             }
-            $model->load(['transLocale', 'educationalStage', 'semester', 'grade']);
+          $model->load(['transLocale', 'educationalStage', 'semester', 'grade']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subject retrieved successfully', new SubjectResource($model));
         } catch (\Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Subject found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Subject  found', $e->getMessage());
         }
     }
-
 }

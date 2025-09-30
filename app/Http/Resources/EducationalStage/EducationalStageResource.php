@@ -27,6 +27,16 @@ class EducationalStageResource extends JsonResource
                     ];
                 });
             }),
+            'slug'   => $this->whenLoaded('transLocale', function () {
+                return $this->transLocale->first()->slug ?? null;
+            }, function () {
+                return $this->whenLoaded('trans', function () {
+                    return [
+                        'en' => $this->trans->firstWhere('locale', 'en')->slug ?? null,
+                        'ar' => $this->trans->firstWhere('locale', 'ar')->slug ?? null,
+                    ];
+                });
+            }),
             'status' => $this->status,
             'grades' => GradeResource::collection($this->whenLoaded('grades')),
         ];

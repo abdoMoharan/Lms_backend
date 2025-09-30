@@ -29,17 +29,23 @@ class EducationalStageController extends Controller
         }
     }
 
-    public function show($local, $id)
+    public function show($locale, $id, $slug = null)
     {
         try {
-            $model = $this->model->find($id);
+            if ($slug) {
+                $model = $this->model->whereHas('transLocale', function ($query) use ($slug, $locale) {
+                    $query->where('slug', $slug)->where('locale', $locale);
+                })->first();
+            } else {
+                $model = $this->model->find($id);
+            }
             if (! $model) {
-                return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'eduction_stage not found', []);
+                return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Education stage not found', []);
             }
             $model->load(['transLocale', 'grades']);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction_stage retrieved successfully', new EducationalStageResource($model));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Education stage retrieved successfully', new EducationalStageResource($model));
         } catch (\Exception $e) {
-            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No eduction_stage found', []);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No education stage found', $e->getMessage());
         }
     }
 

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('stage_id');
             $table->string('locale')->index();
             $table->string('name')->nullable();
+            $table->string('slug')->nullable();
             $table->unique(['stage_id', 'locale']);
             $table->foreign('stage_id')->references('id')->on('educational_stages')->onDelete('cascade');
             $table->timestamps();

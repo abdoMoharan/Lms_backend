@@ -23,6 +23,7 @@ class Subject extends Model implements TranslatableContract
         'subject_id',
         'locale',
         'name',
+   'slug',
     ];
     protected $translationForeignKey = 'subject_id';
 

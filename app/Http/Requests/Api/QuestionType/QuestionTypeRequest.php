@@ -2,9 +2,11 @@
 namespace App\Http\Requests\Api\QuestionType;
 
 use App\Http\Requests\Base\ApiRequest;
+use App\Models\QuestionTypeTranslation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
 
 class QuestionTypeRequest extends ApiRequest
@@ -33,11 +35,12 @@ class QuestionTypeRequest extends ApiRequest
         $req = [];
         foreach (config('translatable.locales') as $locale) {
             $req = array_merge($req, [
-                "{$locale}.name"       => 'nullable',
+                "{$locale}.name" => 'nullable',
+                "{$locale}.slug" => "name" . Lang::get($locale),
             ]);
         }
         $req = array_merge($req, [
-            'status'     => 'nullable|in:1,0',
+            'status' => 'nullable|in:1,0',
         ]);
 
         return $req;
@@ -54,6 +57,11 @@ class QuestionTypeRequest extends ApiRequest
     public function getData()
     {
         $data = $this->validated();
+        foreach (config('translatable.locales') as $locale) {
+            if (empty($data[$locale]['slug']) && ! empty($data[$locale]['name'])) {
+                $data[$locale]['slug'] = $this->generateUniqueSlug($data[$locale]['name'], $locale);
+            }
+        }
         if ($this->isMethod('POST')) {
             $data['created_by'] = Auth::user()->id;
         } else {
@@ -89,5 +97,27 @@ class QuestionTypeRequest extends ApiRequest
         }
 
         return $text; // Return the original text if translation fails
+    }
+    private function generateUniqueSlug($text, $locale)
+    {
+        // توليد slug باستخدام Str::slug
+        $slug = Str::slug($text);
+
+        // التحقق من وجود slug مكرر في قاعدة البيانات
+        $existingSlug = QuestionTypeTranslation::where('locale', $locale)
+            ->where('slug', $slug)
+            ->exists();
+
+        // إذا كان الـ slug مكررًا، أضف رقماً لتفادي التكرار
+        $counter = 1;
+        while ($existingSlug) {
+            $slug         = Str::slug($text) . '-' . $counter;
+            $existingSlug = QuestionTypeTranslation::where('locale', $locale)
+                ->where('slug', $slug)
+                ->exists();
+            $counter++;
+        }
+
+        return $slug;
     }
 }

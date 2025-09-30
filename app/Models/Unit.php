@@ -20,6 +20,7 @@ class Unit extends Model implements TranslatableContract
         'unit_id',
         'locale',
         'name',
+           'slug',
     ];
     protected $translationForeignKey = 'unit_id';
 

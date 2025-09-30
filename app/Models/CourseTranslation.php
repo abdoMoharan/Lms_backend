@@ -10,6 +10,7 @@ class CourseTranslation extends Model
         'course_id',
         'locale',
         'name',
+   'slug',
         'description',
     ];
 }

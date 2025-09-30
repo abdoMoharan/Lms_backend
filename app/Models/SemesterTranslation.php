@@ -11,5 +11,6 @@ class SemesterTranslation extends Model
         'semester_id',
         'locale',
         'name',
+   'slug',
     ];
 }

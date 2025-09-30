@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('locale')->index();
             $table->string('name')->nullable();
             $table->unique(['unit_id', 'locale']);
+            $table->string('slug')->nullable();
             $table->foreign('unit_id')->references('id')->on('units')->onDelete('cascade');
             $table->timestamps();
         });

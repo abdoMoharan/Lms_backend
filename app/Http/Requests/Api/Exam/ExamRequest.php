@@ -1,10 +1,12 @@
 <?php
 namespace App\Http\Requests\Api\Exam;
 
-use App\Http\Requests\Base\ApiRequest;
+use Illuminate\Support\Str;
+use App\Models\ExamTranslation;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Validation\Validator;
+use App\Http\Requests\Base\ApiRequest;
 
 class ExamRequest extends ApiRequest
 {
@@ -20,6 +22,7 @@ class ExamRequest extends ApiRequest
             $attr = array_merge($attr, [
                 "{$locale}.name" => "name" . Lang::get($locale),
                 "{$locale}.description" => "description" . Lang::get($locale),
+
             ]);
         }
         return $attr;
@@ -32,6 +35,7 @@ class ExamRequest extends ApiRequest
             $rules = array_merge($rules, [
                 "{$locale}.name" => 'nullable',
                 "{$locale}.description" => 'nullable',
+                "{$locale}.slug" => "name" . Lang::get($locale),
             ]);
         }
 
@@ -67,6 +71,11 @@ class ExamRequest extends ApiRequest
     public function getData()
     {
         $data = $this->validated();
+         foreach (config('translatable.locales') as $locale) {
+            if (empty($data[$locale]['slug']) && ! empty($data[$locale]['name'])) {
+                $data[$locale]['slug'] = $this->generateUniqueSlug($data[$locale]['name'], $locale);
+            }
+        }
         // الترجمة التلقائية من العربية للغات الأخرى
         foreach (config('translatable.locales') as $locale) {
             if ($locale !== 'ar' && empty($data[$locale]['name'])) {
@@ -85,7 +94,28 @@ class ExamRequest extends ApiRequest
         }
         return $data;
     }
+    private function generateUniqueSlug($text, $locale)
+    {
+        // توليد slug باستخدام Str::slug
+        $slug = Str::slug($text);
 
+        // التحقق من وجود slug مكرر في قاعدة البيانات
+        $existingSlug = ExamTranslation::where('locale', $locale)
+            ->where('slug', $slug)
+            ->exists();
+
+        // إذا كان الـ slug مكررًا، أضف رقماً لتفادي التكرار
+        $counter = 1;
+        while ($existingSlug) {
+            $slug         = Str::slug($text) . '-' . $counter;
+            $existingSlug = ExamTranslation::where('locale', $locale)
+                ->where('slug', $slug)
+                ->exists();
+            $counter++;
+        }
+
+        return $slug;
+    }
     public function translateAutomatically($text, $locale)
     {
         // تجنب إرسال نص فارغ للترجمة

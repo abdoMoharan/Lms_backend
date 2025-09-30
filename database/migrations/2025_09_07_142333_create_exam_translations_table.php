@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('locale')->index();
             $table->string('name')->nullable();
             $table->longText('description')->nullable();
+ $table->string('slug')->nullable();
             $table->unique(['exam_id', 'locale']);
             $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
             $table->timestamps();

@@ -10,5 +10,6 @@ class EducationalStageTranslation extends Model
         'stage_id',
         'locale',
         'name',
+        'slug',
     ];
 }

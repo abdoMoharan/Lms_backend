@@ -11,5 +11,6 @@ class GradeTranslation extends Model
         'grade_id',
         'locale',
         'name',
+   'slug',
     ];
 }

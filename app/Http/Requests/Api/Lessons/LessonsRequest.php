@@ -1,11 +1,13 @@
 <?php
 namespace App\Http\Requests\Api\Lessons;
 
-use App\Http\Requests\Base\ApiRequest;
+use Illuminate\Support\Str;
+use App\Models\LessonsTranslation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Validation\Validator;
+use App\Http\Requests\Base\ApiRequest;
 
 class LessonsRequest extends ApiRequest
 {
@@ -38,6 +40,7 @@ class LessonsRequest extends ApiRequest
                 "{$locale}.name"        => 'nullable|string|max:255',
                 "{$locale}.description" => 'nullable|string',
                 "{$locale}.content"     => 'nullable|string',
+     "{$locale}.slug" => "name" . Lang::get($locale),
             ]);
         }
 
@@ -74,6 +77,11 @@ class LessonsRequest extends ApiRequest
     public function getData()
     {
         $data = $this->validated();
+ foreach (config('translatable.locales') as $locale) {
+            if (empty($data[$locale]['slug']) && ! empty($data[$locale]['name'])) {
+                $data[$locale]['slug'] = $this->generateUniqueSlug($data[$locale]['name'], $locale);
+            }
+        }
         if ($this->isMethod('POST')) {
             $data['created_by'] = Auth::user()->id;
         } else {
@@ -102,6 +110,28 @@ class LessonsRequest extends ApiRequest
             $data['ar']['content'] = $this->translateAutomatically($data['en']['content'], 'ar');
         }
         return $data;
+    }
+ private function generateUniqueSlug($text, $locale)
+    {
+        // توليد slug باستخدام Str::slug
+        $slug = Str::slug($text);
+
+        // التحقق من وجود slug مكرر في قاعدة البيانات
+        $existingSlug = LessonsTranslation::where('locale', $locale)
+            ->where('slug', $slug)
+            ->exists();
+
+        // إذا كان الـ slug مكررًا، أضف رقماً لتفادي التكرار
+        $counter = 1;
+        while ($existingSlug) {
+            $slug         = Str::slug($text) . '-' . $counter;
+            $existingSlug = LessonsTranslation::where('locale', $locale)
+                ->where('slug', $slug)
+                ->exists();
+            $counter++;
+        }
+
+        return $slug;
     }
     public function translateAutomatically($text, $locale)
     {

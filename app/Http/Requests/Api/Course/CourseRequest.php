@@ -2,7 +2,10 @@
 namespace App\Http\Requests\Api\Course;
 
 use App\Http\Requests\Base\ApiRequest;
+use App\Models\CourseTranslation;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
 
 class CourseRequest extends ApiRequest
@@ -33,6 +36,7 @@ class CourseRequest extends ApiRequest
             $rules = array_merge($rules, [
                 "{$locale}.name" => 'nullable',
                 "{$locale}.description" => 'nullable',
+                "{$locale}.slug" => "name" . Lang::get($locale),
             ]);
         }
 
@@ -59,7 +63,11 @@ class CourseRequest extends ApiRequest
     public function getData()
     {
         $data = $this->validated();
-
+        foreach (config('translatable.locales') as $locale) {
+            if (empty($data[$locale]['slug']) && ! empty($data[$locale]['name'])) {
+                $data[$locale]['slug'] = $this->generateUniqueSlug($data[$locale]['name'], $locale);
+            }
+        }
         // الترجمة التلقائية من العربية للغات أخرى
         foreach (config('translatable.locales') as $locale) {
             if ($locale !== 'ar' && empty($data[$locale]['name'])) {
@@ -78,7 +86,28 @@ class CourseRequest extends ApiRequest
         }
         return $data;
     }
+    private function generateUniqueSlug($text, $locale)
+    {
+        // توليد slug باستخدام Str::slug
+        $slug = Str::slug($text);
 
+        // التحقق من وجود slug مكرر في قاعدة البيانات
+        $existingSlug = CourseTranslation::where('locale', $locale)
+            ->where('slug', $slug)
+            ->exists();
+
+        // إذا كان الـ slug مكررًا، أضف رقماً لتفادي التكرار
+        $counter = 1;
+        while ($existingSlug) {
+            $slug         = Str::slug($text) . '-' . $counter;
+            $existingSlug = CourseTranslation::where('locale', $locale)
+                ->where('slug', $slug)
+                ->exists();
+            $counter++;
+        }
+
+        return $slug;
+    }
     public function translateAutomatically($text, $locale)
     {
         if (empty($text)) {

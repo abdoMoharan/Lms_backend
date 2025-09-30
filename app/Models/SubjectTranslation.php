@@ -10,5 +10,6 @@ class SubjectTranslation extends Model
         'subject_id',
         'locale',
         'name',
+   'slug',
     ];
 }

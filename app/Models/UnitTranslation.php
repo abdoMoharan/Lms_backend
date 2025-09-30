@@ -10,5 +10,6 @@ class UnitTranslation extends Model
         'unit_id',
         'locale',
         'name',
+   'slug',
     ];
 }

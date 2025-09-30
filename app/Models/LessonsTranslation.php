@@ -12,5 +12,6 @@ class LessonsTranslation extends Model
         'name',
         'description',
         'content',
+   'slug',
     ];
 }

@@ -20,6 +20,7 @@ class Semester extends Model implements TranslatableContract
         'semester_id',
         'locale',
         'name',
+   'slug',
     ];
     protected $translationForeignKey = 'semester_id';
 

@@ -11,5 +11,6 @@ class QuestionTypeTranslation extends Model
         'question_type_id',
         'locale',
         'name',
+   'slug',
     ];
 }

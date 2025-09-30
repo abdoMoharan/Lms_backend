@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subject_translations', function (Blueprint $table) {
-          $table->id();
+            $table->id();
             $table->unsignedBigInteger('subject_id');
             $table->string('locale')->index();
             $table->string('name')->nullable();
+            $table->string('slug')->nullable();
             $table->unique(['subject_id', 'locale']);
             $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
             $table->timestamps();

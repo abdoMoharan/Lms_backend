@@ -16,12 +16,12 @@ class Grade extends Model implements TranslatableContract
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ['created_by', 'updated_by', 'status', 'stage_id'];
+    protected $fillable          = ['created_by', 'updated_by', 'status', 'stage_id'];
     public $translatedAttributes = [
         'grade_id',
         'locale',
         'name',
-   'slug',
+        'slug',
     ];
     protected $translationForeignKey = 'grade_id';
 
@@ -38,16 +38,19 @@ class Grade extends Model implements TranslatableContract
     {
         return $this->belongsTo(EducationalStage::class, 'stage_id')->with('transLocale');
     }
-public function subjects()
-{
-return $this->hasMany(Subject::class,'grade_id');
-}
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class, 'grade_id')->with('transLocale');
+    }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
         if (isset($filters['name'])) {
             $builder->whereHas('transLocale', function ($q) use ($filters) {
                 $q->where('name', 'like', '%' . $filters['name'] . '%');
             });
+        }
+        if (isset($filters['stage_id'])) {
+            $builder->where('stage_id', $filters['stage_id']);
         }
         $builder->when(isset($filters['status']), function ($builder) use ($filters) {
             $statusValue = intval($filters['status']) == 0 ? 0 : $filters['status'];
@@ -66,9 +69,9 @@ return $this->hasMany(Subject::class,'grade_id');
         return $this->belongsTo(User::class, 'updated_by');
     }
 
-     public static function getAllDeleted()
+    public static function getAllDeleted()
     {
-        return self::onlyTrashed()->with(['transLocale','educationalStage'])->get();
+        return self::onlyTrashed()->with(['transLocale', 'educationalStage'])->get();
     }
     // Restore a Deleted Record
     public static function restoreSoft($id)

@@ -20,7 +20,7 @@ class GradeRepository implements GradeInterface
     public function index($request)
     {
         try {
-            $Grades = $this->model->query()->with(['createdBy', 'transLocale', 'educationalStage'])->filter($request->query())->get();
+            $Grades = $this->model->query()->with(['createdBy', 'transLocale', 'educationalStage','subjects'])->filter($request->query())->get();
             if ($Grades->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Grades found', []);
             }
@@ -70,7 +70,7 @@ class GradeRepository implements GradeInterface
     public function show($local, $model)
     {
         try {
-             $model->load(['trans', 'createdBy','educationalStage']);
+             $model->load(['trans', 'createdBy','educationalStage','subjects']);
 
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grades retrieved successfully', new GradeResource($model));
         } catch (\Exception $e) {

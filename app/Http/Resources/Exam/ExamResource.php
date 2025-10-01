@@ -39,6 +39,16 @@ class ExamResource extends JsonResource
                     ];
                 });
             }),
+                        'slug'   => $this->whenLoaded('transLocale', function () {
+                return $this->transLocale->first()->slug ?? null;
+            }, function () {
+                return $this->whenLoaded('trans', function () {
+                    return [
+                        'en' => $this->trans->firstWhere('locale', 'en')->slug ?? null,
+                        'ar' => $this->trans->firstWhere('locale', 'ar')->slug ?? null,
+                    ];
+                });
+            }),
             'course'      => new CourseResource($this->whenLoaded('course')),
             'teacher'     => new UserResource($this->whenLoaded('teacher')),
             'questions'     =>  QuestionResource::collection($this->whenLoaded('questions')),

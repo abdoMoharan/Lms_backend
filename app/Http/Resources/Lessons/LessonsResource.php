@@ -48,11 +48,22 @@ class LessonsResource extends JsonResource
                     ];
                 });
             }),
+            'slug'   => $this->whenLoaded('transLocale', function () {
+                return $this->transLocale->first()->slug ?? null;
+            }, function () {
+                return $this->whenLoaded('trans', function () {
+                    return [
+                        'en' => $this->trans->firstWhere('locale', 'en')->slug ?? null,
+                        'ar' => $this->trans->firstWhere('locale', 'ar')->slug ?? null,
+                    ];
+                });
+            }),
             'status'      => $this->status,
             'sort'        => $this->sort,
             'cover_image' => $this->getPath($this->cover_image),
             'url'         => $this->url,
             'zoom_url'    => $this->zoom_url,
+
             'unit'        => new UnitResource($this->whenLoaded('unit')),
             'created_by'  => new UserResource($this->whenLoaded('createdBy')),
             'updated_by'  => new UserResource($this->whenLoaded('updatedBy')),

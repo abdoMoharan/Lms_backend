@@ -2,9 +2,11 @@
 namespace App\Providers;
 
 use App\Models\QuestionType;
+use App\Interfaces\ProfileInterface;
 use App\Interfaces\Exam\ExamInterface;
 use App\Interfaces\Unit\UnitInterface;
 use App\Interfaces\User\UserInterface;
+use App\Repositories\ProfileRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Interfaces\Grade\GradeInterface;
 use App\Repositories\Exam\ExamRepository;
@@ -46,6 +48,7 @@ class RepositoryProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app->singleton(UserInterface::class, UserRepository::class);
+        $this->app->singleton(ProfileInterface::class, ProfileRepository::class);
         $this->app->singleton(EducationalStageInterface::class, EducationalStageRepository::class);
         $this->app->singleton(SemesterInterface::class, SemesterRepository::class);
         $this->app->singleton(GradeInterface::class, GradeRepository::class);

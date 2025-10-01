@@ -1,15 +1,16 @@
 <?php
 namespace App\Models;
 
+use App\Models\User;
 use App\Models\Grade;
+use App\Models\Course;
 use App\Models\Semester;
 use App\Models\SubjectTranslation;
-use App\Models\User;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Illuminate\Database\Eloquent\Model;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
 class Subject extends Model implements TranslatableContract
 {
@@ -45,6 +46,10 @@ class Subject extends Model implements TranslatableContract
     {
         return $this->belongsTo(Semester::class, 'semester_id')->with('transLocale');
     }
+public function courses()
+{
+return $this->hasMany(Course::class, 'subject_id');
+}
     public function grade()
     {
         return $this->belongsTo(Grade::class, 'grade_id')->with('transLocale');

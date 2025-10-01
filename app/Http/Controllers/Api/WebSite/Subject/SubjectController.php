@@ -42,7 +42,7 @@ class SubjectController extends Controller
             if (! $model) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Subject not found', []);
             }
-          $model->load(['transLocale', 'educationalStage', 'semester', 'grade']);
+          $model->load(['transLocale', 'educationalStage', 'semester', 'grade','courses']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subject retrieved successfully', new SubjectResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Subject  found', $e->getMessage());

@@ -40,7 +40,7 @@ class GradeController extends Controller
             if (! $model) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Grade not found', []);
             }
-            $model->load(['transLocale', 'educationalStage']);
+            $model->load(['transLocale', 'educationalStage','subjects']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Grade retrieved successfully', new GradeResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No education stage found', $e->getMessage());

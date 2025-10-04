@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Resources\Lessons;
 
-use App\Http\Resources\Lessons\AttachmentResource;
 use App\Http\Resources\Unit\UnitResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
@@ -48,7 +47,7 @@ class LessonsResource extends JsonResource
                     ];
                 });
             }),
-            'slug'   => $this->whenLoaded('transLocale', function () {
+            'slug'        => $this->whenLoaded('transLocale', function () {
                 return $this->transLocale->first()->slug ?? null;
             }, function () {
                 return $this->whenLoaded('trans', function () {
@@ -59,15 +58,15 @@ class LessonsResource extends JsonResource
                 });
             }),
             'status'      => $this->status,
-            'sort'        => $this->sort,
-            'cover_image' => $this->getPath($this->cover_image),
-            'url'         => $this->url,
-            'zoom_url'    => $this->zoom_url,
+            // 'sort'        => $this->sort,
+            // 'cover_image' => $this->getPath($this->cover_image),
+            // 'url'         => $this->url,
+            // 'zoom_url'    => $this->zoom_url,
 
             'unit'        => new UnitResource($this->whenLoaded('unit')),
             'created_by'  => new UserResource($this->whenLoaded('createdBy')),
             'updated_by'  => new UserResource($this->whenLoaded('updatedBy')),
-            'attachments' => AttachmentResource::collection($this->whenLoaded('attachments')),
+            // 'attachments' => AttachmentResource::collection($this->whenLoaded('attachments')),
         ];
     }
 }

@@ -19,10 +19,6 @@ class Lessons extends Model implements TranslatableContract
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'sort',
-        'cover_image',
-        'url',
-        'zoom_url',
         'unit_id',
         'created_by',
         'updated_by',
@@ -34,7 +30,7 @@ class Lessons extends Model implements TranslatableContract
         'name',
         'description',
         'content',
-   'slug',
+        'slug',
     ];
     protected $translationForeignKey = 'lesson_id';
 

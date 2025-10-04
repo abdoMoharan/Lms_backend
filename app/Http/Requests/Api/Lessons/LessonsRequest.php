@@ -1,13 +1,13 @@
 <?php
 namespace App\Http\Requests\Api\Lessons;
 
-use Illuminate\Support\Str;
+use App\Http\Requests\Base\ApiRequest;
 use App\Models\LessonsTranslation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
-use App\Http\Requests\Base\ApiRequest;
 
 class LessonsRequest extends ApiRequest
 {
@@ -20,9 +20,9 @@ class LessonsRequest extends ApiRequest
         $attr = [];
         foreach (config('translatable.locales') as $locale) {
             $attr = array_merge($attr, [
-                "{$locale}.name"        => "name" . Lang::get($locale),
+                "{$locale}.name" => "name" . Lang::get($locale),
                 "{$locale}.description" => "description" . Lang::get($locale),
-                "{$locale}.content"     => "content" . Lang::get($locale),
+                "{$locale}.content" => "content" . Lang::get($locale),
             ]);
         }
         return $attr;
@@ -37,29 +37,29 @@ class LessonsRequest extends ApiRequest
         $req = [];
         foreach (config('translatable.locales') as $locale) {
             $req = array_merge($req, [
-                "{$locale}.name"        => 'nullable|string|max:255',
+                "{$locale}.name" => 'nullable|string|max:255',
                 "{$locale}.description" => 'nullable|string',
-                "{$locale}.content"     => 'nullable|string',
-     "{$locale}.slug" => "name" . Lang::get($locale),
+                "{$locale}.content" => 'nullable|string',
+                "{$locale}.slug" => "name" . Lang::get($locale),
             ]);
         }
 
         $req = array_merge($req, [
-            'status'                    => 'nullable|in:1,0',
-            'unit_id'                   => 'required|exists:units,id',
-            'sort'                      => 'nullable|integer',
-            'cover_image'               => 'nullable|image|mimes:jpg,jpeg,png',
-            'url'                       => 'nullable|active_url',
-            'zoom_url'                  => 'nullable|active_url',
-            'created_by'                => 'nullable|exists:users,id',
-            'updated_by'                => 'nullable|exists:users,id',
-            'attachment'                => 'nullable|array',
-            'attachment.*'              => 'nullable',
-            'attachment.*.file'         => 'nullable|mimes:pdf,docx,doc,xls,xlsx,ppt,pptx,zip,rar',
-            'attachment.*.type'         => 'nullable|in:upload_video,youtube_link,vimeo_link',
-            'attachment.*.video_upload' => 'nullable|mimes:mp4,mov,avi,wmv',
-            'attachment.*.link'         => 'nullable|active_url',
-            'attachment.*.image'        => 'nullable|mimes:jpg,jpeg,png',
+            'status'     => 'nullable|in:1,0',
+            'unit_id'    => 'required|exists:units,id',
+            // 'sort'                      => 'nullable|integer',
+            // 'cover_image'               => 'nullable|image|mimes:jpg,jpeg,png',
+            // 'url'                       => 'nullable|active_url',
+            // 'zoom_url'                  => 'nullable|active_url',
+            'created_by' => 'nullable|exists:users,id',
+            'updated_by' => 'nullable|exists:users,id',
+            // 'attachment'                => 'nullable|array',
+            // 'attachment.*'              => 'nullable',
+            // 'attachment.*.file'         => 'nullable|mimes:pdf,docx,doc,xls,xlsx,ppt,pptx,zip,rar',
+            // 'attachment.*.type'         => 'nullable|in:upload_video,youtube_link,vimeo_link',
+            // 'attachment.*.video_upload' => 'nullable|mimes:mp4,mov,avi,wmv',
+            // 'attachment.*.link'         => 'nullable|active_url',
+            // 'attachment.*.image'        => 'nullable|mimes:jpg,jpeg,png',
         ]);
 
         return $req;
@@ -77,7 +77,7 @@ class LessonsRequest extends ApiRequest
     public function getData()
     {
         $data = $this->validated();
- foreach (config('translatable.locales') as $locale) {
+        foreach (config('translatable.locales') as $locale) {
             if (empty($data[$locale]['slug']) && ! empty($data[$locale]['name'])) {
                 $data[$locale]['slug'] = $this->generateUniqueSlug($data[$locale]['name'], $locale);
             }
@@ -111,7 +111,7 @@ class LessonsRequest extends ApiRequest
         }
         return $data;
     }
- private function generateUniqueSlug($text, $locale)
+    private function generateUniqueSlug($text, $locale)
     {
         // توليد slug باستخدام Str::slug
         $slug = Str::slug($text);

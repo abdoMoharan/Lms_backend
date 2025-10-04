@@ -20,7 +20,7 @@ class CourseRepository implements CourseInterface
     public function index($request)
     {
         try {
-            $model = $this->model->query()->with(['createdBy', 'transLocale','teacher','subject'])->filter($request->query())->get();
+            $model = $this->model->query()->with(['createdBy', 'transLocale','subject'])->filter($request->query())->get();
             if ($model->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No course found', []);
             }
@@ -35,7 +35,7 @@ class CourseRepository implements CourseInterface
             DB::beginTransaction();
             $data  = $request->getData();
             $model = $this->model->create($data);
-            $model->load(['trans', 'createdBy','teacher','subject']);
+            $model->load(['trans', 'createdBy','subject']);
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'course created successfully', new CourseResource($model));
         } catch (\Exception $e) {
@@ -50,7 +50,7 @@ class CourseRepository implements CourseInterface
         try {
             $data = $request->getData();
             $model->update($data);
-            $model->load(['trans', 'createdBy','teacher','subject']);
+            $model->load(['trans', 'createdBy','subject']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new CourseResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No course found', []);
@@ -69,7 +69,7 @@ class CourseRepository implements CourseInterface
     public function show($local, $model)
     {
         try {
-            $model->load(['trans', 'createdBy','teacher','subject']);
+            $model->load(['trans', 'createdBy','subject']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'course retrieved successfully', new CourseResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No course found', []);
@@ -79,7 +79,7 @@ class CourseRepository implements CourseInterface
     {
         $model = $this->model->getAllDeleted();
         if ($model->isEmpty()) {
-            $model->load(['transLocale', 'createdBy','teacher','subject']);
+            $model->load(['transLocale', 'createdBy','subject']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted course found', []);
         }
         return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted course retrieved successfully', CourseResource::collection($model));

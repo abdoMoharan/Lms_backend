@@ -13,10 +13,6 @@ return new class extends Migration
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
-            $table->integer('sort')->nullable();
-            $table->string('cover_image')->nullable();
-            $table->string('url')->nullable();
-            $table->string('zoom_url')->nullable();
             $table->foreignId('unit_id')->nullable()->constrained('units')->cascadeOnDelete();
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');

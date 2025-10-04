@@ -49,7 +49,6 @@ class CourseResource extends JsonResource
                 });
             }),
             'status'           => $this->status,
-            'teacher' => new UserResource($this->whenLoaded('teacher')),
             'subject'            => new SubjectResource($this->whenLoaded('subject')),
             'created_by' => new UserResource($this->whenLoaded('createdBy')),
             'updated_by' => new UserResource($this->whenLoaded('updatedBy')),

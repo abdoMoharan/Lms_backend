@@ -42,7 +42,6 @@ class CourseRequest extends ApiRequest
 
         $rules = array_merge($rules, [
             'subject_id' => 'required|exists:subjects,id',
-            'user_id'    => 'required|exists:users,id',
             'status'     => 'nullable|in:1,0',
 
         ]);

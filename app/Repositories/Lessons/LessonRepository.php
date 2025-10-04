@@ -22,7 +22,7 @@ class LessonRepository implements LessonInterface
     public function index($request)
     {
         try {
-            $model = $this->model->query()->with(['createdBy', 'transLocale', 'unit', 'attachments'])->filter($request->query())->get();
+            $model = $this->model->query()->with(['createdBy', 'transLocale', 'unit'])->filter($request->query())->get();
             if ($model->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No lesson found', []);
             }
@@ -41,7 +41,7 @@ class LessonRepository implements LessonInterface
             if ($request->attachment) {
                 $model->attachments()->createMany($request->attachment);
             }
-            $model->load(['createdBy', 'transLocale', 'unit', 'attachments']);
+            $model->load(['createdBy', 'transLocale', 'unit']);
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'lesson created successfully', new LessonsResource($model));
         } catch (\Exception $e) {
@@ -65,7 +65,7 @@ class LessonRepository implements LessonInterface
             }
             $model->update($data);
 
-            $model->load(['createdBy', 'transLocale', 'unit', 'attachments']);
+            $model->load(['createdBy', 'transLocale', 'unit']);
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'lesson updated successfully', new LessonsResource($model));
         } catch (\Exception $e) {
@@ -86,7 +86,7 @@ class LessonRepository implements LessonInterface
     public function show($local, $model)
     {
         try {
-            $model->load(['createdBy', 'transLocale', 'unit', 'attachments']);
+            $model->load(['createdBy', 'transLocale', 'unit']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'lesson retrieved successfully', new LessonsResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No lesson found', []);
@@ -96,7 +96,7 @@ class LessonRepository implements LessonInterface
     {
         $model = $this->model->getAllDeleted();
         if ($model->isEmpty()) {
-            $model->load(['createdBy', 'transLocale', 'unit', 'attachments']);
+            $model->load(['createdBy', 'transLocale', 'unit']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted lesson found', []);
         }
         return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted lesson retrieved successfully', LessonsResource::collection($model));

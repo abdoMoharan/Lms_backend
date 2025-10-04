@@ -19,7 +19,6 @@ class Course extends Model implements TranslatableContract
     protected $fillable =
         [
         'subject_id',
-        'user_id',
         'created_by',
         'updated_by',
         'status',
@@ -43,10 +42,7 @@ class Course extends Model implements TranslatableContract
         return $this->hasMany(CourseTranslation::class, 'course_id');
     }
 
-    public function teacher()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+
 
     public function subject()
     {

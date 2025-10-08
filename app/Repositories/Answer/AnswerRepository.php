@@ -1,15 +1,16 @@
 <?php
 namespace App\Repositories\Answer;
 
-use App\Helpers\ApiResponse;
-use App\Http\Resources\Answer\AnswerResource;
-use App\Interfaces\Answer\AnswerInterface;
-use App\Models\Answer;
 use Exception;
+use App\Models\Answer;
+use App\Helpers\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
+use App\Interfaces\Answer\AnswerInterface;
+use App\Http\Resources\Answer\AnswerResource;
 
-class AnswerRepository implements AnswerInterface
+class AnswerRepository extends BaseRepository
 {
     public Answer $model;
 

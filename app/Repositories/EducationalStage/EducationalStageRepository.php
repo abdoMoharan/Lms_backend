@@ -1,15 +1,16 @@
 <?php
 namespace App\Repositories\EducationalStage;
 
-use App\Helpers\ApiResponse;
-use App\Http\Resources\EducationalStage\EducationalStageResource;
-use App\Interfaces\EducationalStage\EducationalStageInterface;
-use App\Models\EducationalStage;
 use Exception;
+use App\Helpers\ApiResponse;
+use App\Models\EducationalStage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
+use App\Interfaces\EducationalStage\EducationalStageInterface;
+use App\Http\Resources\EducationalStage\EducationalStageResource;
 
-class EducationalStageRepository implements EducationalStageInterface
+class EducationalStageRepository extends BaseRepository
 {
     public EducationalStage $model;
 

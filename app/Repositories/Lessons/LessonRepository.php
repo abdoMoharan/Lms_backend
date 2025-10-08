@@ -1,17 +1,18 @@
 <?php
 namespace App\Repositories\Lessons;
 
-use App\Helpers\ApiResponse;
-use App\Http\Resources\Lessons\LessonsResource;
-use App\Interfaces\Lessons\LessonInterface;
-use App\Models\Lessons;
-use App\Models\LessonsAttachment;
 use Exception;
+use App\Models\Lessons;
+use App\Helpers\ApiResponse;
+use App\Models\LessonsAttachment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
 use Illuminate\Support\Facades\Storage;
+use App\Interfaces\Lessons\LessonInterface;
+use App\Http\Resources\Lessons\LessonsResource;
 
-class LessonRepository implements LessonInterface
+class LessonRepository extends BaseRepository
 {
     public Lessons $model;
 

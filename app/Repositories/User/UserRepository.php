@@ -1,15 +1,16 @@
 <?php
 namespace App\Repositories\User;
 
-use App\Helpers\ApiResponse;
-use App\Http\Resources\User\UserResource;
-use App\Interfaces\User\UserInterface;
-use App\Models\User;
 use Exception;
+use App\Models\User;
+use App\Helpers\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
+use App\Interfaces\User\UserInterface;
+use App\Http\Resources\User\UserResource;
 
-class UserRepository implements UserInterface
+class UserRepository extends BaseRepository
 {
     public User $model;
 

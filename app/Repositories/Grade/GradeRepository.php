@@ -1,15 +1,16 @@
 <?php
 namespace App\Repositories\Grade;
 
-use App\Helpers\ApiResponse;
-use App\Http\Resources\Grade\GradeResource;
-use App\Interfaces\Grade\GradeInterface;
-use App\Models\Grade;
 use Exception;
+use App\Models\Grade;
+use App\Helpers\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
+use App\Interfaces\Grade\GradeInterface;
+use App\Http\Resources\Grade\GradeResource;
 
-class GradeRepository implements GradeInterface
+class GradeRepository extends BaseRepository
 {
     public Grade $model;
 

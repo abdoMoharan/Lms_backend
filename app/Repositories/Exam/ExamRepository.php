@@ -1,17 +1,18 @@
 <?php
 namespace App\Repositories\Exam;
 
-use App\Helpers\ApiResponse;
-use App\Http\Resources\Exam\ExamResource;
-use App\Interfaces\Exam\ExamInterface;
-use App\Models\Answer;
-use App\Models\Exam;
-use App\Models\Question;
 use Exception;
+use App\Models\Exam;
+use App\Models\Answer;
+use App\Models\Question;
+use App\Helpers\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
+use App\Interfaces\Exam\ExamInterface;
+use App\Http\Resources\Exam\ExamResource;
 
-class ExamRepository implements ExamInterface
+class ExamRepository extends BaseRepository
 {
     public Exam $model;
 

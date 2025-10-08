@@ -1,15 +1,16 @@
 <?php
 namespace App\Repositories\QuestionType;
 
-use App\Helpers\ApiResponse;
-use App\Http\Resources\QuestionType\QuestionTypeResource;
-use App\Interfaces\QuestionType\QuestionTypeInterface;
-use App\Models\QuestionType;
 use Exception;
+use App\Helpers\ApiResponse;
+use App\Models\QuestionType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
+use App\Interfaces\QuestionType\QuestionTypeInterface;
+use App\Http\Resources\QuestionType\QuestionTypeResource;
 
-class QuestionTypeRepository implements QuestionTypeInterface
+class QuestionTypeRepository extends BaseRepository
 {
     public QuestionType $model;
 

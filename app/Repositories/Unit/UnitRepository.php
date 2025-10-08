@@ -8,10 +8,11 @@ use App\Models\Unit;
 use App\Helpers\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
 use App\Interfaces\Unit\UnitInterface;
 use App\Http\Resources\Unit\UnitResource;
 
-class UnitRepository implements UnitInterface
+class UnitRepository extends BaseRepository
 {
     public Unit $model;
 

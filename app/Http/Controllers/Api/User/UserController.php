@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Api\User;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Interfaces\User\UserInterface;
+use App\Repositories\User\UserRepository;
 use App\Http\Requests\Api\User\UserRequest;
 
 class UserController extends Controller
 {
-    public UserInterface $user;
-    public function __construct(UserInterface $user)
+    public UserRepository $user;
+    public function __construct(UserRepository $user)
     {
         $this->user = $user;
     }

@@ -1,15 +1,16 @@
 <?php
 namespace App\Repositories\Semester;
 
-use App\Helpers\ApiResponse;
-use App\Http\Resources\Semester\SemesterResource;
-use App\Interfaces\Semester\SemesterInterface;
-use App\Models\Semester;
 use Exception;
+use App\Models\Semester;
+use App\Helpers\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
+use App\Interfaces\Semester\SemesterInterface;
+use App\Http\Resources\Semester\SemesterResource;
 
-class SemesterRepository implements SemesterInterface
+class SemesterRepository extends BaseRepository
 {
     public Semester $model;
 

@@ -7,11 +7,12 @@ use App\Helpers\ApiResponse;
 use App\Models\LessonsAttachment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Lessons\AttachmentResource;
 use App\Interfaces\Lessons\AttachmentLessonInterface;
 
-class AttachmentLessonRepository implements AttachmentLessonInterface
+class AttachmentLessonRepository extends BaseRepository
 {
     public LessonsAttachment $model;
 

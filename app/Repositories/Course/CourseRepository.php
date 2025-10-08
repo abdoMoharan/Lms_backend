@@ -1,15 +1,16 @@
 <?php
 namespace App\Repositories\Course;
 
-use App\Helpers\ApiResponse;
-use App\Http\Resources\Course\CourseResource;
-use App\Interfaces\Course\CourseInterface;
-use App\Models\Course;
 use Exception;
+use App\Models\Course;
+use App\Helpers\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
+use App\Interfaces\Course\CourseInterface;
+use App\Http\Resources\Course\CourseResource;
 
-class CourseRepository implements CourseInterface
+class CourseRepository extends BaseRepository
 {
     public Course $model;
 

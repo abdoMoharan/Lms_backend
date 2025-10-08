@@ -1,65 +1,65 @@
 <?php
 namespace App\Http\Controllers\Api\Lessons;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Lessons\LessonsRequest;
-use App\Interfaces\Lessons\LessonInterface;
 use App\Models\Lessons;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Repositories\Lessons\LessonRepository;
+use App\Http\Requests\Api\Lessons\LessonsRequest;
 
 class LessonsController extends Controller
 {
-    public LessonInterface $interface;
-    public function __construct(LessonInterface $interface)
+    public LessonRepository $repository;
+    public function __construct(LessonRepository $repository)
     {
-        $this->interface = $interface;
+        $this->repository = $repository;
     }
     public function index(Request $request)
     {
-        return $this->interface->index($request);
+        return $this->repository->index($request);
     }
     public function store(LessonsRequest $request)
     {
-        return $this->interface->store($request);
+        return $this->repository->store($request);
     }
     public function update($local, LessonsRequest $request, Lessons $model)
     {
 
-        return $this->interface->update($local, $request, $model);
+        return $this->repository->update($local, $request, $model);
     }
     public function delete($local, Lessons $model)
     {
 
-        return $this->interface->delete($local, $model);
+        return $this->repository->delete($local, $model);
     }
     public function show($local, Lessons $model)
     {
-        return $this->interface->show($local, $model);
+        return $this->repository->show($local, $model);
     }
     public function showDeleted()
     {
-        return $this->interface->showDeleted();
+        return $this->repository->showDeleted();
     }
     public function restore($local, $id)
     {
-        return $this->interface->restore($local, $id);
+        return $this->repository->restore($local, $id);
     }
     public function forceDelete($local, $id)
     {
-        return $this->interface->forceDelete($local, $id);
+        return $this->repository->forceDelete($local, $id);
     }
     public function multi_actions($local, Request $request)
     {
-        return $this->interface->multi_actions($local, $request);
+        return $this->repository->multi_actions($local, $request);
     }
 
     public function updateAttachment($local, Lessons $model, Request $request)
     {
-        return $this->interface->updateAttachment($local, $model, $request);
+        return $this->repository->updateAttachment($local, $model, $request);
     }
     public function deleteAttachment($local, Lessons $model)
     {
-        return $this->interface->deleteAttachment($local, $model);
+        return $this->repository->deleteAttachment($local, $model);
     }
 
 }

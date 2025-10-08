@@ -1,15 +1,16 @@
 <?php
 namespace App\Repositories\Subject;
 
-use App\Helpers\ApiResponse;
-use App\Http\Resources\Subject\SubjectResource;
-use App\Interfaces\Subject\SubjectInterface;
-use App\Models\Subject;
 use Exception;
+use App\Models\Subject;
+use App\Helpers\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Abstract\BaseRepository;
+use App\Interfaces\Subject\SubjectInterface;
+use App\Http\Resources\Subject\SubjectResource;
 
-class SubjectRepository implements SubjectInterface
+class SubjectRepository extends BaseRepository
 {
     public Subject $model;
 

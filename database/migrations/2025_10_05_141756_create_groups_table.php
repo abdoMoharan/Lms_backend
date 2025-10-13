@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('group_name');                                                  // اسم المجموعة
             $table->foreignId('course_id')->constrained()->onDelete('cascade');            // الكورس الذي تنتمي إليه المجموعة
-            $table->foreignId('teacher_id')->constrained('teachers')->onDelete('cascade'); // المدرب المسؤول
+            $table->foreignId('teacher_id')->constrained('users')->onDelete('cascade'); // المدرب المسؤول
             $table->integer('max_seats')->nullable()->default(25);                         // الحد الأقصى لعدد المقاعد
             $table->tinyInteger('status')->default(1);
             $table->dateTime('start_time');                                          // وقت بدء الجلسة

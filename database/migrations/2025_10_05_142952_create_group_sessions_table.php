@@ -14,7 +14,7 @@ return new class extends Migration
  Schema::create('group_sessions', function (Blueprint $table) {
         $table->id();
         $table->foreignId('group_id')->constrained('groups')->onDelete('cascade');      // ربط الجلسة بالمجموعة
-        $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');        // ربط الجلسة بالغرفة
+        // $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');        // ربط الجلسة بالغرفة
         $table->dateTime('start_time');                                                  // وقت بدء الجلسة
         $table->dateTime('end_time');                                                    // وقت انتهاء الجلسة
         $table->integer('capacity');                                                     // عدد المقاعد المتاحة في الجلسة

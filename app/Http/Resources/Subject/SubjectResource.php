@@ -1,11 +1,12 @@
 <?php
 namespace App\Http\Resources\Subject;
 
-use App\Http\Resources\EducationalStage\EducationalStageResource;
-use App\Http\Resources\Grade\GradeResource;
-use App\Http\Resources\Semester\SemesterResource;
 use Illuminate\Http\Request;
+use App\Http\Resources\Grade\GradeResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Semester\SemesterResource;
+use App\Http\Resources\Semester\SemesterSubjectResource;
+use App\Http\Resources\EducationalStage\EducationalStageResource;
 
 class SubjectResource extends JsonResource
 {
@@ -41,7 +42,7 @@ class SubjectResource extends JsonResource
             }),
             'status'           => $this->status,
             'educationalStage' => new EducationalStageResource($this->whenLoaded('educationalStage')),
-            'semester'         => new SemesterResource($this->whenLoaded('semester')),
+            'semesters'         =>  SemesterSubjectResource::collection($this->whenLoaded('semesters')),
             'grade'            => new GradeResource($this->whenLoaded('grade')),
         ];
     }

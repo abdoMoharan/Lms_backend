@@ -4,6 +4,7 @@ namespace App\Repositories\Subject;
 use Exception;
 use App\Models\Subject;
 use App\Helpers\ApiResponse;
+use App\Models\SubjectSemester;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Abstract\BaseRepository;
@@ -36,7 +37,14 @@ class SubjectRepository extends BaseRepository
             DB::beginTransaction();
             $data    = $request->getData();
             $model = $this->model->create($data);
-            $model->load(['trans', 'educationalStage', 'semester', 'grade']);
+            foreach ($data['semesters'] as $semester) {
+
+                $model->semesters()->create([
+                    'semester_id' => $semester['semester_id'],
+                ]);
+            }
+            $model->load(['trans', 'educationalStage', 'semesters', 'grade']);
+
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subjects created successfully', new SubjectResource($model));
         } catch (\Exception $e) {

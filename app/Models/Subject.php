@@ -1,16 +1,15 @@
 <?php
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\Grade;
 use App\Models\Course;
-use App\Models\Semester;
+use App\Models\Grade;
 use App\Models\SubjectTranslation;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
 class Subject extends Model implements TranslatableContract
 {
@@ -19,12 +18,12 @@ class Subject extends Model implements TranslatableContract
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable          = ['created_by', 'updated_by', 'status', 'stage_id', 'semester_id', 'grade_id'];
+    protected $fillable          = ['created_by', 'updated_by', 'status', 'stage_id', 'grade_id'];
     public $translatedAttributes = [
         'subject_id',
         'locale',
         'name',
-   'slug',
+        'slug',
     ];
     protected $translationForeignKey = 'subject_id';
 
@@ -42,14 +41,20 @@ class Subject extends Model implements TranslatableContract
         return $this->belongsTo(EducationalStage::class, 'stage_id')->with('transLocale');
     }
 
-    public function semester()
+    // public function semester()
+    // {
+    //     return $this->belongsTo(Semester::class, 'semester_id')->with('transLocale');
+    // }
+
+    public function semesters()
     {
-        return $this->belongsTo(Semester::class, 'semester_id')->with('transLocale');
+        return $this->hasMany(SubjectSemester::class, 'subject_id')->with('semester');
     }
-public function courses()
-{
-return $this->hasMany(Course::class, 'subject_id');
-}
+
+    public function courses()
+    {
+        return $this->hasMany(Course::class, 'subject_id');
+    }
     public function grade()
     {
         return $this->belongsTo(Grade::class, 'grade_id')->with('transLocale');
@@ -80,7 +85,7 @@ return $this->hasMany(Course::class, 'subject_id');
 
     public static function getAllDeleted()
     {
-        return self::onlyTrashed()->with(['transLocale','educationalStage','semester','grade','createdBy'])->get();
+        return self::onlyTrashed()->with(['transLocale', 'educationalStage', 'semester', 'grade', 'createdBy'])->get();
     }
 
     // Restore a Deleted Record

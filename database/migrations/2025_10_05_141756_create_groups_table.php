@@ -13,15 +13,17 @@ return new class extends Migration
     {
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
-            $table->string('group_name');                                                  // اسم المجموعة
-            $table->foreignId('course_id')->constrained()->onDelete('cascade');            // الكورس الذي تنتمي إليه المجموعة
+            $table->string('group_name');                                               // اسم المجموعة
+            $table->foreignId('course_id')->constrained()->onDelete('cascade');         // الكورس الذي تنتمي إليه المجموعة
             $table->foreignId('teacher_id')->constrained('users')->onDelete('cascade'); // المدرب المسؤول
-            $table->integer('max_seats')->nullable()->default(25);                         // الحد الأقصى لعدد المقاعد
-            $table->tinyInteger('status')->default(1);
+            $table->integer('max_seats')->nullable()->default(25);                      // الحد الأقصى لعدد المقاعد
+            $table->integer('available_seats')->nullable()->default(0);                      // الحد الحالي لعدد المقاعد
+            $table->tinyInteger('status')->default(1)->nullable();
             $table->dateTime('start_time');                                          // وقت بدء الجلسة
-            $table->dateTime('end_time');                                            // وقت انتهاء الجلسة
-            $table->integer('capacity');                                             // عدد المقاعد المتاحة في الجلسة
-            $table->enum('session_status', ['scheduled', 'completed', 'cancelled']); // حالة الجلسة         // حالة المجموعة
+            $table->enum('session_time',['pm','am']);                                          // وقت بدء الجلسة
+            $table->enum('session_status', ['scheduled', 'completed', 'cancelled']); // حالة الجلسة
+            $table->enum('group_type', ['individual', 'group']);                     // حالة المجموعة (فردي/جماعي)
+            $table->integer('hours_count')->nullable();                              // عدد الساعات
             $table->timestamps();
         });
     }

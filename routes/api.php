@@ -1,15 +1,16 @@
 <?php
 
-use App\Http\Controllers\Api\Answer\AnswerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
-use App\Http\Controllers\Api\Auth\SocialAuthController;
 use App\Http\Controllers\Api\Exam\ExamController;
 use App\Http\Controllers\Api\Role\RoleController;
 use App\Http\Controllers\Api\Unit\UnitController;
 use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\Grade\GradeController;
+use App\Http\Controllers\Api\Group\GroupController;
+use App\Http\Controllers\Api\Answer\AnswerController;
 use App\Http\Controllers\Api\Course\CourseController;
+use App\Http\Controllers\Api\Auth\SocialAuthController;
 use App\Http\Controllers\Api\Lessons\LessonsController;
 use App\Http\Controllers\Api\Subject\SubjectController;
 use App\Http\Controllers\Api\Question\QuestionController;
@@ -175,6 +176,13 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::get('/show/{model}', 'show')->name('show');
         });
         Route::prefix('answers')->name('answers.')->controller(AnswerController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/update/{model}', 'update')->name('update');
+            Route::delete('/delete/{model}', 'delete')->name('delete');
+            Route::get('/show/{model}', 'show')->name('show');
+        });
+        Route::prefix('groups')->name('groups.')->controller(GroupController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::put('/update/{model}', 'update')->name('update');

@@ -1,10 +1,31 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Group extends Model
 {
-    //
+    protected $fillable = [
+        'group_name',
+        'course_id',
+        'teacher_id',
+        'max_seats',
+        'available_seats',
+        'status',
+        'start_time',
+        'session_time',
+        'session_status',
+        'group_type',
+        'hours_count',
+    ];
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    public function teacher()
+    {
+        return $this->belongsTo(User::class, 'teacher_id');
+    }
 }

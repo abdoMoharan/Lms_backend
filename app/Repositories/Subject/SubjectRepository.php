@@ -38,13 +38,11 @@ class SubjectRepository extends BaseRepository
             $data    = $request->getData();
             $model = $this->model->create($data);
             foreach ($data['semesters'] as $semester) {
-
                 $model->semesters()->create([
-                    'semester_id' => $semester['semester_id'],
+                    'semester_id' => $semester['id'],
                 ]);
             }
             $model->load(['trans', 'educationalStage', 'semesters', 'grade']);
-
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subjects created successfully', new SubjectResource($model));
         } catch (\Exception $e) {

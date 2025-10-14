@@ -1,0 +1,33 @@
+<?php
+namespace App\Http\Resources\Group;
+
+use App\Http\Resources\Course\CourseResource;
+use App\Http\Resources\User\UserResource;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class GroupResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id'              => $this->id,
+            'group_name'      => $this->group_name,
+            'max_seats'       => $this->max_seats,
+            'available_seats' => $this->available_seats,
+            'status'          => $this->status,
+            'start_time'      => $this->start_time,
+            'end_time'        => $this->end_time,
+            'session_status'  => $this->session_status,
+            'group_type'      => $this->group_type,
+            'hours_count'     => $this->hours_count,
+            'course'          => new CourseResource($this->whenLoaded('course')),
+            'teacher'         => new UserResource($this->whenLoaded('teacher')),
+        ];
+    }
+}

@@ -29,7 +29,7 @@ class GroupRequest extends ApiRequest
             'status' => 'nullable|in:0,1',
             'start_time' => 'required',
             'session_time' => 'required|in:pm,am',
-            'session_status' => 'required|in:upcoming,ongoing,completed',
+            'session_status' => 'required|in:scheduled,completed,cancelled',
             'group_type' => 'required|in:individual,group',
             'hours_count' => 'required|integer|min:1',
         ];

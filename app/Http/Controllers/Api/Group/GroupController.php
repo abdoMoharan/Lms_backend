@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\Group;
 use App\Models\Group;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Group\GroupRequest;
 use App\Repositories\Group\GroupRepository;
+use App\Http\Requests\Api\Group\GroupRequest;
 
 class GroupController extends Controller
 {

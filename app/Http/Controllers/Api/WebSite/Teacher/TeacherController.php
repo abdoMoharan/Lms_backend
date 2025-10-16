@@ -18,7 +18,7 @@ class TeacherController extends Controller
     public function index(Request $request)
     {
         try {
-            $Teacher = $this->model->query()->with(['transLocale', 'profile', 'userEductionStage'])->where('user_type', 'teacher')->filter($request->query())->get();
+            $Teacher = $this->model->query()->with(['profile', 'userEductionStage'])->where('user_type', 'teacher')->filter($request->query())->get();
             if ($Teacher->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Teacher found', []);
             }
@@ -34,7 +34,7 @@ class TeacherController extends Controller
             if (! $model) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Teacher not found', []);
             }
-            $model->load(['transLocale', 'profile', 'userEductionStage']);
+            $model->load([ 'profile', 'userEductionStage']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Teacher retrieved successfully', new UserResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Teacher found', $e->getMessage());

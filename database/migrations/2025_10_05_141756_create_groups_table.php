@@ -17,13 +17,12 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained()->onDelete('cascade');         // الكورس الذي تنتمي إليه المجموعة
             $table->foreignId('teacher_id')->constrained('users')->onDelete('cascade'); // المدرب المسؤول
             $table->integer('max_seats')->nullable()->default(25);                      // الحد الأقصى لعدد المقاعد
-            $table->integer('available_seats')->nullable()->default(0);                      // الحد الحالي لعدد المقاعد
+            $table->integer('available_seats')->nullable()->default(25);                // الحد الحالي لعدد المقاعد
             $table->tinyInteger('status')->default(1)->nullable();
-            $table->dateTime('start_time');                                          // وقت بدء الجلسة
-            $table->enum('session_time',['pm','am']);                                          // وقت بدء الجلسة
             $table->enum('session_status', ['scheduled', 'completed', 'cancelled']); // حالة الجلسة
             $table->enum('group_type', ['individual', 'group']);                     // حالة المجموعة (فردي/جماعي)
             $table->integer('hours_count')->nullable();                              // عدد الساعات
+            $table->integer('number_lessons')->nullable();                           //get in course Id
             $table->timestamps();
         });
     }

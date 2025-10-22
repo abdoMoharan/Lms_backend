@@ -18,7 +18,7 @@ class Subject extends Model implements TranslatableContract
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable          = ['created_by', 'updated_by', 'status', 'stage_id', 'grade_id', 'day_count'];
+    protected $fillable          = ['created_by', 'updated_by', 'status', 'stage_id', 'grade_id'];
     public $translatedAttributes = [
         'subject_id',
         'locale',

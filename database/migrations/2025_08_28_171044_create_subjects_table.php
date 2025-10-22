@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
-            $table->integer('day_count')->nullable()->default(2);
+
             $table->foreignId('stage_id')->nullable()->constrained('educational_stages')->cascadeOnDelete();
             $table->foreignId('grade_id')->nullable()->constrained('grades')->cascadeOnDelete();
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');

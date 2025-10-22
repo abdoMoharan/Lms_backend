@@ -41,7 +41,7 @@ class SubjectRequest extends ApiRequest
         }
         $req = array_merge($req, [
             'status'                  => 'nullable|in:1,0',
-            'day_count'               => 'required|integer',
+
             'stage_id'                => 'required|exists:educational_stages,id',
             'grade_id'                => 'required|exists:grades,id',
             'semesters'               => 'array',

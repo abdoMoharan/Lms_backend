@@ -39,11 +39,10 @@ class CourseRequest extends ApiRequest
                 "{$locale}.slug" => "name" . Lang::get($locale),
             ]);
         }
-
         $rules = array_merge($rules, [
             'subject_id' => 'required|exists:subjects,id',
             'status'     => 'nullable|in:1,0',
-
+            'day_count'  => 'required|integer',
         ]);
 
         return $rules;

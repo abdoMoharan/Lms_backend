@@ -21,23 +21,25 @@ class GroupRequest extends ApiRequest
     public function rules(): array
     {
         return [
-            'group_name' => 'required|string|max:255',
-            'course_id' => 'required|exists:courses,id',
-            'teacher_id' => 'required|exists:users,id',
-            'max_seats' => 'required|integer|min:1',
+            'group_name'      => 'required|string|max:255',
+            'course_id'       => 'required|exists:courses,id',
+            'teacher_id'      => 'required|exists:users,id',
+            'max_seats'       => 'required|integer|min:1',
             'available_seats' => 'required|integer|min:0',
-            'status' => 'nullable|in:0,1',
-            'start_time' => 'required',
-            'session_time' => 'required|in:pm,am',
-            'session_status' => 'required|in:scheduled,completed,cancelled',
-            'group_type' => 'required|in:individual,group',
-            'hours_count' => 'required|integer|min:1',
+            'status'          => 'nullable|in:0,1',
+            'start_time'      => 'required',
+            'session_time'    => 'required|in:pm,am',
+            'session_status'  => 'required|in:scheduled,completed,cancelled',
+            'group_type'      => 'required|in:individual,group',
+            'hours_count'     => 'nullable|integer|min:1',
+            'week_ids'        => 'required',
+            'week_ids.*'      => 'exists:weeks,id',
         ];
     }
 
-
-function getData() : array {
-    return $this->validated();
-}
+    public function getData(): array
+    {
+        return $this->validated();
+    }
 
 }

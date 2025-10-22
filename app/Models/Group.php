@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Group extends Model
 {
@@ -12,11 +13,10 @@ class Group extends Model
         'max_seats',
         'available_seats',
         'status',
-        'start_time',
-        'session_time',
         'session_status',
         'group_type',
         'hours_count',
+        'number_lessons',
     ];
 
     public function course()
@@ -27,5 +27,10 @@ class Group extends Model
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function groupDays(): HasMany
+    {
+        return $this->hasMany(GroupDay::class, 'group_id');
     }
 }

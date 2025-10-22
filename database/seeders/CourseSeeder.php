@@ -16,6 +16,7 @@ class CourseSeeder extends Seeder
 
         $courses = [
             [
+                'day_count'    => 2,
                 'created_by'   => $user->id,
                 'updated_by'   => $user->id,
                 'status'       => 1,
@@ -33,6 +34,8 @@ class CourseSeeder extends Seeder
                 ],
             ],
             [
+                'day_count'    => 3,
+
                 'created_by'   => $user->id,
                 'updated_by'   => $user->id,
                 'status'       => 1,
@@ -59,6 +62,7 @@ class CourseSeeder extends Seeder
                 'created_by' => $courseData['created_by'],
                 'updated_by' => $courseData['updated_by'],
                 'status'     => $courseData['status'],
+  'day_count'  => $courseData['day_count'],
             ]);
 
             foreach ($courseData['translations'] as $locale => $translation) {

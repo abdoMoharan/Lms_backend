@@ -4,17 +4,22 @@ namespace App\Repositories\Group;
 use App\Helpers\ApiResponse;
 use App\Http\Abstract\BaseRepository;
 use App\Http\Resources\Group\GroupResource;
+use App\Models\Course;
 use App\Models\Group;
+use App\Models\GroupDay;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class GroupRepository extends BaseRepository
 {
     public Group $model;
+    public Course $course;
 
-    public function __construct(Group $model)
+    public function __construct(Group $model,Course $course)
     {
         $this->model = $model;
+        $this->course = $course;
+
     }
     public function index($request)
     {
@@ -32,9 +37,62 @@ class GroupRepository extends BaseRepository
     {
         try {
             DB::beginTransaction();
-            $data  = $request->getData();
+
+            $data = $request->getData();
+
+            // حفظ البيانات في جدول groups
             $model = $this->model->create($data);
-            $model->load(['teacher', 'course']);
+
+            // جلب الكورس المرتبط بالمجموعة
+            $course = $this->course->findOrFail($data['course_id']);
+
+            // استرجاع عدد الأيام من الكورس
+            $dayCount = $course->day_count;
+
+            $weekIds = $data['week_ids']; // من الـ request
+                                          // تحقق من أن عدد الأيام لا يتجاوز `day_count` في الكورس
+            if (count($weekIds) > $dayCount) {
+                return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Number of days exceeds course day count');
+            }
+
+            // 1. تحقق من وجود مجموعة في نفس الوقت للمعلم
+            $group_day_exists = GroupDay::whereHas('group', function ($query) use ($data) {
+                $query->where('teacher_id', $data['teacher_id']);
+            })
+                ->where('start_time', $data['start_time']) // تحقق من الوقت نفسه
+                ->exists();
+
+            if ($group_day_exists) {
+                return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'This time is already reserved for this teacher.');
+            }
+
+            // 2. تحقق من أن الفرق بين آخر مجموعة والمعلمة الجديدة هو ساعتين على الأقل
+            $last_group = GroupDay::whereHas('group', function ($query) use ($data) {
+                $query->where('teacher_id', $data['teacher_id']);
+            })
+                ->orderBy('start_time', 'desc')
+                ->first();
+
+            if ($last_group) {
+                $last_start_time = \Carbon\Carbon::parse($last_group->start_time);
+                $new_start_time  = \Carbon\Carbon::parse($data['start_time']);
+                $difference      = $last_start_time->diffInHours($new_start_time);
+
+                if ($difference < 2) {
+                    return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'There must be at least a 2-hour difference between the last group and the new one.');
+                }
+            }
+//get Lessons By Courses
+$get_lessons=$this->course->whereHas()
+            // إنشاء سجلات جديدة في جدول group_days بناءً على week_ids
+            foreach ($weekIds as $weekId) {
+                $model->groupDays()->create([
+                    'start_time'   => $data['start_time'],
+                    'session_time' => $data['session_time'],
+                    'week_id'      => $weekId,
+                ]);
+            }
+
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Groups created successfully', new GroupResource($model));
         } catch (\Exception $e) {

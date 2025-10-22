@@ -18,7 +18,7 @@ class SubjectSeeder extends Seeder
 
         $subjects = [
             [
-                'day_count'    => 3,
+
                 'created_by'   => $user->id,
                 'updated_by'   => $user->id,
                 'status'       => 1,
@@ -34,7 +34,6 @@ class SubjectSeeder extends Seeder
                 ],
             ],
             [
-                'day_count'    => 2,
                 'created_by'   => $user->id,
                 'updated_by'   => $user->id,
                 'status'       => 1,
@@ -61,7 +60,7 @@ class SubjectSeeder extends Seeder
                 'created_by' => $subjectData['created_by'],
                 'updated_by' => $subjectData['updated_by'],
                 'status'     => $subjectData['status'],
-                'day_count'  => $subjectData['day_count'],
+
             ]);
             foreach ($subjectData['translations'] as $locale => $translation) {
                 $subject->translations()->create([

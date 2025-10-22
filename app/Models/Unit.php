@@ -6,6 +6,7 @@ use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Unit extends Model implements TranslatableContract
@@ -15,12 +16,12 @@ class Unit extends Model implements TranslatableContract
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable          = ['created_by', 'updated_by', 'status', 'course_id','sort'];
+    protected $fillable          = ['created_by', 'updated_by', 'status', 'course_id', 'sort'];
     public $translatedAttributes = [
         'unit_id',
         'locale',
         'name',
-           'slug',
+        'slug',
     ];
     protected $translationForeignKey = 'unit_id';
 
@@ -36,7 +37,13 @@ class Unit extends Model implements TranslatableContract
 
     public function course()
     {
-        return $this->belongsTo(Course::class, 'course_id')->with(['transLocale','teacher','subject']);
+        return $this->belongsTo(Course::class, 'course_id')->with(['transLocale', 'teacher', 'subject']);
+    }
+
+
+    public function lessons(): HasMany
+    {
+        return $this->hasMany(Lessons::class, 'unit_id')->with('transLocale');
     }
 
     public function scopeFilter(Builder $builder, array $filters): Builder
@@ -70,7 +77,7 @@ class Unit extends Model implements TranslatableContract
 
     public static function getAllDeleted()
     {
-        return self::onlyTrashed()->with(['transLocale','course','createdBy'])->get();
+        return self::onlyTrashed()->with(['transLocale', 'course', 'createdBy'])->get();
     }
 
     // Restore a Deleted Record

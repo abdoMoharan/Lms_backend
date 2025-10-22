@@ -17,8 +17,8 @@ class CourseResource extends JsonResource
     {
         $transLocale = $this->transLocale()->first();
         return [
-            "id"               => $this->id,
-            'name'             => $this->whenLoaded('transLocale', function () {
+            "id"          => $this->id,
+            'name'        => $this->whenLoaded('transLocale', function () {
                 return $this->transLocale->first()->name ?? null;
             }, function () {
                 return $this->whenLoaded('trans', function () {
@@ -28,7 +28,7 @@ class CourseResource extends JsonResource
                     ];
                 });
             }),
-            'description'             => $this->whenLoaded('transLocale', function () {
+            'description' => $this->whenLoaded('transLocale', function () {
                 return $this->transLocale->first()->description ?? null;
             }, function () {
                 return $this->whenLoaded('trans', function () {
@@ -38,7 +38,7 @@ class CourseResource extends JsonResource
                     ];
                 });
             }),
-                        'slug'   => $this->whenLoaded('transLocale', function () {
+            'slug'        => $this->whenLoaded('transLocale', function () {
                 return $this->transLocale->first()->slug ?? null;
             }, function () {
                 return $this->whenLoaded('trans', function () {
@@ -48,10 +48,11 @@ class CourseResource extends JsonResource
                     ];
                 });
             }),
-            'status'           => $this->status,
-            'subject'            => new SubjectResource($this->whenLoaded('subject')),
-            'created_by' => new UserResource($this->whenLoaded('createdBy')),
-            'updated_by' => new UserResource($this->whenLoaded('updatedBy')),
+            'status'      => $this->status,
+            'day_count'   => $this->day_count,
+            'subject'     => new SubjectResource($this->whenLoaded('subject')),
+            'created_by'  => new UserResource($this->whenLoaded('createdBy')),
+            'updated_by'  => new UserResource($this->whenLoaded('updatedBy')),
         ];
     }
 }

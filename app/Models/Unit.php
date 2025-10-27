@@ -37,7 +37,7 @@ class Unit extends Model implements TranslatableContract
 
     public function course()
     {
-        return $this->belongsTo(Course::class, 'course_id')->with(['transLocale', 'teacher', 'subject']);
+        return $this->belongsTo(Course::class, 'course_id')->with(['transLocale','subject']);
     }
 
 

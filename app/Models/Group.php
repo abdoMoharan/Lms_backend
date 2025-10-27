@@ -33,4 +33,8 @@ class Group extends Model
     {
         return $this->hasMany(GroupDay::class, 'group_id');
     }
+    public function groupSession(): HasMany
+    {
+        return $this->hasMany(GroupSession::class, 'group_id')->with(['lesson']);
+    }
 }

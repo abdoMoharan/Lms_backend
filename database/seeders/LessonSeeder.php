@@ -54,7 +54,45 @@ class LessonSeeder extends Seeder
                         'slug' => 'second-lesson'
                     ],
                 ]
-            ]
+                ],
+            [
+                'created_by' => $user->id,
+                'updated_by' => $user->id,
+                'status' => 1,
+                'translations' => [
+                    'ar' => [
+                        'name' => 'الدارس رقم 3',
+                        'description' => 'مقدمة في الرياضيات.',
+                        'content' => 'هنا شرح كامل للدرس الأول.',
+                        'slug' => 'الدرس-الأول'
+                    ],
+                    'en' => [
+                        'name' => 'Lesson 3',
+                        'description' => 'Introduction to Mathematics.',
+                        'content' => 'Complete explanation of the first lesson.',
+                        'slug' => 'first-lesson'
+                    ],
+                ]
+            ],
+            [
+                'created_by' => $user->id,
+                'updated_by' => $user->id,
+                'status' => 1,
+                'translations' => [
+                    'ar' => [
+                        'name' =>'الدارس رقم 4',
+                        'description' => 'مقدمة متقدمة في الرياضيات.',
+                        'content' => 'هنا شرح كامل للدرس الثاني.',
+                        'slug' => 'الدرس-الثاني'
+                    ],
+                    'en' => [
+                        'name' => 'Lesson 4',
+                        'description' => 'Advanced Mathematics.',
+                        'content' => 'Complete explanation of the second lesson.',
+                        'slug' => 'second-lesson'
+                    ],
+                ]
+                ],
         ];
 
         foreach ($lessons as $lessonData) {

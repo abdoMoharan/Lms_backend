@@ -7,6 +7,7 @@ use App\Http\Resources\Group\GroupResource;
 use App\Models\Course;
 use App\Models\Group;
 use App\Models\GroupDay;
+use App\Models\Week;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -15,9 +16,9 @@ class GroupRepository extends BaseRepository
     public Group $model;
     public Course $course;
 
-    public function __construct(Group $model,Course $course)
+    public function __construct(Group $model, Course $course)
     {
-        $this->model = $model;
+        $this->model  = $model;
         $this->course = $course;
 
     }
@@ -50,12 +51,13 @@ class GroupRepository extends BaseRepository
             $dayCount = $course->day_count;
 
             $weekIds = $data['week_ids']; // من الـ request
-                                          // تحقق من أن عدد الأيام لا يتجاوز `day_count` في الكورس
+
+            // تحقق من أن عدد الأيام لا يتجاوز `day_count` في الكورس
             if (count($weekIds) > $dayCount) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Number of days exceeds course day count');
             }
 
-            // 1. تحقق من وجود مجموعة في نفس الوقت للمعلم
+            // تحقق من وجود مجموعة في نفس الوقت للمعلم
             $group_day_exists = GroupDay::whereHas('group', function ($query) use ($data) {
                 $query->where('teacher_id', $data['teacher_id']);
             })
@@ -66,7 +68,7 @@ class GroupRepository extends BaseRepository
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'This time is already reserved for this teacher.');
             }
 
-            // 2. تحقق من أن الفرق بين آخر مجموعة والمعلمة الجديدة هو ساعتين على الأقل
+            // تحقق من أن الفرق بين آخر مجموعة والمعلمة الجديدة هو ساعتين على الأقل
             $last_group = GroupDay::whereHas('group', function ($query) use ($data) {
                 $query->where('teacher_id', $data['teacher_id']);
             })
@@ -82,16 +84,54 @@ class GroupRepository extends BaseRepository
                     return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'There must be at least a 2-hour difference between the last group and the new one.');
                 }
             }
-//get Lessons By Courses
-$get_lessons=$this->course->whereHas()
+
+            // جلب الوحدات والدروس المرتبطة بالكورس
+            $units   = $course->units;
+            $lessons = [];
+            foreach ($units as $unit) {
+                $lessons = array_merge($lessons, $unit->lessons->toArray());
+            }
+
+            // توزيع الدروس على الأيام
+            $lessonCount   = count($lessons);
+            $dayCount      = count($weekIds);                // عدد الأيام التي اختارها المعلم
+            $lessonsPerDay = ceil($lessonCount / $dayCount); // توزيع الدروس بالتساوي
+
+            $lessonIndex = 0;
+
             // إنشاء سجلات جديدة في جدول group_days بناءً على week_ids
             foreach ($weekIds as $weekId) {
-                $model->groupDays()->create([
+                // إضافة البيانات إلى جدول group_days
+                $groupDay = $model->groupDays()->create([
                     'start_time'   => $data['start_time'],
                     'session_time' => $data['session_time'],
                     'week_id'      => $weekId,
                 ]);
+
+                // جلب اليوم (week) من جدول weeks بناءً على week_id
+                $week = Week::find($weekId);
+                $date = \Carbon\Carbon::now()->next($week->day); // تحديد التاريخ الخاص باليوم في الأسبوع
+
+                // تحديد عدد الدروس التي سيتم تخصيصها لهذا اليوم
+                $lessonsForDay = array_slice($lessons, $lessonIndex, $lessonsPerDay);
+
+                foreach ($lessonsForDay as $lesson) {
+                    // إنشاء جلسة للمجموعة على هذا اليوم
+                    $groupSession = \App\Models\GroupSession::create([
+                        'date'         => $date->toDateString(),
+                        'start_time'   => $data['start_time'],
+                        'session_time' => $data['session_time'],
+                        'group_id'     => $model->id,    // المعرف الخاص بالمجموعة
+                        'day_id'       => $groupDay->id, // ربط session بـ groupDay
+                        'lesson_id'    => $lesson['id'], // استخدام ID الدرس هنا
+                    ]);
+                    $lessonIndex++;
+                }
+
             }
+
+            // إعادة تحميل العلاقة بعد إضافة البيانات
+            $model->load(['course', 'teacher', 'groupDays','groupSession']);
 
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Groups created successfully', new GroupResource($model));

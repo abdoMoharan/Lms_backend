@@ -21,13 +21,16 @@ class GroupResource extends JsonResource
             'max_seats'       => $this->max_seats,
             'available_seats' => $this->available_seats,
             'status'          => $this->status,
-            'start_time'      => $this->start_time,
-            'end_time'        => $this->end_time,
+            // 'start_time'      => $this->start_time,
+            // 'end_time'        => $this->end_time,
             'session_status'  => $this->session_status,
             'group_type'      => $this->group_type,
             'hours_count'     => $this->hours_count,
             'course'          => new CourseResource($this->whenLoaded('course')),
             'teacher'         => new UserResource($this->whenLoaded('teacher')),
+            'groupDays'         => GroupDayResource::collection($this->whenLoaded('groupDays')),
+            'groupSession'         => GroupSessionResource::collection($this->whenLoaded('groupSession')),
+
         ];
     }
 }

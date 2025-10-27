@@ -17,6 +17,7 @@ class Group extends Model
         'group_type',
         'hours_count',
         'number_lessons',
+        'duration',
     ];
 
     public function course()
@@ -28,6 +29,7 @@ class Group extends Model
     {
         return $this->belongsTo(User::class, 'teacher_id');
     }
+
 
     public function groupDays(): HasMany
     {

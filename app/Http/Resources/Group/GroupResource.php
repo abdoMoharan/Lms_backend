@@ -25,6 +25,7 @@ class GroupResource extends JsonResource
             // 'end_time'        => $this->end_time,
             'session_status'  => $this->session_status,
             'group_type'      => $this->group_type,
+            'duration'     => $this->duration,
             'hours_count'     => $this->hours_count,
             'course'          => new CourseResource($this->whenLoaded('course')),
             'teacher'         => new UserResource($this->whenLoaded('teacher')),

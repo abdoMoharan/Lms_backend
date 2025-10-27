@@ -21,6 +21,7 @@ return new class extends Migration
             $table->tinyInteger('status')->default(1)->nullable();
             $table->enum('session_status', ['scheduled', 'completed', 'cancelled']); // حالة الجلسة
             $table->enum('group_type', ['individual', 'group']);                     // حالة المجموعة (فردي/جماعي)
+            $table->integer('duration')->nullable();                              // عدد الساعات
             $table->integer('hours_count')->nullable();                              // عدد الساعات
             $table->integer('number_lessons')->nullable();                           //get in course Id
             $table->timestamps();

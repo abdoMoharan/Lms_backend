@@ -32,6 +32,7 @@ class GroupRequest extends ApiRequest
             'session_status'  => 'required|in:scheduled,completed,cancelled',
             'group_type'      => 'required|in:individual,group',
             'hours_count'     => 'nullable|integer|min:1',
+            'duration'     => 'nullable|integer|min:1',
             'week_ids'        => 'required',
             'week_ids.*'      => 'exists:weeks,id',
         ];

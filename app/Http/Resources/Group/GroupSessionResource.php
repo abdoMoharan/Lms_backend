@@ -17,8 +17,6 @@ class GroupSessionResource extends JsonResource
         return [
             'id'           => $this->id,
             'date'         => $this->date,
-            'start_time'   => $this->start_time,
-            'session_time' => $this->session_time,
             'group'     => new GroupResource($this->whenLoaded('group')),
             'day'     => new GroupDayResource($this->whenLoaded('groupDay')),
             'lesson'     => new LessonsResource($this->whenLoaded('lesson')),

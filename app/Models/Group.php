@@ -18,6 +18,7 @@ class Group extends Model
         'hours_count',
         'number_lessons',
         'duration',
+        'start_date',
     ];
 
     public function course()

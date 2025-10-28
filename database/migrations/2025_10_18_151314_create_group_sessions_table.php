@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('group_sessions', function (Blueprint $table) {
             $table->id();
             $table->date('date')->nullable(); // وقت بدء الجلسة
-            $table->string('start_time')->nullable(); // وقت بدء الجلسة
-            $table->enum('session_time', ['pm', 'am'])->nullable();
             $table->foreignId('group_id')->nullable()->constrained('groups')->onDelete('cascade');
             $table->foreignId('lesson_id')->nullable()->constrained('lessons')->onDelete('cascade');
             $table->foreignId('day_id')->nullable()->constrained('group_days')->onDelete('cascade');

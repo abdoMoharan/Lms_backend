@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('group_name');                                               // اسم المجموعة
+            $table->date('start_date')->nullable();                                               // اسم المجموعة
             $table->foreignId('course_id')->constrained()->onDelete('cascade');         // الكورس الذي تنتمي إليه المجموعة
             $table->foreignId('teacher_id')->constrained('users')->onDelete('cascade'); // المدرب المسؤول
             $table->integer('max_seats')->nullable()->default(25);                      // الحد الأقصى لعدد المقاعد

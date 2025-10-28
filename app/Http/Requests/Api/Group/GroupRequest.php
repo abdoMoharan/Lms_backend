@@ -27,6 +27,7 @@ class GroupRequest extends ApiRequest
             'max_seats'       => 'required|integer|min:1',
             'available_seats' => 'required|integer|min:0',
             'status'          => 'nullable|in:0,1',
+            'start_date'      => 'required|date',
             'start_time'      => 'required',
             'session_time'    => 'required|in:pm,am',
             'session_status'  => 'required|in:scheduled,completed,cancelled',

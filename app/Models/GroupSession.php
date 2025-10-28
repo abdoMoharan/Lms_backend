@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GroupSession extends Model
 {
-    protected $fillable = ['date', 'start_time', 'session_time', 'group_id', 'day_id', 'lesson_id'];
+    protected $fillable = ['date',  'group_id', 'day_id', 'lesson_id'];
 
     public function group()
     {
@@ -19,6 +19,6 @@ class GroupSession extends Model
     }
     public function lesson()
     {
-        return $this->belongsTo(Lessons::class, 'lesson_id');
+        return $this->belongsTo(Lessons::class, 'lesson_id')->with('transLocale');
     }
 }

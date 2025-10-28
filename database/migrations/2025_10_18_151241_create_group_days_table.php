@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('group_days', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('start_time')->nullable(); // وقت بدء الجلسة
+            $table->time('start_time')->nullable(); // وقت بدء الجلسة
             $table->enum('session_time', ['pm', 'am'])->nullable();
             $table->foreignId('group_id')->nullable()->constrained('groups')->onDelete('cascade');
             $table->foreignId('week_id')->nullable()->constrained('weeks')->onDelete('cascade');

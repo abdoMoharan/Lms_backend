@@ -29,10 +29,11 @@ class TeacherController extends Controller
     }
     public function show($locale, $id)
     {
+
         try {
-            $model = $this->model->find($id);
+            $model = $this->model->where('id',$id)->where('user_type','teacher')->first();
             if (! $model) {
-                return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Teacher not found', []);
+                return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Teacher not found');
             }
             $model->load([ 'profile', 'userEductionStage']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Teacher retrieved successfully', new UserResource($model));

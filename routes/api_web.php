@@ -32,7 +32,7 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
         });
         Route::prefix('teachers')->name('teachers.')->controller(TeacherController::class)->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/show/{id}', 'show')->name('show');
+            Route::get('/{id}', 'show')->name('show');
         });
     });
 });

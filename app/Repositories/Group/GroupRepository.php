@@ -25,7 +25,7 @@ class GroupRepository extends BaseRepository
     public function index($request)
     {
         try {
-            $Groups = $this->model->query()->with(['teacher', 'course'])->filter($request->query())->get();
+            $Groups = $this->model->query()->with(['teacher', 'course'])->get();
             if ($Groups->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Groups found', []);
             }

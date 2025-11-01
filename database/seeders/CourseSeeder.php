@@ -22,6 +22,24 @@ class CourseSeeder extends Seeder
                 'status'       => 1,
                 'translations' => [
                     'ar' => [
+                        'name'        => 'html',
+                        'description' => 'html.',
+                        'slug'        => 'html',
+                    ],
+                    'en' => [
+                        'name'        => 'html',
+                        'description' => 'html',
+                        'slug'        => 'html',
+                    ],
+                ],
+            ],
+            [
+                'day_count'    => 2,
+                'created_by'   => $user->id,
+                'updated_by'   => $user->id,
+                'status'       => 1,
+                'translations' => [
+                    'ar' => [
                         'name'        => 'دورة الرياضيات الأساسية',
                         'description' => 'دورة شاملة حول أساسيات الرياضيات.',
                         'slug'        => 'دورة-الرياضيات-الأساسية',
@@ -62,7 +80,7 @@ class CourseSeeder extends Seeder
                 'created_by' => $courseData['created_by'],
                 'updated_by' => $courseData['updated_by'],
                 'status'     => $courseData['status'],
-  'day_count'  => $courseData['day_count'],
+                'day_count'  => $courseData['day_count'],
             ]);
 
             foreach ($courseData['translations'] as $locale => $translation) {

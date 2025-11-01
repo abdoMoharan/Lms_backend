@@ -17,6 +17,13 @@ class SocialAuthController extends Controller
     public function login(Request $request)
     {
         try {
+
+
+
+
+
+
+
             $data = $request->validate([
                 'social_id' => 'required',
                 'first_name'      => 'nullable',

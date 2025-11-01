@@ -32,6 +32,7 @@ class TeacherController extends Controller
 
         try {
             $model = $this->model->where('id',$id)->where('user_type','teacher')->first();
+
             if (! $model) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Teacher not found');
             }

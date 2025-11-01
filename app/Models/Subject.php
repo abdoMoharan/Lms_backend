@@ -66,6 +66,14 @@ class Subject extends Model implements TranslatableContract
                 $q->where('name', 'like', '%' . $filters['name'] . '%');
             });
         }
+
+        if (isset($filters['stage_id'])) {
+            $builder->where('stage_id', $filters['stage_id']);
+        }
+        if (isset($filters['grade_id'])) {
+            $builder->where('grade_id', $filters['grade_id']);
+
+        }
         $builder->when(isset($filters['status']), function ($builder) use ($filters) {
             $statusValue = intval($filters['status']) == 0 ? 0 : $filters['status']; // استخدام `intval` لتحويل النصوص للأرقام
             $builder->where('status', $statusValue);

@@ -18,7 +18,7 @@ class SemesterController extends Controller
     public function index(Request $request)
     {
         try {
-            $semester = $this->model->query()->with('transLocale')->filter($request->query())->get();
+            $semester = $this->model->query()->with(['transLocale','semesters'])->filter($request->query())->get();
             if ($semester->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No semester found', []);
             }
@@ -41,7 +41,7 @@ class SemesterController extends Controller
             if (! $model) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'semester stage not found', []);
             }
-            $model->load('transLocale');
+            $model->load(['transLocale','semesters']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester stage retrieved successfully', new SemesterResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No education stage found', $e->getMessage());

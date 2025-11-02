@@ -13,43 +13,36 @@ class SocialAuthController extends Controller
 {
     const TOKEN_NAME = 'token';
 
-    // التعامل مع الـ Callback من Google
+    // التعامل مع الـ Callback من Google أو Facebook
     public function login(Request $request)
     {
         try {
-
-
-
-
-
-
-
+            // التحقق من البيانات الواردة
             $data = $request->validate([
-                'social_id' => 'required',
-                'first_name'      => 'nullable',
-                'last_name'      => 'nullable',
-                'email'     => 'nullable|email',
+                'email'      => 'nullable|email',
+                'name'       => 'nullable',     // الاسم الكامل
             ]);
-            $user = User::where('social_id', $request->social_id)->first();
+            // البحث عن المستخدم بناءً على الـ social_id
+            $user = User::where('email', $request->email)->first();
+
             if ($user) {
-                $token = $user->createToken('self::TOKEN_NAME')->plainTextToken;
+                $token = $user->createToken(self::TOKEN_NAME)->plainTextToken;
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'تم تسجيل الدخول بنجاح', [
                     'token' => $token,
                     'user'  => $user,
                 ]);
             } else {
+                // إذا كان المستخدم غير موجود، نقوم بإنشائه
                 $userData = [
-                    'social_id'  => $data['social_id'],
-                    'username'    => $data['first_name'] .  $data['last_name'],
-                    'first_name'  => $data['first_name'] ?? 'غير محدد',
-                    'last_name'   => $data['last_name'] ?? 'غير محدد',
-                    'email'      => $data['email'] ?? null,
-                    'user_type'  =>'student',
-                    'password'   => Str::random(16), // يمكنك تخصيص كلمة مرور عشوائية هنا
+                    'username'   => $data['name'], // دمج الاسم الأول والأخير
+                    'first_name' => $data['name'] ?? 'غير محدد',
+                    'email'      => $data['email'] ,
+                    'user_type'  => 'student',
+                    'password'   => Str::random(16), // كلمة مرور عشوائية
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ];
-                $user = User::create($userData);
+                $user  = User::create($userData);
                 $token = $user->createToken('social-login')->plainTextToken;
                 return ApiResponse::apiResponse(JsonResponse::HTTP_CREATED, 'تم إنشاء المستخدم بنجاح', [
                     'token' => $token,
@@ -58,7 +51,6 @@ class SocialAuthController extends Controller
             }
 
         } catch (\Exception $e) {
-            // في حالة حدوث خطأ
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'حدث خطأ في تسجيل الدخول', $e->getMessage());
         }
     }

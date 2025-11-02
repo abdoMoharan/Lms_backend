@@ -206,7 +206,7 @@ class GroupRepository extends BaseRepository
     public function show($local, $model)
     {
         try {
-            $model->load(['teacher', 'course']);
+            $model->load(['teacher', 'course','groupDays','groupSession']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Groups retrieved successfully', new GroupResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Groups found', []);

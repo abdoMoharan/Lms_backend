@@ -15,7 +15,7 @@ class GroupSession extends Model
     }
     public function groupDay()
     {
-        return $this->belongsTo(GroupDay::class, 'day_id');
+        return $this->belongsTo(GroupDay::class, 'day_id')->with('week');
     }
     public function lesson()
     {

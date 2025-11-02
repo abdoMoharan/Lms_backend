@@ -23,7 +23,7 @@ class Group extends Model
 
     public function course()
     {
-        return $this->belongsTo(Course::class, 'course_id');
+        return $this->belongsTo(Course::class, 'course_id')->with('transLocale');
     }
 
     public function teacher()
@@ -34,10 +34,10 @@ class Group extends Model
 
     public function groupDays(): HasMany
     {
-        return $this->hasMany(GroupDay::class, 'group_id');
+        return $this->hasMany(GroupDay::class, 'group_id')->with('week');
     }
     public function groupSession(): HasMany
     {
-        return $this->hasMany(GroupSession::class, 'group_id')->with(['lesson']);
+        return $this->hasMany(GroupSession::class, 'group_id')->with(['lesson','groupDay']);
     }
 }

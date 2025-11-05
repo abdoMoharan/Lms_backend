@@ -1,8 +1,12 @@
 <?php
 namespace App\Models;
 
+use App\Models\User;
+use App\Models\Group;
 use App\Models\Lessons;
+use App\Models\GroupSession;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LessonsAttachment extends Model
 {
@@ -14,11 +18,27 @@ class LessonsAttachment extends Model
         'type',
         'link',
         'image',
+        'group_id',
+        'group_session_id',
+        'user_id',
     ];
+
+    public function teacher()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function lesson()
     {
         return $this->belongsTo(Lessons::class, 'lesson_id')->with(['transLocale']);
+    }
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'group_id')->with(['course', 'groupDays', 'groupSession']);
+    }
+    public function group_session(): BelongsTo
+    {
+        return $this->belongsTo(GroupSession::class, 'group_session_id')->with('lesson');
     }
     public static function getPath($path)
     {

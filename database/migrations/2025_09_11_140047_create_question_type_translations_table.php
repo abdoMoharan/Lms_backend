@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('question_type_id');
             $table->string('locale')->index();
             $table->string('name')->nullable();
- $table->string('slug')->nullable();
+            $table->string('slug')->nullable();
             $table->unique(['question_type_id', 'locale']);
             $table->foreign('question_type_id')->references('id')->on('question_types')->onDelete('cascade');
             $table->timestamps();

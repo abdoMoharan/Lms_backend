@@ -9,6 +9,7 @@ class UserEducationalStage extends Model
     protected $fillable = [
         'user_id',
         'stage_id',
+        'grad_id',
         'subject_id',
     ];
 

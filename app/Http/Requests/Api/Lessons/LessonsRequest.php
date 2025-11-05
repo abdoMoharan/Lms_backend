@@ -47,19 +47,9 @@ class LessonsRequest extends ApiRequest
         $req = array_merge($req, [
             'status'     => 'nullable|in:1,0',
             'unit_id'    => 'required|exists:units,id',
-            // 'sort'                      => 'nullable|integer',
-            // 'cover_image'               => 'nullable|image|mimes:jpg,jpeg,png',
-            // 'url'                       => 'nullable|active_url',
-            // 'zoom_url'                  => 'nullable|active_url',
-            'created_by' => 'nullable|exists:users,id',
+
             'updated_by' => 'nullable|exists:users,id',
-            // 'attachment'                => 'nullable|array',
-            // 'attachment.*'              => 'nullable',
-            // 'attachment.*.file'         => 'nullable|mimes:pdf,docx,doc,xls,xlsx,ppt,pptx,zip,rar',
-            // 'attachment.*.type'         => 'nullable|in:upload_video,youtube_link,vimeo_link',
-            // 'attachment.*.video_upload' => 'nullable|mimes:mp4,mov,avi,wmv',
-            // 'attachment.*.link'         => 'nullable|active_url',
-            // 'attachment.*.image'        => 'nullable|mimes:jpg,jpeg,png',
+
         ]);
 
         return $req;

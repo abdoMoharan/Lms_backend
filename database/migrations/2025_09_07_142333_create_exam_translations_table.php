@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('exam_translations', function (Blueprint $table) {
-          $table->id();
+            $table->id();
             $table->unsignedBigInteger('exam_id');
             $table->string('locale')->index();
             $table->string('name')->nullable();
             $table->longText('description')->nullable();
- $table->string('slug')->nullable();
+            $table->string('slug')->nullable();
             $table->unique(['exam_id', 'locale']);
             $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
             $table->timestamps();

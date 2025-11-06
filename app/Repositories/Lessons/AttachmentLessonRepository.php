@@ -48,7 +48,7 @@ class AttachmentLessonRepository extends BaseRepository
 
     public function update($local, $request, $model)
     {
-        $model = $this->model->findOrFail($model);
+        $model = $this->model->where('user_id', auth()->user()->id)->findOrFail($model);
         if (! $model) {
 
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Attachment not found', []);

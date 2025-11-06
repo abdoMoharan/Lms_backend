@@ -19,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('setLocale', [
             SetLocale::class,
         ]);
+        $middleware->appendToGroup('activeTeacher', [
+            \App\Http\Middleware\ActiveTeacher::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

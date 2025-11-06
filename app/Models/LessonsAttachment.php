@@ -12,13 +12,11 @@ class LessonsAttachment extends Model
 {
     protected $table    = 'lessons_attachments';
     protected $fillable = [
-        'lesson_id',
         'video_upload',
         'file',
         'type',
         'link',
         'image',
-        'group_id',
         'group_session_id',
         'user_id',
     ];
@@ -28,17 +26,10 @@ class LessonsAttachment extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function lesson()
-    {
-        return $this->belongsTo(Lessons::class, 'lesson_id')->with(['transLocale']);
-    }
-    public function group(): BelongsTo
-    {
-        return $this->belongsTo(Group::class, 'group_id')->with(['course', 'groupDays', 'groupSession']);
-    }
+
     public function group_session(): BelongsTo
     {
-        return $this->belongsTo(GroupSession::class, 'group_session_id')->with('lesson');
+        return $this->belongsTo(GroupSession::class, 'group_session_id')->with(['lesson','group']);
     }
     public static function getPath($path)
     {

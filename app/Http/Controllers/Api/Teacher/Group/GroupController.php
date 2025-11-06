@@ -35,7 +35,6 @@ class GroupController extends Controller
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, ['No Groups found'], $e->getMessage());
         }
     }
-
     public function store(GroupRequest $request)
     {
         try {

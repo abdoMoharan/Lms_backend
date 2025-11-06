@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('lessons_attachments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('lesson_id')->nullable()->constrained('lessons')->cascadeOnDelete();
-            $table->foreignId('group_id')->nullable()->constrained('groups')->cascadeOnDelete();
             $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->foreignId('group_session_id')->nullable()->constrained('group_sessions')->cascadeOnDelete();
             $table->string('video_upload')->nullable();

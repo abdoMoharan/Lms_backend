@@ -2,6 +2,7 @@
 namespace App\Http\Requests\Api\Lessons;
 
 use App\Http\Requests\Base\ApiRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AttachmentLessonRequest extends ApiRequest
 {
@@ -18,7 +19,7 @@ class AttachmentLessonRequest extends ApiRequest
     public function rules()
     {
         return [
-            'lesson_id'    => 'required',
+            'group_session_id'    => 'required|exists:group_sessions,id',
             'file'         => 'nullable',
             'type'         => 'nullable|in:upload_video,youtube_link,vimeo_link',
             'video_upload' => 'nullable',
@@ -34,12 +35,13 @@ class AttachmentLessonRequest extends ApiRequest
             'video_upload.mimes' => 'The video must be a type of mp4, mov, avi, or wmv.',
             'type.in'            => 'The type must be one of the following: upload_video, youtube_link, or vimeo_link.',
             'link.active_url'    => 'The link must be a valid URL.',
-            'lesson_id.required' => 'The lesson is required.',
+            'group_session_id.required' => 'The group session is required.',
         ];
     }
     public function getData()
     {
         $data = $this->validated();
+        $data['user_id'] =Auth::user()->id;
         return $data;
     }
 

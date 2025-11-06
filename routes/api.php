@@ -138,15 +138,7 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::post('/update-attachment/{model}', 'updateAttachment')->name('update-attachment');
             Route::delete('/delete-attachment/{model}', 'deleteAttachment')->name('delete-attachment');
         });
-        Route::prefix('attachment-lessons')->name('attachment-lessons.')->controller(AttachmentLessonController::class)->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::post('/', 'store')->name('store');
-            Route::post('/update/{model}', 'update')->name('update');
-            Route::delete('/delete/{model}', 'delete')->name('delete');
-            Route::get('/show/{model}', 'show')->name('show');
-            Route::get('/deleted', 'showDeleted')->name('deleted');
-            Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
-        });
+
         Route::prefix('exams')->name('exams.')->controller(ExamController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');

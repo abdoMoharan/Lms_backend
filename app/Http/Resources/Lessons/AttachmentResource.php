@@ -3,6 +3,7 @@ namespace App\Http\Resources\Lessons;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Group\GroupSessionResource;
 
 class AttachmentResource extends JsonResource
 {
@@ -20,7 +21,8 @@ class AttachmentResource extends JsonResource
             'file'         => $this->getPath($this->file),
             'image'        => $this->getPath($this->image),
             'video_upload' => $this->getPath($this->video_upload),
-            'lesson'       => new LessonsResource($this->whenLoaded('lesson')),
+            // 'lesson'       => new LessonsResource($this->whenLoaded('lesson')),
+            'group_session' => new GroupSessionResource($this->whenLoaded('group_session')),
         ];
     }
 }

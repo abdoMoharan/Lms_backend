@@ -1,21 +1,17 @@
 <?php
 namespace App\Repositories\Lessons;
 
-use Exception;
-use App\Models\Lessons;
 use App\Helpers\ApiResponse;
+use App\Http\Abstract\BaseRepository;
+use App\Http\Resources\Lessons\AttachmentResource;
 use App\Models\LessonsAttachment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use App\Http\Abstract\BaseRepository;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Resources\Lessons\AttachmentResource;
-use App\Interfaces\Lessons\AttachmentLessonInterface;
 
 class AttachmentLessonRepository extends BaseRepository
 {
     public LessonsAttachment $model;
-
 
     public function __construct(LessonsAttachment $model)
     {
@@ -24,9 +20,9 @@ class AttachmentLessonRepository extends BaseRepository
     public function index($request)
     {
         try {
-            $model = $this->model->query()->with('lesson')->get();
+            $model = $this->model->query()->with('group_session')->get();
             if ($model->isEmpty()) {
-                return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No attachment found', []);
+                return ApiResponse::apiResponse(JsonResponse::HTTP_OK, ['No attachment found'], []);
             }
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'attachment retrieved successfully', AttachmentResource::collection($model)->response()->getData(true));
         } catch (\Exception $e) {
@@ -35,11 +31,13 @@ class AttachmentLessonRepository extends BaseRepository
     }
     public function store($request)
     {
+
+// dd($request->getData());
         try {
             DB::beginTransaction();
-            $data = $request->getData();
+            $data  = $request->getData();
             $model = $this->model->create($data);
-            $model->load(['lesson']);
+            $model->load('group_session');
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'attachment created successfully', new AttachmentResource($model));
         } catch (\Exception $e) {
@@ -50,7 +48,9 @@ class AttachmentLessonRepository extends BaseRepository
 
     public function update($local, $request, $model)
     {
+        $model = $this->model->findOrFail($model);
         if (! $model) {
+
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Attachment not found', []);
         }
         try {
@@ -69,7 +69,7 @@ class AttachmentLessonRepository extends BaseRepository
                 Storage::disk('attachment')->delete($model->image);
             }
             $model->update($data);
-            $model->load(['lesson']);
+            $model->load('group_session');
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'attachment updated successfully', new AttachmentResource($model));
         } catch (\Exception $e) {
@@ -79,6 +79,7 @@ class AttachmentLessonRepository extends BaseRepository
     }
     public function delete($local, $model)
     {
+        $model = $this->model->findOrFail($model);
         try {
             if ($model->file) {
                 Storage::disk('attachment')->delete($model->file);
@@ -98,8 +99,9 @@ class AttachmentLessonRepository extends BaseRepository
 
     public function show($local, $model)
     {
+        $model = $this->model->findOrFail($model);
         try {
-            $model->load(['lesson']);
+            $model->load('group_session');
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'attachment retrieved successfully', new AttachmentResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No attachment found', []);

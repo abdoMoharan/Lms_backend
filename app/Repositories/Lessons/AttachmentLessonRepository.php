@@ -20,7 +20,7 @@ class AttachmentLessonRepository extends BaseRepository
     public function index($request)
     {
         try {
-            $model = $this->model->query()->with('group_session')->get();
+            $model = $this->model->query()->where('user_id', auth()->user()->id)->with('group_session')->get();
             if ($model->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, ['No attachment found'], []);
             }

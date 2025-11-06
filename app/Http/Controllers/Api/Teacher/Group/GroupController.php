@@ -151,10 +151,11 @@ class GroupController extends Controller
         return $carbonDate;
     }
 
-    public function delete($local, $model)
+    public function delete($model)
     {
         try {
-            $model->delete();
+            $group = $this->model->findOrFail($model);
+            $group->delete();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Groups deleted successfully', []);
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Groups found', []);
@@ -163,7 +164,7 @@ class GroupController extends Controller
     public function show($model)
     {
         try {
-            $group = $this->model->find($model);
+            $group = $this->model->findOrFail($model);
             $group->load(['course', 'groupDays', 'groupSession']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Groups retrieved successfully', new GroupResource($group));
         } catch (\Exception $e) {

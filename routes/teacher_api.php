@@ -13,8 +13,8 @@ Route::prefix('teacher')->group(function () {
         Route::prefix('groups')->name('groups.')->controller(GroupController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
-            Route::delete('/delete/{model}', 'delete')->name('delete');
             Route::get('/show/{model}', 'show')->name('show');
+            Route::delete('/delete/{model}', 'delete')->name('delete');
         });
     });
 });

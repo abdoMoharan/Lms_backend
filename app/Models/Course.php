@@ -46,7 +46,7 @@ class Course extends Model implements TranslatableContract
 
     public function subject()
     {
-        return $this->belongsTo(Subject::class, 'subject_id');
+        return $this->belongsTo(Subject::class, 'subject_id')->with('transLocale');
 
     }
     public function units(): HasMany

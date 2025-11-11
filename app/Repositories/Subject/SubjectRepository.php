@@ -1,15 +1,13 @@
 <?php
 namespace App\Repositories\Subject;
 
-use Exception;
-use App\Models\Subject;
 use App\Helpers\ApiResponse;
-use App\Models\SubjectSemester;
+use App\Http\Abstract\BaseRepository;
+use App\Http\Resources\Subject\SubjectResource;
+use App\Models\Subject;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use App\Http\Abstract\BaseRepository;
-use App\Interfaces\Subject\SubjectInterface;
-use App\Http\Resources\Subject\SubjectResource;
 
 class SubjectRepository extends BaseRepository
 {
@@ -35,7 +33,7 @@ class SubjectRepository extends BaseRepository
     {
         try {
             DB::beginTransaction();
-            $data    = $request->getData();
+            $data  = $request->getData();
             $model = $this->model->create($data);
             foreach ($data['semesters'] as $semester) {
                 $model->semesters()->create([
@@ -57,8 +55,18 @@ class SubjectRepository extends BaseRepository
         try {
             $data = $request->getData();
             $model->update($data);
+            if ($data['semesters']) {
+                foreach ($data['semesters'] as $semester) {
+                    $model->semesters()->updateOrCreate([
+                        'semester_id' => $semester['id'],
+                    ], [
+                        'semester_id' => $semester['id'],
+                    ]);
+                }
+            }
+
             $model->load(['trans', 'educationalStage', 'semesters', 'grade']);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new SubjectResource($model));
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subject updated successfully', new SubjectResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Subjects found', []);
         }

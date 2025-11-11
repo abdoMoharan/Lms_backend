@@ -14,6 +14,7 @@ Route::prefix('teacher')->group(function () {
         Route::prefix('groups')->name('groups.')->controller(GroupController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
+            Route::get('/create_meeting', 'create_meeting')->name('create_meeting');
             Route::get('/show/{model}', 'show')->name('show');
             Route::delete('/delete/{model}', 'delete')->name('delete');
         });

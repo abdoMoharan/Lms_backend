@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Week\WeekController;
 use App\Http\Controllers\Api\WebSite\Grade\GradeController;
 use App\Http\Controllers\Api\WebSite\Course\CourseController;
 use App\Http\Controllers\Api\WebSite\Subject\SubjectController;
@@ -33,6 +34,11 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
         Route::prefix('teachers')->name('teachers.')->controller(TeacherController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{id}', 'show')->name('show');
+        });
+
+       Route::prefix('weeks')->name('weeks.')->controller(WeekController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/show/{model}', 'show')->name('show');
         });
     });
 });

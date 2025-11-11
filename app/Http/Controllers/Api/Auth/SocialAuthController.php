@@ -21,6 +21,7 @@ class SocialAuthController extends Controller
             $data = $request->validate([
                 'email'      => 'nullable|email',
                 'name'       => 'nullable',     // الاسم الكامل
+                'provider'       => 'nullable',     // الاسم الكامل
             ]);
             // البحث عن المستخدم بناءً على الـ social_id
             $user = User::where('email', $request->email)->first();
@@ -37,6 +38,7 @@ class SocialAuthController extends Controller
                     'username'   => $data['name'], // دمج الاسم الأول والأخير
                     'first_name' => $data['name'] ?? 'غير محدد',
                     'email'      => $data['email'] ,
+                    'provider'      => $data['provider'] ,
                     'user_type'  => 'student',
                     'password'   => Str::random(16), // كلمة مرور عشوائية
                     'created_at' => Carbon::now(),

@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Group;
 use App\Models\GroupDay;
 use App\Models\Week;
+use App\Services\ZoomService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -15,12 +16,13 @@ class GroupRepository extends BaseRepository
 {
     public Group $model;
     public Course $course;
+    public $zoomService;
 
-    public function __construct(Group $model, Course $course)
+    public function __construct(Group $model, Course $course, ZoomService $zoomService)
     {
-        $this->model  = $model;
-        $this->course = $course;
-
+        $this->model       = $model;
+        $this->course      = $course;
+        $this->zoomService = $zoomService;
     }
     public function index($request)
     {
@@ -34,8 +36,6 @@ class GroupRepository extends BaseRepository
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Groups found', $e->getMessage());
         }
     }
-
-
 
     public function store($request)
     {
@@ -127,14 +127,16 @@ class GroupRepository extends BaseRepository
 
                 // توزيع الدروس على الأيام المختارة
                 $lessonsForDay = array_slice($lessons, $lessonIndex, $lessonsPerDay);
-
+                $meetingLink   = $this->zoomService->createMeeting('Pvl9mln-RVGuwqP91_v1_A', $data['teacher_id'], $date->toDateString(), $data['session_time']);
                 foreach ($lessonsForDay as $lesson) {
                     // إنشاء جلسة للمجموعة على هذا اليوم
                     $groupSession = \App\Models\GroupSession::create([
-                        'date'      => $date->toDateString(),
-                        'group_id'  => $model->id,    // المعرف الخاص بالمجموعة
-                        'day_id'    => $groupDay->id, // ربط session بـ groupDay
-                        'lesson_id' => $lesson['id'], // استخدام ID الدرس هنا
+                        'date'               => $date->toDateString(),
+                        'group_id'           => $model->id,    // المعرف الخاص بالمجموعة
+                        'day_id'             => $groupDay->id, // ربط session بـ groupDay
+                        'lesson_id'          => $lesson['id'],
+                        'meeting_link'       => $meetingLink, // حفظ رابط الاجتماع
+                        'is_meeting_created' => true,         // تحديد أن الاجتماع قد تم إنشاؤه // استخدام ID الدرس هنا
                     ]);
                     $lessonIndex++;
 
@@ -206,8 +208,8 @@ class GroupRepository extends BaseRepository
     public function show($local, $model)
     {
         try {
-        $group=$this->model->find($model);
-            $group->load(['course','groupDays','groupSession']);
+            $group = $this->model->find($model);
+            $group->load(['course', 'groupDays', 'groupSession']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Groups retrieved successfully', new GroupResource($group));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Groups found', []);

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('user_type', ['student', 'teacher', 'admin'])->default('student');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('provider')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->rememberToken();
             $table->softDeletes();

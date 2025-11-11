@@ -45,8 +45,7 @@ class AttachmentLessonRepository extends BaseRepository
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No attachment found', $e->getMessage());
         }
     }
-
-    public function update($local, $request, $model)
+     public function update($local, $request, $model)
     {
         $model = $this->model->where('user_id', auth()->user()->id)->findOrFail($model);
         if (! $model) {

@@ -9,8 +9,10 @@ use App\Models\Course;
 use App\Models\Group;
 use App\Models\GroupDay;
 use App\Models\Week;
+use App\Services\ZoomService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class GroupController extends Controller
@@ -18,10 +20,12 @@ class GroupController extends Controller
 
     public Group $model;
     public Course $course;
-    public function __construct(Group $model, Course $course)
+    public $zoom;
+    public function __construct(Group $model, Course $course, ZoomService $zoom)
     {
         $this->model  = $model;
         $this->course = $course;
+        $this->zoom   = $zoom;
     }
     public function index(Request $request)
     {
@@ -109,10 +113,11 @@ class GroupController extends Controller
                 $lessonsForDay = array_slice($lessons, $lessonIndex, $lessonsPerDay);
                 foreach ($lessonsForDay as $lesson) {
                     $groupSession = \App\Models\GroupSession::create([
-                        'date'      => $date->toDateString(),
-                        'group_id'  => $model->id,    // المعرف الخاص بالمجموعة
-                        'day_id'    => $groupDay->id, // ربط session بـ groupDay
-                        'lesson_id' => $lesson['id'], // استخدام ID الدرس هنا
+                        'date'       => $date->toDateString(),
+                        'start_time' => $data['start_time'],
+                        'group_id'   => $model->id,    // المعرف الخاص بالمجموعة
+                        'day_id'     => $groupDay->id, // ربط session بـ groupDay
+                        'lesson_id'  => $lesson['id'], // استخدام ID الدرس هنا
                     ]);
                     $lessonIndex++;
                     $date = $date->addWeek();
@@ -170,4 +175,29 @@ class GroupController extends Controller
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Groups found', []);
         }
     }
+
+    public function create_meeting()
+    {
+        $meeting = $this->zoom->createMeeting('me', [
+            'topic'      => 'My Laravel Zoom Meeting',
+            'type'       => 2,
+            'start_time' => Carbon::parse('2025-11-12 15:30:00')->toIso8601String(),
+            'duration'   => 40,
+            'timezone'   => 'Asia/Kolkata',
+            'settings'   => [
+                'host_video'                                => true,
+                'participant_video'                         => false,
+                'mute_upon_entry'                           => true,
+                'request_permission_to_unmute_participants' => true,
+                'audio'                                     => 'voip',
+                'waiting_room'                              => true,
+            ],
+        ]);
+
+        return response()->json($meeting);
+    }
+
+
+
+
 }

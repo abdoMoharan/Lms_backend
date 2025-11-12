@@ -19,58 +19,59 @@ class AuthController extends Controller
     /**
      * دالة لإعادة إرسال OTP
      */
-    public function resendOtp(Request $request)
-    {
-        // التحقق من وجود البريد الإلكتروني
-        $request->validate([
-            'email' => 'required|email',
-        ]);
+   public function resendOtp(Request $request)
+{
+    // التحقق من وجود البريد الإلكتروني
+    $request->validate([
+        'email' => 'required|email',
+    ]);
 
-        // البحث عن المستخدم باستخدام البريد الإلكتروني
-        $user = User::where('email', $request->email)->first();
+    // البحث عن المستخدم باستخدام البريد الإلكتروني
+    $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
-            return ApiResponse::apiResponse(
-                JsonResponse::HTTP_BAD_REQUEST,
-                ['email' => ['البريد الإلكتروني غير مسجل']]
-            );
-        }
-
-        // التحقق إذا كانت صلاحية OTP قد انتهت أو أن الكود غير صالح
-        if ($user->otp_expires_at && now()->gt($user->otp_expires_at)) {
-            // مسح الكود القديم إذا كانت صلاحية OTP قد انتهت
-            $user->otp = null;
-            $user->otp_expires_at = null;
-            $user->otp_sent_at = null; // مسح وقت الإرسال القديم
-            $user->save();
-        }
-
-        // تحقق من الوقت بين إرسال OTP السابق وإذا كان أقل من 30 ثانية أو دقيقة
-        if ($user->otp_sent_at && $user->otp_sent_at->gt(now()->subSeconds(30))) {
-            return ApiResponse::apiResponse(
-                JsonResponse::HTTP_BAD_REQUEST,
-                ['error' => ['يجب الانتظار 30 ثانية قبل محاولة إرسال OTP آخر']]
-            );
-        }
-
-        // توليد OTP عشوائي وتخزينه
-        $otp = rand(100000, 999999);
-        $user->otp = $otp;
-        $user->otp_expires_at = now()->addMinutes(10);  // صلاحية الكود 10 دقائق
-        $user->otp_sent_at = now();  // تحديث وقت إرسال OTP
-        $user->save();
-
-        // إرسال OTP إلى البريد الإلكتروني
-        Mail::to($user->email)->send(new OtpMail($otp));
-
+    if (!$user) {
         return ApiResponse::apiResponse(
-            JsonResponse::HTTP_OK,
-            [
-                'message' => 'تم إرسال OTP جديد إلى بريدك الإلكتروني للتحقق',
-                'user'    => $user,
-            ]
+            JsonResponse::HTTP_BAD_REQUEST,
+            ['email' => ['البريد الإلكتروني غير مسجل']]
         );
     }
+
+    // التحقق إذا كانت صلاحية OTP قد انتهت أو أن الكود غير صالح
+    if ($user->otp_expires_at && now()->gt(\Carbon\Carbon::parse($user->otp_expires_at))) {
+        // مسح الكود القديم إذا كانت صلاحية OTP قد انتهت
+        $user->otp = null;
+        $user->otp_expires_at = null;
+        $user->otp_sent_at = null; // مسح وقت الإرسال القديم
+        $user->save();
+    }
+
+    // تحقق من الوقت بين إرسال OTP السابق وإذا كان أقل من 30 ثانية أو دقيقة
+    if ($user->otp_sent_at && \Carbon\Carbon::parse($user->otp_sent_at)->gt(now()->subSeconds(30))) {
+        return ApiResponse::apiResponse(
+            JsonResponse::HTTP_BAD_REQUEST,
+            ['error' => ['يجب الانتظار 30 ثانية قبل محاولة إرسال OTP آخر']]
+        );
+    }
+
+    // توليد OTP عشوائي وتخزينه
+    $otp = rand(100000, 999999);
+    $user->otp = $otp;
+    $user->otp_expires_at = now()->addMinutes(10);  // صلاحية الكود 10 دقائق
+    $user->otp_sent_at = now();  // تحديث وقت إرسال OTP
+    $user->save();
+
+    // إرسال OTP إلى البريد الإلكتروني
+    Mail::to($user->email)->send(new OtpMail($otp));
+
+    return ApiResponse::apiResponse(
+        JsonResponse::HTTP_OK,
+        [
+            'message' => 'تم إرسال OTP جديد إلى بريدك الإلكتروني للتحقق',
+            'user'    => $user,
+        ]
+    );
+}
+
 
     /**
      * دالة التسجيل
@@ -145,49 +146,56 @@ class AuthController extends Controller
     /**
      * دالة لتسجيل الدخول
      */
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
+ public function login(Request $request)
+{
+    // التحقق من وجود البريد الإلكتروني
+    $request->validate([
+        'email' => 'required|email',
+    ]);
 
-        $user = User::where('email', $request->email)
-            ->where('user_type', 'teacher')
-            ->first();
+    // البحث عن المستخدم باستخدام البريد الإلكتروني
+    $user = User::where('email', $request->email)
+        ->where('user_type', 'teacher')
+        ->first();
 
-        if (!$user) {
-            return ApiResponse::apiResponse(
-                JsonResponse::HTTP_BAD_REQUEST,
-                ['email' => ['البريد الإلكتروني غير مسجل']]
-            );
-        }
+    // التحقق من وجود المستخدم
+    if (!$user) {
+        return ApiResponse::apiResponse(
+            JsonResponse::HTTP_BAD_REQUEST,
+            ['email' => ['البريد الإلكتروني غير مسجل']]
+        );
+    }
 
-        // تحقق من الوقت بين إرسال OTP السابق وإذا كان أقل من 30 ثانية أو دقيقة
-        if ($user->otp_sent_at && $user->otp_sent_at->gt(now()->subSeconds(30))) {
+    // تحقق من الوقت بين إرسال OTP السابق وإذا كان أقل من 30 ثانية
+    if ($user->otp_sent_at) {
+        $otpSentAt = \Carbon\Carbon::parse($user->otp_sent_at); // تحويل إلى كائن Carbon
+        if ($otpSentAt->gt(now()->subSeconds(30))) {
             return ApiResponse::apiResponse(
                 JsonResponse::HTTP_BAD_REQUEST,
                 ['error' => ['يجب الانتظار 30 ثانية قبل محاولة إرسال OTP آخر']]
             );
         }
-
-        // توليد OTP عشوائي وتخزينه
-        $otp                  = rand(100000, 999999);
-        $user->otp            = $otp;
-        $user->otp_expires_at = now()->addMinutes(10); // صلاحية الكود 10 دقائق
-        $user->otp_sent_at    = now(); // تحديث وقت إرسال OTP
-        $user->save();
-
-        // إرسال OTP إلى البريد الإلكتروني
-        Mail::to($user->email)->send(new OtpMail($otp));
-
-        return ApiResponse::apiResponse(
-            JsonResponse::HTTP_OK,
-            [
-                'message' => 'تم إرسال OTP إلى بريدك الإلكتروني للتحقق',
-                'user'    => $user,
-            ]
-        );
     }
+
+    // توليد OTP عشوائي وتخزينه
+    $otp = rand(100000, 999999);
+    $user->otp = $otp;
+    $user->otp_expires_at = now()->addMinutes(10); // صلاحية الكود 10 دقائق
+    $user->otp_sent_at = now(); // تحديث وقت إرسال OTP
+    $user->save();
+
+    // إرسال OTP إلى البريد الإلكتروني
+    Mail::to($user->email)->send(new OtpMail($otp));
+
+    return ApiResponse::apiResponse(
+        JsonResponse::HTTP_OK,
+        [
+            'message' => 'تم إرسال OTP إلى بريدك الإلكتروني للتحقق',
+            'user'    => $user,
+        ]
+    );
+}
+
 
     /**
      * تسجيل الخروج للمعلم

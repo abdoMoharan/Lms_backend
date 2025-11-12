@@ -3,51 +3,34 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class OtpMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+    public $otp;
 
     /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'Otp Mail',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
+     * إنشاء رسالة البريد الإلكتروني
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @param int $otp
+     * @return void
      */
-    public function attachments(): array
+    public function __construct($otp)
     {
-        return [];
+        $this->otp = $otp;  // تخزين OTP ليتم عرضه في العرض
+    }
+
+    /**
+     * بناء الرسالة.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        return $this->subject('Your OTP Code')  // تعيين موضوع الرسالة
+                    ->view('emails.otp');     // تحديد العرض لعرض OTP
     }
 }

@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('provider')->nullable();
             $table->string('otp')->nullable();
             $table->datetime('otp_expires_at')->nullable();
+            $table->datetime('otp_sent_at')->nullable();
+
             $table->tinyInteger('status')->default(1);
             $table->rememberToken();
             $table->softDeletes();

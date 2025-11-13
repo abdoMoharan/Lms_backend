@@ -23,7 +23,6 @@ class GroupRequest extends ApiRequest
         return [
             'group_name'      => 'required|string|max:255',
             'course_id'       => 'required|exists:courses,id',
-
             'max_seats'       => 'required|integer|min:1',
             'available_seats' => 'required|integer|min:0',
             'status'          => 'nullable|in:0,1',

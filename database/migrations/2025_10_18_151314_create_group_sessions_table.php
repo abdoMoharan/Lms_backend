@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('group_id')->nullable()->constrained('groups')->onDelete('cascade');
             $table->foreignId('lesson_id')->nullable()->constrained('lessons')->onDelete('cascade');
             $table->foreignId('day_id')->nullable()->constrained('group_days')->onDelete('cascade');
-            $table->boolean('is_meeting_created')->default(false);
+            $table->tinyInteger('is_meeting_created')->default(0);
             $table->timestamps();
         });
     }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class GroupSession extends Model
 {
     protected $fillable = ['date',  'group_id', 'day_id', 'lesson_id',
-        'start_time'];
+        'start_time','is_meeting_created'];
 
     public function group()
     {

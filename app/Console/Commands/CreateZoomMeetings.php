@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Console\Commands;
 
 use App\Models\GroupSession;
@@ -6,6 +7,8 @@ use App\Models\MeetingZoom;
 use App\Services\ZoomService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MeetingLinkMail;
 
 class CreateZoomMeetings extends Command
 {
@@ -22,36 +25,50 @@ class CreateZoomMeetings extends Command
 
     public function handle()
     {
-        $sessions = GroupSession::with('group')->whereDate('date', Carbon::now()->toDateString()) // الجلسات التي تاريخها اليوم
-            ->where('is_meeting_created', false)                                                      // الجلسات التي لم يتم إنشاء رابط الاجتماع لها
+        $sessions = GroupSession::with('group')
+            ->whereDate('date', Carbon::now()->toDateString()) // Sessions for today
+            ->where('is_meeting_created', false)              // Sessions that don't have a meeting link created
             ->get();
-        // إذا لم تكن هناك جلسات لتحديد الاجتماعات لها
+
+        // If there are no sessions to create meetings for
         if ($sessions->isEmpty()) {
             $this->info('No upcoming sessions to create meetings for.');
-            return; // إنهاء المهمة إذا لم توجد جلسات
+            return; // Exit if no sessions are found
         }
+
         foreach ($sessions as $session) {
-            $meeting = $this->create_meeting($session); // تمرير الجلسة إلى دالة إنشاء الاجتماع
-            // إذا تم إنشاء الاجتماع بنجاح
+            $meeting = $this->create_meeting($session); // Call function to create the meeting
+
             if ($meeting && isset($meeting['join_url'])) {
+                // Create new MeetingZoom record
                 $meeting_zoom = MeetingZoom::create([
-                    'group_session_id' => $session->id,
-                    'zoom_id'          => $meeting['id'],
-                    'host_id'          => $meeting['host_id'],
-                    'host_email'       => $meeting['host_email'],
-                    'topic'            => $meeting['topic'],
-                    'start_time'       => $meeting['start_time'],
-                    'duration'         => $meeting['duration'],
-                    'timezone'         => $meeting['timezone'],
-                    'start_url'        => $meeting['start_url'],
-                    'join_url'         => $meeting['join_url'],
-                    'password'         => $meeting['password'],
-                    'is_meeting_created' => true,
+                    'group_session_id'   => $session->id,
+                    'teacher_id'         => $session->group->teacher_id,
+                    'zoom_id'            => $meeting['id'],
+                    'host_id'            => $meeting['host_id'],
+                    'host_email'         => $meeting['host_email'],
+                    'topic'              => $meeting['topic'],
+                    'start_time'         => $meeting['start_time'],
+                    'duration'           => $meeting['duration'],
+                    'timezone'           => $meeting['timezone'],
+                    'start_url'          => $meeting['start_url'],
+                    'join_url'           => $meeting['join_url'],
+                    'password'           => $meeting['password'],
+                    'is_meeting_created' => 1,
                 ]);
-                // تحديث الجلسة برابط الاجتماع
+
+                // Update session with the meeting link
                 $session->update([
-                    'is_meeting_created' => true, // تم إنشاء الاجتماع
+                    'is_meeting_created' => 1,
                 ]);
+
+                // Send email to teacher with meeting link
+                $teacher = $session->group->teacher;
+                $teacherName = $teacher->name;  // Assuming teacher's name is stored
+                $meetingLink = $meeting['join_url'];
+
+                // Send the email to the teacher
+                Mail::to($teacher->email)->send(new MeetingLinkMail($teacherName, $meetingLink));
 
                 $this->info("Created meeting for session on {$session->date}, link: {$meeting['join_url']}");
             } else {
@@ -60,20 +77,19 @@ class CreateZoomMeetings extends Command
         }
     }
 
-    // دالة إنشاء الاجتماع
+    // Function to create Zoom meeting
     public function create_meeting($session)
     {
-                                                                                                     // إعدادات الاجتماع بناءً على بيانات الجلسة
-        $start_time = Carbon::parse($session->date . ' ' . $session->start_time)->toIso8601String(); // تحديد وقت بدء الاجتماع استنادًا للجلسة
+        $start_time = Carbon::parse($session->date . ' ' . $session->start_time)->toIso8601String(); // Start time for the meeting
 
-        // استدعاء خدمة Zoom لإنشاء الاجتماع
+        // Call ZoomService to create the meeting
         $meeting = $this->zoomService->createMeeting('me', [
             'topic' => "Meeting for session {$session->id}",
-            'type'       => 2,                         // مجدول
-            'start_time' => $start_time,               // تحديد وقت البدء
-            'duration'   => $session->group->duration, // تحديد مدة الاجتماع من الجلسة
-            'timezone'   => 'Asia/Kolkata',            // المنطقة الزمنية
-            'settings'   => [
+            'type'  => 2,                          // Scheduled
+            'start_time' => $start_time,           // Set start time
+            'duration' => $session->group->duration, // Set duration from session
+            'timezone' => 'Asia/Kolkata',          // Timezone
+            'settings' => [
                 'host_video'                                => true,
                 'participant_video'                         => false,
                 'mute_upon_entry'                           => true,
@@ -83,11 +99,11 @@ class CreateZoomMeetings extends Command
             ],
         ]);
 
-        // إذا كانت الاستجابة ناجحة، أعد البيانات
+        // If the meeting was created successfully, return the meeting data
         if (isset($meeting['join_url'])) {
-            return $meeting; // إرجاع الرابط
+            return $meeting;
         }
 
-        return null; // في حال فشل الإنشاء، ارجع null
+        return null; // Return null if meeting creation failed
     }
 }

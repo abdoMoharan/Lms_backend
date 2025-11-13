@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('meeting_zooms', function (Blueprint $table) {
             $table->id();
             $table->foreignId('group_session_id')->nullable()->constrained('group_sessions')->cascadeOnDelete();
+            $table->foreignId('teacher_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->string('zoom_id')->nullable();    // لتخزين Zoom Meeting ID
             $table->string('host_id')->nullable();    // لتخزين ID المضيف
             $table->string('host_email')->nullable(); // لتخزين البريد الإلكتروني للمضيف
@@ -24,7 +25,7 @@ return new class extends Migration
             $table->longText('start_url')->nullable();  // لتخزين رابط بدء الاجتماع
             $table->longText('join_url')->nullable();   // لتخزين رابط الانضمام للاجتماع
             $table->string('password')->nullable();   // لتخزين كلمة المرور الخاصة بالاجتماع
-            $table->boolean('is_meeting_created')->default(false);
+  $table->tinyInteger('is_meeting_created')->default(0);
             $table->timestamps();
         });
     }

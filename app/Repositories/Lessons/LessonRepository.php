@@ -87,7 +87,7 @@ class LessonRepository extends BaseRepository
     public function show($local, $model)
     {
         try {
-            $model->load(['createdBy', 'transLocale', 'unit']);
+            $model->load(['createdBy', 'trans', 'unit']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'lesson retrieved successfully', new LessonsResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No lesson found', []);

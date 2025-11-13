@@ -53,6 +53,11 @@ class Course extends Model implements TranslatableContract
     {
         return $this->hasMany(Unit::class, 'course_id')->with(['transLocale', 'lessons']);
     }
+
+    public function groups()
+    {
+        return $this->hasMany(Group::class, 'course_id')->with(['teacher', 'groupDays', 'groupSession']);
+    }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
         if (isset($filters['name'])) {

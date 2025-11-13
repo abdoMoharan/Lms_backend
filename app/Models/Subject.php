@@ -53,7 +53,7 @@ class Subject extends Model implements TranslatableContract
 
     public function courses()
     {
-        return $this->hasMany(Course::class, 'subject_id');
+        return $this->hasMany(Course::class, 'subject_id')->with(['transLocale', 'units', 'groups']);
     }
     public function grade()
     {

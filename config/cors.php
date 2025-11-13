@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:3000','https://lms-test-2002.vercel.app','https://admin-lms-test.vercel.app/en','https://teacher-lms-test-2002.vercel.app/en'],
+    'allowed_origins' => ['http://localhost:3000','https://lms-test-2002.vercel.app','https://admin-lms-test.vercel.app','https://teacher-lms-test-2002.vercel.app'],
 
     'allowed_origins_patterns' => [],
 

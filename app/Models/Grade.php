@@ -1,13 +1,14 @@
 <?php
 namespace App\Models;
 
-use App\Models\GradeTranslation;
 use App\Models\User;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use App\Models\Course;
+use App\Models\GradeTranslation;
+use Illuminate\Database\Eloquent\Model;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
 class Grade extends Model implements TranslatableContract
 {
@@ -38,9 +39,10 @@ class Grade extends Model implements TranslatableContract
     {
         return $this->belongsTo(EducationalStage::class, 'stage_id')->with('transLocale');
     }
-    public function subjects()
+
+    public function courses()
     {
-        return $this->hasMany(Subject::class, 'grade_id')->with(['transLocale','semesters']);
+        return $this->hasMany(Course::class, 'grade_id')->with(['transLocale','semesters']);
     }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {

@@ -29,7 +29,7 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
         });
         Route::prefix('courses')->name('courses.')->controller(CourseController::class)->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/show/{id}/{slug?}', 'show')->name('show');
+            Route::get('/{id}/{slug?}', 'show')->name('show');
         });
         Route::prefix('teachers')->name('teachers.')->controller(TeacherController::class)->group(function () {
             Route::get('/', 'index')->name('index');

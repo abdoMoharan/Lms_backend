@@ -20,7 +20,7 @@ class EducationalStage extends Model implements TranslatableContract
         'stage_id',
         'locale',
         'name',
-   'slug',
+        'slug',
     ];
     protected $translationForeignKey = 'stage_id';
 
@@ -60,7 +60,7 @@ class EducationalStage extends Model implements TranslatableContract
 
     public function grades()
     {
-        return $this->hasMany(Grade::class, 'stage_id')->with(['transLocale','subjects']);
+        return $this->hasMany(Grade::class, 'stage_id')->with(['transLocale', 'courses']);
     }
     public static function getAllDeleted()
     {

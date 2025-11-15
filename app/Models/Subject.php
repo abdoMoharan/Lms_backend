@@ -18,7 +18,7 @@ class Subject extends Model implements TranslatableContract
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable          = ['created_by', 'updated_by', 'status', 'stage_id', 'grade_id'];
+    protected $fillable          = ['created_by', 'updated_by', 'status'];
     public $translatedAttributes = [
         'subject_id',
         'locale',
@@ -36,29 +36,12 @@ class Subject extends Model implements TranslatableContract
     {
         return $this->hasMany(SubjectTranslation::class, 'subject_id');
     }
-    public function educationalStage()
-    {
-        return $this->belongsTo(EducationalStage::class, 'stage_id')->with('transLocale');
-    }
-
-    // public function semester()
-    // {
-    //     return $this->belongsTo(Semester::class, 'semester_id')->with('transLocale');
-    // }
-
-    public function semesters()
-    {
-        return $this->hasMany(SubjectSemester::class, 'subject_id')->with('semester');
-    }
 
     public function courses()
     {
         return $this->hasMany(Course::class, 'subject_id')->with(['transLocale', 'units', 'groups']);
     }
-    public function grade()
-    {
-        return $this->belongsTo(Grade::class, 'grade_id')->with('transLocale');
-    }
+
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
         if (isset($filters['name'])) {

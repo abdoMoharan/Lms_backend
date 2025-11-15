@@ -41,11 +41,6 @@ class SubjectRequest extends ApiRequest
         }
         $req = array_merge($req, [
             'status'                  => 'nullable|in:1,0',
-
-            'stage_id'                => 'required|exists:educational_stages,id',
-            'grade_id'                => 'required|exists:grades,id',
-            'semesters'               => 'array',
-            'semesters.*.id' => 'nullable|exists:semesters,id',
         ]);
 
         return $req;

@@ -20,7 +20,7 @@ class Semester extends Model implements TranslatableContract
         'semester_id',
         'locale',
         'name',
-   'slug',
+        'slug',
     ];
     protected $translationForeignKey = 'semester_id';
 
@@ -57,7 +57,7 @@ class Semester extends Model implements TranslatableContract
         return $this->belongsTo(User::class, 'updated_by');
     }
 
- public static function getAllDeleted()
+    public static function getAllDeleted()
     {
         return self::onlyTrashed()->with('transLocale')->get();
     }

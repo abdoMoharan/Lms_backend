@@ -2,6 +2,8 @@
 namespace Database\Seeders;
 
 use App\Models\Course;
+use App\Models\EducationalStage;
+use App\Models\Grade;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -11,10 +13,11 @@ class CourseSeeder extends Seeder
     public function run()
     {
         // الحصول على أول مستخدم من قاعدة البيانات
-        $user     = User::first();
-        $subjects = Subject::all();
-
-        $courses = [
+        $user              = User::first();
+        $subjects          = Subject::all();
+        $educationalStages = EducationalStage::all();
+        $grades            = Grade::all();
+        $courses           = [
             [
                 'day_count'    => 2,
                 'created_by'   => $user->id,
@@ -73,10 +76,13 @@ class CourseSeeder extends Seeder
         ];
 
         foreach ($courses as $courseData) {
-            $subject = $subjects->random(); // اختيار مادة عشوائية
-
-            $course = Course::create([
+            $subject          = $subjects->random(); // اختيار مادة عشوائية
+            $educationalStage = $educationalStages->random();
+            $grade            = $grades->random();
+            $course           = Course::create([
                 'subject_id' => $subject->id,
+                'stage_id'   => $educationalStage->id,
+                'grade_id'   => $grade->id,
                 'created_by' => $courseData['created_by'],
                 'updated_by' => $courseData['updated_by'],
                 'status'     => $courseData['status'],

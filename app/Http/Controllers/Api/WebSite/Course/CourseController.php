@@ -18,7 +18,7 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         try {
-            $Course = $this->model->query()->with(['transLocale', 'subject'])->filter($request->query())->get();
+            $Course = $this->model->query()->with(['transLocale', 'subject', 'educationalStage', 'semesters', 'grade'])->filter($request->query())->get();
             if ($Course->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Course found', []);
             }
@@ -40,7 +40,7 @@ class CourseController extends Controller
             if (! $model) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Course not found', []);
             }
-            $model->load(['transLocale',  'subject']);
+            $model->load(['transLocale',  'subject', 'educationalStage', 'semesters', 'grade']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Course retrieved successfully', new CourseResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No education stage found', $e->getMessage());

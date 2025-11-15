@@ -18,7 +18,7 @@ class SubjectController extends Controller
     public function index(Request $request)
     {
         try {
-            $Subject = $this->model->query()->with(['transLocale', 'educationalStage', 'semesters', 'grade'])->filter($request->query())->get();
+            $Subject = $this->model->query()->with(['transLocale'])->filter($request->query())->get();
             if ($Subject->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Subject found', []);
             }
@@ -42,7 +42,7 @@ class SubjectController extends Controller
             if (! $model) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Subject not found', []);
             }
-          $model->load(['transLocale', 'educationalStage', 'semesters', 'grade','courses']);
+          $model->load(['transLocale']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subject retrieved successfully', new SubjectResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Subject  found', $e->getMessage());

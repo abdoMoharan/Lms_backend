@@ -13,8 +13,7 @@ class SubjectSeeder extends Seeder
     {
         // الحصول على أول مستخدم من قاعدة البيانات
         $user              = User::first();
-        $educationalStages = EducationalStage::all();
-        $grades            = Grade::all();
+
 
         $subjects = [
             [
@@ -51,12 +50,10 @@ class SubjectSeeder extends Seeder
         ];
 
         foreach ($subjects as $subjectData) {
-            $educationalStage = $educationalStages->random();
-            $grade            = $grades->random();
+
 
             $subject = Subject::create([
-                'stage_id'   => $educationalStage->id,
-                'grade_id'   => $grade->id,
+
                 'created_by' => $subjectData['created_by'],
                 'updated_by' => $subjectData['updated_by'],
                 'status'     => $subjectData['status'],

@@ -43,6 +43,10 @@ class CourseRequest extends ApiRequest
             'subject_id' => 'required|exists:subjects,id',
             'status'     => 'nullable|in:1,0',
             'day_count'  => 'required|integer',
+            'stage_id'                => 'required|exists:educational_stages,id',
+            'grade_id'                => 'required|exists:grades,id',
+            'semesters'               => 'array',
+            'semesters.*.id' => 'required|exists:semesters,id',
         ]);
 
         return $rules;

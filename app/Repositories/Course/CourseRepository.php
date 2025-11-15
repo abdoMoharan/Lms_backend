@@ -1,14 +1,13 @@
 <?php
 namespace App\Repositories\Course;
 
-use Exception;
-use App\Models\Course;
 use App\Helpers\ApiResponse;
+use App\Http\Abstract\BaseRepository;
+use App\Http\Resources\Course\CourseResource;
+use App\Models\Course;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use App\Http\Abstract\BaseRepository;
-use App\Interfaces\Course\CourseInterface;
-use App\Http\Resources\Course\CourseResource;
 
 class CourseRepository extends BaseRepository
 {
@@ -21,7 +20,7 @@ class CourseRepository extends BaseRepository
     public function index($request)
     {
         try {
-            $model = $this->model->query()->with(['createdBy', 'transLocale','subject'])->filter($request->query())->get();
+            $model = $this->model->query()->with(['createdBy', 'transLocale', 'subject', 'educationalStage', 'semesters', 'grade'])->filter($request->query())->get();
             if ($model->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No course found', []);
             }
@@ -36,7 +35,12 @@ class CourseRepository extends BaseRepository
             DB::beginTransaction();
             $data  = $request->getData();
             $model = $this->model->create($data);
-            $model->load(['trans', 'createdBy','subject']);
+            foreach ($data['semesters'] as $semester) {
+                $model->semesters()->create([
+                    'semester_id' => $semester['id'],
+                ]);
+            }
+            $model->load(['trans', 'createdBy', 'subject', 'educationalStage', 'semesters', 'grade']);
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'course created successfully', new CourseResource($model));
         } catch (\Exception $e) {
@@ -47,12 +51,20 @@ class CourseRepository extends BaseRepository
 
     public function update($local, $request, $model)
     {
-
         try {
             $data = $request->getData();
             $model->update($data);
-            $model->load(['trans', 'createdBy','subject']);
-            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new CourseResource($model));
+            if ($data['semesters']) {
+                foreach ($data['semesters'] as $semester) {
+                    $model->semesters()->updateOrCreate([
+                        'semester_id' => $semester['id'],
+                    ], [
+                        'semester_id' => $semester['id'],
+                    ]);
+                }
+            }
+            $model->load(['trans', 'createdBy', 'subject', 'educationalStage', 'semesters', 'grade']);
+            return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'course updated successfully', new CourseResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No course found', []);
         }
@@ -70,7 +82,7 @@ class CourseRepository extends BaseRepository
     public function show($local, $model)
     {
         try {
-            $model->load(['trans', 'createdBy','subject']);
+            $model->load(['trans', 'createdBy', 'subject', 'educationalStage', 'semesters', 'grade', 'groups']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'course retrieved successfully', new CourseResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No course found', []);
@@ -80,7 +92,7 @@ class CourseRepository extends BaseRepository
     {
         $model = $this->model->getAllDeleted();
         if ($model->isEmpty()) {
-            $model->load(['transLocale', 'createdBy','subject']);
+            $model->load(['transLocale', 'createdBy', 'subject']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted course found', []);
         }
         return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Deleted course retrieved successfully', CourseResource::collection($model));

@@ -20,7 +20,7 @@ class SubjectRepository extends BaseRepository
     public function index($request)
     {
         try {
-            $subject = $this->model->query()->with(['createdBy', 'transLocale', 'educationalStage', 'semesters', 'grade'])->filter($request->query())->get();
+            $subject = $this->model->query()->with(['createdBy', 'transLocale'])->filter($request->query())->get();
             if ($subject->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Subjects found', []);
             }
@@ -35,12 +35,8 @@ class SubjectRepository extends BaseRepository
             DB::beginTransaction();
             $data  = $request->getData();
             $model = $this->model->create($data);
-            foreach ($data['semesters'] as $semester) {
-                $model->semesters()->create([
-                    'semester_id' => $semester['id'],
-                ]);
-            }
-            $model->load(['trans', 'educationalStage', 'semesters', 'grade']);
+
+            $model->load(['trans']);
             DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subjects created successfully', new SubjectResource($model));
         } catch (\Exception $e) {
@@ -55,17 +51,9 @@ class SubjectRepository extends BaseRepository
         try {
             $data = $request->getData();
             $model->update($data);
-            if ($data['semesters']) {
-                foreach ($data['semesters'] as $semester) {
-                    $model->semesters()->updateOrCreate([
-                        'semester_id' => $semester['id'],
-                    ], [
-                        'semester_id' => $semester['id'],
-                    ]);
-                }
-            }
 
-            $model->load(['trans', 'educationalStage', 'semesters', 'grade']);
+
+            $model->load(['trans']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subject updated successfully', new SubjectResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Subjects found', []);
@@ -84,7 +72,7 @@ class SubjectRepository extends BaseRepository
     public function show($local, $model)
     {
         try {
-            $model->load(['createdBy', 'trans', 'educationalStage', 'semesters', 'grade']);
+            $model->load(['createdBy', 'trans']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Subjects retrieved successfully', new SubjectResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Subjects found', []);

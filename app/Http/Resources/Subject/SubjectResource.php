@@ -41,9 +41,6 @@ class SubjectResource extends JsonResource
                 });
             }),
             'status'           => $this->status,
-            'educationalStage' => new EducationalStageResource($this->whenLoaded('educationalStage')),
-            'semesters'         =>  SemesterSubjectResource::collection($this->whenLoaded('semesters')),
-            'grade'            => new GradeResource($this->whenLoaded('grade')),
         ];
     }
 }

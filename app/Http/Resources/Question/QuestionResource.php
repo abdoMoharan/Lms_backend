@@ -1,11 +1,10 @@
 <?php
 namespace App\Http\Resources\Question;
 
-use App\Http\Resources\Answer\AnswerResource;
-use App\Http\Resources\Exam\ExamResource;
-use App\Http\Resources\QuestionType\QuestionTypeResource;
-use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
+use App\Http\Resources\Exam\ExamResource;
+use App\Http\Resources\User\UserResource;
+use App\Http\Resources\Option\OptionResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class QuestionResource extends JsonResource
@@ -19,14 +18,10 @@ class QuestionResource extends JsonResource
     {
         return [
             "id"            => $this->id,
-            'name'          => $this->name,
+            'question_text' => $this->question_text,
+            'mark'          => $this->mark,
             'exam'          => new ExamResource($this->whenLoaded('exam')),
-            'question_type' => new QuestionTypeResource($this->whenLoaded('question_type')),
-            'answers' =>      AnswerResource::collection($this->whenLoaded('answers')),
-
-            'created_by'    => new UserResource($this->whenLoaded('createdBy')),
-            'updated_by'    => new UserResource($this->whenLoaded('updatedBy')),
+            'options' =>      OptionResource::collection($this->whenLoaded('options')),
         ];
     }
 }
-

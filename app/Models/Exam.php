@@ -3,6 +3,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Question;
+use App\Models\GroupSession;
 use App\Models\ExamTranslation;
 use Illuminate\Database\Eloquent\Model;
 use Astrotomic\Translatable\Translatable;
@@ -10,47 +11,31 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
-class Exam extends Model implements TranslatableContract
+class Exam extends Model
 {
-    use SoftDeletes, Translatable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'course_id',
+        'group_session_id',
         'teacher_id',
-        'time',
+        'duration',
         'start_date',
         'end_date',
         'total',
-    ];
-    public $translatedAttributes = [
-        'exam_id',
-        'locale',
         'name',
         'description',
-   'slug',
     ];
-    protected $translationForeignKey = 'exam_id';
-
-    public function transLocale()
-    {
-        $locale = app()->getLocale();
-        return $this->hasMany(ExamTranslation::class, 'exam_id')->where('locale', $locale);
-    }
-    public function trans()
-    {
-        return $this->hasMany(ExamTranslation::class, 'exam_id');
-    }
 
     public function questions()
     {
-  return      $this->hasMany(Question::class,'exam_id')->with(['answers','question_type']);
+        return $this->hasMany(Question::class, 'exam_id')->with('options');
     }
-    public function course()
+    public function groupSession()
     {
-        return $this->belongsTo(Course::class, 'course_id')->with('transLocale');
+        return $this->belongsTo(GroupSession::class, 'group_session_id')->with(['group','groupDay','lesson']);
     }
     public function teacher()
     {
@@ -69,16 +54,6 @@ class Exam extends Model implements TranslatableContract
             $builder->where('status', $statusValue);
         });
         return $builder;
-    }
-
-    public function createdBy()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function updatedBy()
-    {
-        return $this->belongsTo(User::class, 'updated_by');
     }
 
     public static function getAllDeleted()

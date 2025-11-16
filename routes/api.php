@@ -151,17 +151,17 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::post('/restore/{id}', 'restore')->name('restore');
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
         });
-        Route::prefix('question-types')->name('question-types.')->controller(QuestionTypeController::class)->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::post('/', 'store')->name('store');
-            Route::put('/update/{model}', 'update')->name('update');
-            Route::delete('/delete/{model}', 'delete')->name('delete');
-            Route::get('/show/{model}', 'show')->name('show');
-            Route::get('/deleted', 'showDeleted')->name('deleted');
-            Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
-            Route::post('/restore/{id}', 'restore')->name('restore');
-            Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
-        });
+        // Route::prefix('question-types')->name('question-types.')->controller(QuestionTypeController::class)->group(function () {
+        //     Route::get('/', 'index')->name('index');
+        //     Route::post('/', 'store')->name('store');
+        //     Route::put('/update/{model}', 'update')->name('update');
+        //     Route::delete('/delete/{model}', 'delete')->name('delete');
+        //     Route::get('/show/{model}', 'show')->name('show');
+        //     Route::get('/deleted', 'showDeleted')->name('deleted');
+        //     Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
+        //     Route::post('/restore/{id}', 'restore')->name('restore');
+        //     Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
+        // });
         Route::prefix('questions')->name('questions.')->controller(QuestionController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');

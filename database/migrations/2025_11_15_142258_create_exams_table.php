@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('group_session_id')->constrained('group_sessions')->onDelete('cascade');
             $table->foreignId('teacher_id')->constrained('users')->onDelete('cascade');
-            $table->integer('description'); // مدة الاختبار بالدقائق
+            $table->integer('duration')->default(0); // مدة الاختبار بالدقائق
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->integer('total'); // مجموع الدرجات
+            $table->string('name')->nullable();
+            $table->longText('description')->nullable();
+            $table->integer('total')->default(0); // مجموع الدرجات
             $table->softDeletes();
             $table->timestamps();
         });

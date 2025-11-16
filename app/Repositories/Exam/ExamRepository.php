@@ -1,16 +1,14 @@
 <?php
 namespace App\Repositories\Exam;
 
-use Exception;
-use App\Models\Exam;
-use App\Models\Answer;
-use App\Models\Question;
 use App\Helpers\ApiResponse;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use App\Http\Abstract\BaseRepository;
-use App\Interfaces\Exam\ExamInterface;
 use App\Http\Resources\Exam\ExamResource;
+use App\Models\Exam;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ExamRepository extends BaseRepository
 {
@@ -23,7 +21,7 @@ class ExamRepository extends BaseRepository
     public function index($request)
     {
         try {
-            $Exams = $this->model->query()->with(['transLocale', 'teacher', 'course'])->filter($request->query())->get();
+            $Exams = $this->model->query()->with(['teacher', 'groupSession', 'questions'])->where('teacher_id', Auth::user()->id)->filter($request->query())->get();
             if ($Exams->isEmpty()) {
                 return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No Exams found', []);
             }
@@ -32,57 +30,41 @@ class ExamRepository extends BaseRepository
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Exams found', $e->getMessage());
         }
     }
-    // public function store($request)
-    // {
-    //     try {
-    //         DB::beginTransaction();
-    //         $data  = $request->getData();
-    //         $model = $this->model->create($data);
-    //         $model->load(['trans', 'teacher','course']);
-    //         DB::commit();
-    //         return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Exams created successfully', new ExamResource($model));
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Exams found', $e->getMessage());
-    //     }
-    // }
 
     public function store($request)
     {
+        $data = $request->getData();
         try {
             DB::beginTransaction();
 
-            // معالجة بيانات الامتحان
-            $data = $request->getData();
-            $exam = $this->model->create($data);
-
-            // إضافة الأسئلة والإجابات مع الترجمات
-            foreach ($data['questions'] as $questionData) {
-
-                $question                   = new Question();
-                $question->name             = $questionData['name'];
-                $question->exam_id          = $exam->id;
-                $question->question_type_id = $questionData['question_type_id'];
-                $question->created_by       = auth()->id();
-                $question->status           = 1;
-                $question->save();
-
-                foreach ($questionData['answers'] as $answerData) {
-                    $answer                 = new Answer();
-                    $answer->question_id    = $question->id;
-                    $answer->name           = $answerData['name'];
-                    $answer->correct_answer = $answerData['correct_answer'];
-                    $answer->save();
-                }
-                DB::commit();
-            }
-            $exam->load([
-                'trans',
-                'questions',
-                'course',
-                'teacher',
-                'createdBy'
+            $exam = $this->model->create([
+                'name'             => $data['name'],
+                'group_session_id' => $data['group_session_id'],
+                'teacher_id'       => Auth::user()->id,
+                'description'      => $data['description'] ?? null,
+                'duration'         => $data['duration'] ?? null,
+                'start_date'       => $data['start_date'] ?? null,
+                'end_date'         => $data['end_date'] ?? null,
+                'total'            => $data['total'] ?? 0,
             ]);
+
+            $totalMarks = 0;
+
+            foreach ($data['questions'] as $qData) {
+                $question = $exam->questions()->create([
+                    'question_text' => $qData['question_text'],
+                    'mark'          => $qData['mark'],
+                ]);
+
+                $totalMarks += $qData['mark'];
+
+                foreach ($qData['options'] as $optData) {
+                    $question->options()->create($optData);
+                }
+            }
+            $exam->update(['total' => $totalMarks]);
+            $exam->load(['teacher', 'groupSession', 'questions']);
+            DB::commit();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Exam created successfully', new ExamResource($exam));
         } catch (\Exception $e) {
             DB::rollBack();

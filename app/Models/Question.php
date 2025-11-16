@@ -2,8 +2,9 @@
 namespace App\Models;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Option;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Question extends Model
 {
@@ -12,26 +13,25 @@ class Question extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'question_type_id',
         'exam_id',
-        'created_by',
-        'updated_by',
+        'question_text',
+        'mark',
         'status',
-        'name',
     ];
 
     public function exam()
     {
         return $this->belongsTo(Exam::class, 'exam_ids')->with('transLocale');
     }
-    public function question_type()
-    {
-        return $this->belongsTo(QuestionType::class, 'question_type_id')->with('transLocale');
-    }
 
-    public function answers()
+    // public function answers()
+    // {
+    //  return   $this->hasMany(Answer::class, 'question_id');
+    // }
+
+   public function options()
     {
-     return   $this->hasMany(Answer::class, 'question_id');
+        return $this->hasMany(Option::class,'question_id');
     }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
@@ -43,16 +43,6 @@ class Question extends Model
             $builder->where('status', $statusValue);
         });
         return $builder;
-    }
-
-    public function createdBy()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function updatedBy()
-    {
-        return $this->belongsTo(User::class, 'updated_by');
     }
 
 }

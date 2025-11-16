@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\Lessons\AttachmentLessonController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Exam\ExamController;
 use App\Http\Controllers\Api\Teacher\Auth\AuthController;
 use App\Http\Controllers\Api\Teacher\Group\GroupController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Lessons\AttachmentLessonController;
 
 Route::prefix('teacher')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
@@ -28,6 +29,17 @@ Route::prefix('teacher')->group(function () {
             Route::get('/show/{model}', 'show')->name('show');
             Route::get('/deleted', 'showDeleted')->name('deleted');
             Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
+        });
+    Route::prefix('exams')->name('exams.')->controller(ExamController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::post('/update/{model}', 'update')->name('update');
+            Route::delete('/delete/{model}', 'delete')->name('delete');
+            Route::get('/show/{model}', 'show')->name('show');
+            Route::get('/deleted', 'showDeleted')->name('deleted');
+            Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
+            Route::post('/restore/{id}', 'restore')->name('restore');
+            Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
         });
     });
 

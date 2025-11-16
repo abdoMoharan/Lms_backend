@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Resources\Exam;
 
-use App\Http\Resources\Course\CourseResource;
+use App\Http\Resources\Group\GroupSessionResource;
 use App\Http\Resources\Question\QuestionResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
@@ -16,46 +16,17 @@ class ExamResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $transLocale = $this->transLocale()->first();
         return [
-            "id"          => $this->id,
-            'name'        => $this->whenLoaded('transLocale', function () {
-                return $this->transLocale->first()->name ?? null;
-            }, function () {
-                return $this->whenLoaded('trans', function () {
-                    return [
-                        'en' => $this->trans->firstWhere('locale', 'en')->name ?? null,
-                        'ar' => $this->trans->firstWhere('locale', 'ar')->name ?? null,
-                    ];
-                });
-            }),
-            'description' => $this->whenLoaded('transLocale', function () {
-                return $this->transLocale->first()->description ?? null;
-            }, function () {
-                return $this->whenLoaded('trans', function () {
-                    return [
-                        'en' => $this->trans->firstWhere('locale', 'en')->description ?? null,
-                        'ar' => $this->trans->firstWhere('locale', 'ar')->description ?? null,
-                    ];
-                });
-            }),
-                        'slug'   => $this->whenLoaded('transLocale', function () {
-                return $this->transLocale->first()->slug ?? null;
-            }, function () {
-                return $this->whenLoaded('trans', function () {
-                    return [
-                        'en' => $this->trans->firstWhere('locale', 'en')->slug ?? null,
-                        'ar' => $this->trans->firstWhere('locale', 'ar')->slug ?? null,
-                    ];
-                });
-            }),
-            'course'      => new CourseResource($this->whenLoaded('course')),
-            'teacher'     => new UserResource($this->whenLoaded('teacher')),
-            'questions'     =>  QuestionResource::collection($this->whenLoaded('questions')),
-            'time'        => $this->time,
-            'start_date'  => $this->start_date,
-            'end_date'    => $this->end_date,
-            'total'       => $this->total,
+            "id"           => $this->id,
+            'name'         => $this->name ?? null,
+            'description'  => $this->description ?? null,
+            'duration'     => $this->duration,
+            'start_date'   => $this->start_date,
+            'end_date'     => $this->end_date,
+            'total'        => $this->total,
+            'groupSession' => new GroupSessionResource($this->whenLoaded('groupSession')),
+            'teacher'      => new UserResource($this->whenLoaded('teacher')),
+            'questions'    => QuestionResource::collection($this->whenLoaded('questions')),
         ];
     }
 }

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
+            $table->foreignId('group_session_id')->constrained('group_sessions')->onDelete('cascade');
             $table->foreignId('teacher_id')->constrained('users')->onDelete('cascade');
-            $table->integer('time'); // مدة الاختبار بالدقائق
+            $table->integer('description'); // مدة الاختبار بالدقائق
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->integer('total'); // مجموع الدرجات

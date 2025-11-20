@@ -33,6 +33,10 @@ class Semester extends Model implements TranslatableContract
     {
         return $this->hasMany(SemesterTranslation::class, 'semester_id');
     }
+    public function courses()
+    {
+        return $this->hasMany(CourseSemester::class, 'semester_id')->with('course');
+    }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {
         if (isset($filters['name'])) {

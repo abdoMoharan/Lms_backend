@@ -71,7 +71,7 @@ class SemesterRepository extends BaseRepository
     public function show($local, $model)
     {
         try {
-            $model->load(['trans', 'createdBy']);
+            $model->load(['trans', 'createdBy','courses']);
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'semester retrieved successfully', new SemesterResource($model));
         } catch (\Exception $e) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No semester found', []);

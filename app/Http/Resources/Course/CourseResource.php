@@ -7,6 +7,7 @@ use App\Http\Resources\Grade\GradeResource;
 use App\Http\Resources\Group\GroupResource;
 use App\Http\Resources\Subject\SubjectResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Semester\SemesterCourseResource;
 use App\Http\Resources\Semester\SemesterSubjectResource;
 use App\Http\Resources\EducationalStage\EducationalStageResource;
 
@@ -55,7 +56,7 @@ class CourseResource extends JsonResource
             'status'           => $this->status,
             'day_count'        => $this->day_count,
             'educationalStage' => new EducationalStageResource($this->whenLoaded('educationalStage')),
-            'semesters'        => SemesterSubjectResource::collection($this->whenLoaded('semesters')),
+            'semesters'        => SemesterCourseResource::collection($this->whenLoaded('semesters')),
             'grade'            => new GradeResource($this->whenLoaded('grade')),
             'subject'          => new SubjectResource($this->whenLoaded('subject')),
             'groups'           => GroupResource::collection($this->whenLoaded('groups')),

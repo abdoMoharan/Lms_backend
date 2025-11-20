@@ -1,12 +1,13 @@
 <?php
 namespace App\Http\Resources\Semester;
 
-use App\Http\Resources\Semester\SemesterResource;
-use App\Http\Resources\Subject\SubjectResource;
 use Illuminate\Http\Request;
+use App\Http\Resources\Course\CourseResource;
+use App\Http\Resources\Subject\SubjectResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Semester\SemesterResource;
 
-class SemesterSubjectResource extends JsonResource
+class SemesterCourseResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,7 +18,7 @@ class SemesterSubjectResource extends JsonResource
     {
         return [
             'id'          => $this->id,
-            'subject'  => new SubjectResource($this->whenLoaded('subject')),
+            'course'  => new CourseResource($this->whenLoaded('course')),
             'semester' => new SemesterResource($this->whenLoaded('semester')),
         ];
     }

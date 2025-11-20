@@ -15,8 +15,8 @@ class SemesterResource extends JsonResource
     {
         $transLocale = $this->transLocale()->first();
         return [
-            "id"     => $this->id,
-            'name'   => $this->whenLoaded('transLocale', function () {
+            "id"      => $this->id,
+            'name'    => $this->whenLoaded('transLocale', function () {
                 return $this->transLocale->first()->name ?? null;
             }, function () {
                 return $this->whenLoaded('trans', function () {
@@ -26,7 +26,7 @@ class SemesterResource extends JsonResource
                     ];
                 });
             }),
-            'slug'   => $this->whenLoaded('transLocale', function () {
+            'slug'    => $this->whenLoaded('transLocale', function () {
                 return $this->transLocale->first()->slug ?? null;
             }, function () {
                 return $this->whenLoaded('trans', function () {
@@ -36,8 +36,8 @@ class SemesterResource extends JsonResource
                     ];
                 });
             }),
-            'status' => $this->status,
-
+            'status'  => $this->status,
+            'courses' => SemesterCourseResource::collection($this->whenLoaded('courses')),
         ];
     }
 }

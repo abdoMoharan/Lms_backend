@@ -25,8 +25,8 @@ class AuthController extends Controller
         $password = $request->input('password');
 
         $model = filter_var($contact, FILTER_VALIDATE_EMAIL)
-        ? $this->model->where('email', $contact)->first()
-        : $this->model->where('phone', $contact)->first();
+        ? $this->model->where('email', $contact)->where('status', 1)->where('user_type','admin')->first()
+        : $this->model->where('phone', $contact)->where('status', 1)->where('user_type','admin')->first();
         if (! $model) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_UNAUTHORIZED, 'Incorrect login details', []);
         }

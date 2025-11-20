@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Teacher\Exam\ExamAttemptController;
+use App\Http\Controllers\Api\WebSite\Auth\AuthController;
 use App\Http\Controllers\Api\WebSite\Course\CourseController;
 use App\Http\Controllers\Api\WebSite\EducationalStage\EducationalStageController;
 use App\Http\Controllers\Api\WebSite\Grade\GradeController;
@@ -12,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
     Route::prefix('website')->name('website.')->group(function () {
+        Route::controller(AuthController::class)->group(function () {
+            Route::post('login', 'login');
+            Route::post('register', 'register');
+            Route::post('logout', 'logout')->middleware('auth:sanctum');
+        });
         Route::prefix('education-stages')->name('education-stages.')->controller(EducationalStageController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/show/{id}/{slug?}', 'show')->name('show');

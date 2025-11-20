@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Models\Grade;
 use App\Models\EducationalStage;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,4 +27,9 @@ class UserEducationalStage extends Model
     {
         return $this->belongsTo(Subject::class, 'subject_id')->with('transLocale');
     }
+
+public function grade()
+{
+    return $this->belongsTo(Grade::class, 'grad_id')->with('transLocale');                                              
+}
 }

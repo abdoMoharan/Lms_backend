@@ -73,7 +73,7 @@ class User extends Authenticatable
 
     public function userEductionStage()
     {
-        return $this->hasMany(UserEducationalStage::class, 'user_id')->with(['educational_stage','subject']);
+        return $this->hasMany(UserEducationalStage::class, 'user_id')->with(['educational_stage','subject','grade']);
     }
 
     public function scopeFilter(Builder $builder, $filters)

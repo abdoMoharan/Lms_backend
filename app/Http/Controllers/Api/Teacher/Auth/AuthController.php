@@ -93,12 +93,12 @@ class AuthController extends Controller
             );
         }
 
-        if (\App\Models\Profile::where('id_card_number', $data['id_card_number'])->exists()) {
-            return ApiResponse::apiResponse(
-                JsonResponse::HTTP_BAD_REQUEST,
-                ['id_card_number' => ['رقم الهوية مسجل مسبقاً']]
-            );
-        }
+        // if (\App\Models\Profile::where('id_card_number', $data['id_card_number'])->exists()) {
+        //     return ApiResponse::apiResponse(
+        //         JsonResponse::HTTP_BAD_REQUEST,
+        //         ['id_card_number' => ['رقم الهوية مسجل مسبقاً']]
+        //     );
+        // }
 
         try {
             DB::beginTransaction();

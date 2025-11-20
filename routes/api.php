@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Meeting\ZoomController;
 use App\Http\Controllers\Api\Answer\AnswerController;
 use App\Http\Controllers\Api\Course\CourseController;
 use App\Http\Controllers\Api\Auth\SocialAuthController;
+use App\Http\Controllers\Api\Course\CoursePriceController;
 use App\Http\Controllers\Api\Lessons\LessonsController;
 use App\Http\Controllers\Api\Subject\SubjectController;
 use App\Http\Controllers\Api\Question\QuestionController;
@@ -151,17 +152,13 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::post('/restore/{id}', 'restore')->name('restore');
             Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
         });
-        // Route::prefix('question-types')->name('question-types.')->controller(QuestionTypeController::class)->group(function () {
-        //     Route::get('/', 'index')->name('index');
-        //     Route::post('/', 'store')->name('store');
-        //     Route::put('/update/{model}', 'update')->name('update');
-        //     Route::delete('/delete/{model}', 'delete')->name('delete');
-        //     Route::get('/show/{model}', 'show')->name('show');
-        //     Route::get('/deleted', 'showDeleted')->name('deleted');
-        //     Route::post('/multi-actions', 'multi_actions')->name('multi_actions');
-        //     Route::post('/restore/{id}', 'restore')->name('restore');
-        //     Route::get('/force-delete/{id}', 'forceDelete')->name('force-delete');
-        // });
+        Route::prefix('course-prices')->name('course-prices.')->controller(CoursePriceController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/update/{model}', 'update')->name('update');
+            Route::delete('/delete/{model}', 'delete')->name('delete');
+            Route::get('/show/{model}', 'show')->name('show');
+        });
         Route::prefix('questions')->name('questions.')->controller(QuestionController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');

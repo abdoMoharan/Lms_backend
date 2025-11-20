@@ -1,24 +1,25 @@
 <?php
 namespace App\Providers;
 
-use App\Http\Abstract\BaseRepository;
 use App\Interfaces\ProfileInterface;
-use App\Repositories\Answer\AnswerRepository;
-use App\Repositories\Course\CourseRepository;
-use App\Repositories\EducationalStage\EducationalStageRepository;
-use App\Repositories\Exam\ExamRepository;
-use App\Repositories\Grade\GradeRepository;
-use App\Repositories\Group\GroupRepository;
-use App\Repositories\Lessons\AttachmentLessonRepository;
-use App\Repositories\Lessons\LessonRepository;
+use App\Http\Abstract\BaseRepository;
 use App\Repositories\ProfileRepository;
-use App\Repositories\QuestionType\QuestionTypeRepository;
-use App\Repositories\Question\QuestionRepository;
-use App\Repositories\Semester\SemesterRepository;
-use App\Repositories\Subject\SubjectRepository;
+use Illuminate\Support\ServiceProvider;
+use App\Repositories\Exam\ExamRepository;
 use App\Repositories\Unit\UnitRepository;
 use App\Repositories\User\UserRepository;
-use Illuminate\Support\ServiceProvider;
+use App\Repositories\Grade\GradeRepository;
+use App\Repositories\Group\GroupRepository;
+use App\Repositories\Answer\AnswerRepository;
+use App\Repositories\Course\CourseRepository;
+use App\Repositories\Lessons\LessonRepository;
+use App\Repositories\Subject\SubjectRepository;
+use App\Repositories\Question\QuestionRepository;
+use App\Repositories\Semester\SemesterRepository;
+use App\Repositories\Course\CoursePriceRepository;
+use App\Repositories\Lessons\AttachmentLessonRepository;
+use App\Repositories\QuestionType\QuestionTypeRepository;
+use App\Repositories\EducationalStage\EducationalStageRepository;
 
 class RepositoryProvider extends ServiceProvider
 {
@@ -86,6 +87,10 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(
             BaseRepository::class, // الكلاس المجرد (abstract class)
             GroupRepository::class // الكلاس الذي ينفذ الـ abstract class
+        );
+        $this->app->bind(
+            BaseRepository::class, // الكلاس المجرد (abstract class)
+            CoursePriceRepository::class // الكلاس الذي ينفذ الـ abstract class
         );
     }
 

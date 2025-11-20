@@ -95,7 +95,7 @@ class ExamRepository extends BaseRepository
         }
     }
 
-    public function show($model)
+    public function show($local,$model)
     {
         try {
             $model->load(['trans', 'teacher', 'course']);

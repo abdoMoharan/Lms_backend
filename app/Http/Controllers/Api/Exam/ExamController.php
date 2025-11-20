@@ -1,28 +1,27 @@
 <?php
 namespace App\Http\Controllers\Api\Exam;
 
-use Exception;
-use App\Models\Exam;
 use App\Helpers\ApiResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\Exam\ExamResource;
-use App\Repositories\Exam\ExamRepository;
 use App\Http\Requests\Api\Exam\ExamRequest;
+use App\Http\Resources\Exam\ExamResource;
+use App\Models\Exam;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ExamController extends Controller
 {
-      public Exam $model;
+    public Exam $model;
 
     public function __construct(Exam $model)
     {
         $this->model = $model;
     }
     public function index(Request $request)
-     {
+    {
         try {
             $Exams = $this->model->query()->with(['teacher', 'groupSession', 'questions'])->where('teacher_id', Auth::user()->id)->filter($request->query())->get();
             if ($Exams->isEmpty()) {
@@ -34,7 +33,7 @@ class ExamController extends Controller
         }
     }
     public function store(ExamRequest $request)
-     {
+    {
         $data = $request->getData();
         try {
             DB::beginTransaction();
@@ -74,7 +73,7 @@ class ExamController extends Controller
         }
     }
     public function update(ExamRequest $request, Exam $model)
-     {
+    {
 
         try {
             $data = $request->getData();
@@ -87,7 +86,7 @@ class ExamController extends Controller
         }
     }
     public function delete(Exam $model)
-     {
+    {
         try {
             $model->delete();
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Exams deleted successfully', []);
@@ -105,10 +104,10 @@ class ExamController extends Controller
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'No Exams found', []);
         }
     }
- public function showDeleted()
+    public function showDeleted()
     {
         $model = $this->model->getAllDeleted();
-        $model->load(['transLocale', 'teacher', 'course']);
+        $model->load(['trans', 'teacher', 'course']);
 
         if ($model->isEmpty()) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted Exams found', []);

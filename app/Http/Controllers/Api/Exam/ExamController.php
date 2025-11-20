@@ -97,7 +97,7 @@ class ExamController extends Controller
     public function show(Exam $model)
     {
         try {
-            $model->load(['trans', 'teacher', 'course']);
+            $model->load(['teacher', 'course']);
 
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Exams retrieved successfully', new ExamResource($model));
         } catch (\Exception $e) {

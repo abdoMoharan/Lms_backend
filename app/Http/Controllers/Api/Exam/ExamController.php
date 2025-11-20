@@ -30,9 +30,9 @@ class ExamController extends Controller
     {
         return $this->repository->delete($local, $model);
     }
-    public function show($local, Exam $model)
+    public function show(Exam $model)
     {
-        return $this->repository->show($local, $model);
+        return $this->repository->show($model);
     }
     public function showDeleted()
     {

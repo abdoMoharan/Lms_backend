@@ -78,7 +78,7 @@ class ExamController extends Controller
         try {
             $data = $request->getData();
             $model->update($data);
-            $model->load(['trans', 'teacher', 'course']);
+            $model->load(['teacher', 'groupSession', 'questions']);
 
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'eduction updated successfully', new ExamResource($model));
         } catch (\Exception $e) {
@@ -97,7 +97,7 @@ class ExamController extends Controller
     public function show(Exam $model)
     {
         try {
-            $model->load(['teacher', 'course']);
+            $model->load(['teacher', 'groupSession', 'questions']);
 
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Exams retrieved successfully', new ExamResource($model));
         } catch (\Exception $e) {
@@ -107,7 +107,7 @@ class ExamController extends Controller
     public function showDeleted()
     {
         $model = $this->model->getAllDeleted();
-        $model->load(['trans', 'teacher', 'course']);
+        $model->load([ 'teacher', 'groupSession', 'questions']);
 
         if ($model->isEmpty()) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'No deleted Exams found', []);

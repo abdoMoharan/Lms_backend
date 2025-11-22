@@ -11,7 +11,7 @@ use App\Http\Controllers\Api\WebSite\Subject\SubjectController;
 use App\Http\Controllers\Api\WebSite\Teacher\TeacherController;
 use App\Http\Controllers\Api\Teacher\Exam\ExamAttemptController;
 use App\Http\Controllers\Api\WebSite\Semester\SemesterController;
-use App\Http\Controllers\Api\Website\GroupDetails\GroupDetailsController;
+use App\Http\Controllers\Api\WebSite\GroupDetails\GroupDetailsController;
 use App\Http\Controllers\Api\WebSite\EducationalStage\EducationalStageController;
 
 Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
@@ -55,7 +55,7 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
         });
 // Route::get('test-route/{id}',[TestRouteController::class,'show']);
         // Route::get('group-details/{id}', [GroupDetailsController::class, 'show'])->name('group-details.show');
-        Route::get('details-group/{id}', [DetailsGroupController::class, 'show'])->name('details-group.show');
+        Route::get('details-group/{id}', [GroupDetailsController::class, 'show'])->name('details-group.show');
         Route::post('exam-attempts/start/{examId}', [ExamAttemptController::class, 'start'])->middleware('auth:sanctum');
         Route::post('exam-attempts/submit/{examId}', [ExamAttemptController::class, 'submit'])->middleware('auth:sanctum');
     });

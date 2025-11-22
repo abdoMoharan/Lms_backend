@@ -186,8 +186,6 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{model}', 'show')->name('show');
         });
-        Route::get('group-details/{id}', [GroupDetailsController::class, 'show'])->name('group-details.show');
-
     });
 });
 //include all routes website front

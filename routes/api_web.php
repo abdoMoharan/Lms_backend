@@ -53,7 +53,7 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{model}', 'show')->name('show');
         });
-Route::get('test-route',[TestRouteController::class,'show']);
+Route::get('test-route/{id}',[TestRouteController::class,'show']);
         Route::get('group-details/{id}', [GroupDetailsController::class, 'show'])->name('group-details.show');
         Route::get('details-group/{id}', [DetailsGroupController::class, 'show'])->name('details-group.show');
         Route::post('exam-attempts/start/{examId}', [ExamAttemptController::class, 'start'])->middleware('auth:sanctum');

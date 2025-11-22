@@ -20,19 +20,19 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
         });
         Route::prefix('education-stages')->name('education-stages.')->controller(EducationalStageController::class)->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/show/{id}/{slug?}', 'show')->name('show');
+            Route::get('/{id}/{slug?}', 'show')->name('show');
         });
         Route::prefix('semesters')->name('semesters.')->controller(SemesterController::class)->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/show/{id}/{slug?}', 'show')->name('show');
+            Route::get('/{id}/{slug?}', 'show')->name('show');
         });
         Route::prefix('grades')->name('grades.')->controller(GradeController::class)->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/show/{id}/{slug?}', 'show')->name('show');
+            Route::get('/{id}/{slug?}', 'show')->name('show');
         });
         Route::prefix('subjects')->name('subjects.')->controller(SubjectController::class)->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/show/{id}/{slug?}', 'show')->name('show');
+            Route::get('/{id}/{slug?}', 'show')->name('show');
         });
         Route::prefix('courses')->name('courses.')->controller(CourseController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -45,7 +45,7 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
 
         Route::prefix('weeks')->name('weeks.')->controller(WeekController::class)->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/show/{model}', 'show')->name('show');
+            Route::get('/{model}', 'show')->name('show');
         });
         Route::post('exam-attempts/start/{examId}', [ExamAttemptController::class, 'start'])->middleware('auth:sanctum');
         Route::post('exam-attempts/submit/{examId}', [ExamAttemptController::class, 'submit'])->middleware('auth:sanctum');

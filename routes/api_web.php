@@ -1,17 +1,18 @@
 <?php
 
-use App\Http\Controllers\Api\Teacher\Exam\ExamAttemptController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Week\WeekController;
 use App\Http\Controllers\Api\WebSite\Auth\AuthController;
-use App\Http\Controllers\Api\WebSite\Course\CourseController;
-use App\Http\Controllers\Api\Website\DetailsGroupController;
-use App\Http\Controllers\Api\WebSite\EducationalStage\EducationalStageController;
+use App\Http\Controllers\Api\Website\TestRouteController;
 use App\Http\Controllers\Api\WebSite\Grade\GradeController;
-use App\Http\Controllers\Api\Website\GroupDetails\GroupDetailsController;
-use App\Http\Controllers\Api\WebSite\Semester\SemesterController;
+use App\Http\Controllers\Api\Website\DetailsGroupController;
+use App\Http\Controllers\Api\WebSite\Course\CourseController;
 use App\Http\Controllers\Api\WebSite\Subject\SubjectController;
 use App\Http\Controllers\Api\WebSite\Teacher\TeacherController;
-use App\Http\Controllers\Api\Week\WeekController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Teacher\Exam\ExamAttemptController;
+use App\Http\Controllers\Api\WebSite\Semester\SemesterController;
+use App\Http\Controllers\Api\Website\GroupDetails\GroupDetailsController;
+use App\Http\Controllers\Api\WebSite\EducationalStage\EducationalStageController;
 
 Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
     Route::prefix('website')->name('website.')->group(function () {
@@ -52,9 +53,10 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{model}', 'show')->name('show');
         });
+Route::get('test-route',[TestRouteController::class,'show']);
         Route::get('group-details/{id}', [GroupDetailsController::class, 'show'])->name('group-details.show');
+        Route::get('details-group/{id}', [DetailsGroupController::class, 'show'])->name('details-group.show');
         Route::post('exam-attempts/start/{examId}', [ExamAttemptController::class, 'start'])->middleware('auth:sanctum');
         Route::post('exam-attempts/submit/{examId}', [ExamAttemptController::class, 'submit'])->middleware('auth:sanctum');
     });
 });
-Route::get('details/{id}', [DetailsGroupController::class, 'show'])->name('details-group.show');

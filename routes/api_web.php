@@ -9,7 +9,7 @@ use App\Http\Controllers\Api\WebSite\Subject\SubjectController;
 use App\Http\Controllers\Api\WebSite\Teacher\TeacherController;
 use App\Http\Controllers\Api\Teacher\Exam\ExamAttemptController;
 use App\Http\Controllers\Api\WebSite\Semester\SemesterController;
-use App\Http\Controllers\Api\Website\Group\GroupDetailsController;
+use App\Http\Controllers\Api\Website\GroupDetails\GroupDetailsController;
 use App\Http\Controllers\Api\WebSite\EducationalStage\EducationalStageController;
 
 Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {

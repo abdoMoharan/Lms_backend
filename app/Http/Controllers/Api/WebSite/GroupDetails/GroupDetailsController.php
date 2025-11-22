@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Api\WebSite\Group;
+namespace App\Http\Controllers\Api\WebSite\GroupDetails;
 
 
 use App\Models\Group;

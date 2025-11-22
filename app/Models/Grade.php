@@ -42,7 +42,7 @@ class Grade extends Model implements TranslatableContract
 
     public function courses()
     {
-        return $this->hasMany(Course::class, 'grade_id')->with(['transLocale','semesters']);
+        return $this->hasMany(Course::class, 'grade_id')->with(['transLocale','semesters','subject']);
     }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {

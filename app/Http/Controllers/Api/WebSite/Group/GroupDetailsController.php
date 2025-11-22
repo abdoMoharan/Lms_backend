@@ -1,5 +1,6 @@
 <?php
-namespace App\Http\Controllers\Api\Website\Group;
+namespace App\Http\Controllers\Api\WebSite\Group;
+
 
 use App\Models\Group;
 use App\Helpers\ApiResponse;

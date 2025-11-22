@@ -43,14 +43,15 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{id}', 'show')->name('show');
         });
-        Route::prefix('groups')->name('groups.')->controller(GroupDetailsController::class)->group(function () {
-            // Route::get('/', 'index')->name('index');
-            Route::get('/{id}/', 'show')->name('show');
-        });
+        // Route::prefix('groups')->name('groups.')->controller(GroupDetailsController::class)->group(function () {
+        //     // Route::get('/', 'index')->name('index');
+        //     Route::get('/{id}/', 'show')->name('show');
+        // });
         Route::prefix('weeks')->name('weeks.')->controller(WeekController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{model}', 'show')->name('show');
         });
+        Route::post('groups/{groups}', [GroupDetailsController::class, 'show']);
         Route::post('exam-attempts/start/{examId}', [ExamAttemptController::class, 'start'])->middleware('auth:sanctum');
         Route::post('exam-attempts/submit/{examId}', [ExamAttemptController::class, 'submit'])->middleware('auth:sanctum');
     });

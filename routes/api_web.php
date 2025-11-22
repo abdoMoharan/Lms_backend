@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Week\WeekController;
 use App\Http\Controllers\Api\WebSite\Auth\AuthController;
 use App\Http\Controllers\Api\WebSite\Grade\GradeController;
+use App\Http\Controllers\Api\Website\DetailsGroupController;
 use App\Http\Controllers\Api\WebSite\Course\CourseController;
 use App\Http\Controllers\Api\WebSite\Subject\SubjectController;
 use App\Http\Controllers\Api\WebSite\Teacher\TeacherController;
@@ -52,6 +53,7 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
             Route::get('/{model}', 'show')->name('show');
         });
         Route::get('group-details/{id}', [GroupDetailsController::class, 'show'])->name('group-details.show');
+Route::get('details-group',[DetailsGroupController::class, 'show']);
         Route::post('exam-attempts/start/{examId}', [ExamAttemptController::class, 'start'])->middleware('auth:sanctum');
         Route::post('exam-attempts/submit/{examId}', [ExamAttemptController::class, 'submit'])->middleware('auth:sanctum');
     });

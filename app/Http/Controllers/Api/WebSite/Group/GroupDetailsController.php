@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Group\GroupResource;
 
-class GroupController extends Controller
+class GroupDetailsController extends Controller
 {
     public function show($locale, $id)
     {

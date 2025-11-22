@@ -4,12 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Week\WeekController;
 use App\Http\Controllers\Api\WebSite\Auth\AuthController;
 use App\Http\Controllers\Api\WebSite\Grade\GradeController;
-use App\Http\Controllers\Api\Website\Group\GroupController;
 use App\Http\Controllers\Api\WebSite\Course\CourseController;
 use App\Http\Controllers\Api\WebSite\Subject\SubjectController;
 use App\Http\Controllers\Api\WebSite\Teacher\TeacherController;
 use App\Http\Controllers\Api\Teacher\Exam\ExamAttemptController;
 use App\Http\Controllers\Api\WebSite\Semester\SemesterController;
+use App\Http\Controllers\Api\Website\Group\GroupDetailsController;
 use App\Http\Controllers\Api\WebSite\EducationalStage\EducationalStageController;
 
 Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
@@ -43,7 +43,7 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{id}', 'show')->name('show');
         });
-        Route::prefix('groups')->name('groups.')->controller(GroupController::class)->group(function () {
+        Route::prefix('groups')->name('groups.')->controller(GroupDetailsController::class)->group(function () {
             // Route::get('/', 'index')->name('index');
             Route::get('/{id}/', 'show')->name('show');
         });

@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         api: [
             __DIR__ . '/../routes/api.php',
             __DIR__ . '/../routes/teacher_api.php', // 👈 أضف هذا السطر
+            __DIR__ . '/../routes/api_web.php', // 👈 أضف هذا السطر
         ],
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',

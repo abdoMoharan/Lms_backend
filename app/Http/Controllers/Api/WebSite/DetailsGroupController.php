@@ -11,7 +11,7 @@ use App\Http\Resources\Group\GroupResource;
 
 class DetailsGroupController extends Controller
 {
-    public function show($locale, $id)
+    public function show($id)
     {
         $model = Group::find($id);
 

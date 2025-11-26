@@ -31,7 +31,6 @@ class GroupResource extends JsonResource
             'teacher'          => new UserResource($this->whenLoaded('teacher')),
             'groupDays'        => GroupDayResource::collection($this->whenLoaded('groupDays')),
             'groupSession'     => GroupSessionResource::collection($this->whenLoaded('groupSession')),
-            'attachmentLesson' => AttachmentResource::collection($this->whenLoaded('attachmentLesson')),
         ];
     }
 }

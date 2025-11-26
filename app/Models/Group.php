@@ -38,7 +38,7 @@ class Group extends Model
     }
     public function groupSession(): HasMany
     {
-        return $this->hasMany(GroupSession::class, 'group_id')->with(['lesson', 'groupDay']);
+        return $this->hasMany(GroupSession::class, 'group_id')->with(['lesson', 'groupDay','attachmentLesson']);
     }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {

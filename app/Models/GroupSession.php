@@ -3,12 +3,13 @@ namespace App\Models;
 
 use App\Models\Group;
 use App\Models\GroupDay;
+use App\Models\LessonsAttachment;
 use Illuminate\Database\Eloquent\Model;
 
 class GroupSession extends Model
 {
-    protected $fillable = ['date',  'group_id', 'day_id', 'lesson_id',
-        'start_time','is_meeting_created'];
+    protected $fillable = ['date', 'group_id', 'day_id', 'lesson_id',
+        'start_time', 'is_meeting_created'];
 
     public function group()
     {
@@ -21,5 +22,9 @@ class GroupSession extends Model
     public function lesson()
     {
         return $this->belongsTo(Lessons::class, 'lesson_id')->with('transLocale');
+    }
+    public function attachmentLesson()
+    {
+        return $this->hasMany(LessonsAttachment::class, 'group_session_id');
     }
 }

@@ -21,6 +21,7 @@ class LessonsAttachment extends Model
         'user_id',
     ];
 
+
     public function teacher()
     {
         return $this->belongsTo(User::class, 'user_id');

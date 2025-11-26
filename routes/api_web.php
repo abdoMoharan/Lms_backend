@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Teacher\Exam\ExamAttemptController;
 use App\Http\Controllers\Api\WebSite\Semester\SemesterController;
 use App\Http\Controllers\Api\WebSite\GroupDetails\GroupDetailsController;
 use App\Http\Controllers\Api\WebSite\EducationalStage\EducationalStageController;
+use App\Http\Controllers\Api\WebSite\LessonAttachment\LessonAttachmentController;
 
 Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
     Route::prefix('website')->name('website.')->group(function () {
@@ -51,6 +52,10 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
         // });
         Route::prefix('weeks')->name('weeks.')->controller(WeekController::class)->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::get('/{model}', 'show')->name('show');
+        });
+        Route::prefix('lesson-attachments')->name('lesson-attachments.')->controller(LessonAttachmentController::class)->group(function () {
+            // Route::get('/', 'index')->name('index');
             Route::get('/{model}', 'show')->name('show');
         });
         Route::get('details-group/{id}', [GroupDetailsController::class, 'show'])->name('details-group.show');

@@ -45,6 +45,7 @@ class LessonsAttachment extends Model
         }
     }
 
+
     public function setFileAttribute($value)
     {
         if ($value) {

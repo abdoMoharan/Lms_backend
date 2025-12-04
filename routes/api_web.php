@@ -1,22 +1,32 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Week\WeekController;
+use App\Http\Controllers\Api\Teacher\Exam\ExamAttemptController;
 use App\Http\Controllers\Api\WebSite\Auth\AuthController;
-use App\Http\Controllers\Api\Website\TestRouteController;
-use App\Http\Controllers\Api\WebSite\Grade\GradeController;
-use App\Http\Controllers\Api\Website\DetailsGroupController;
 use App\Http\Controllers\Api\WebSite\Course\CourseController;
+use App\Http\Controllers\Api\WebSite\EducationalStage\EducationalStageController;
+use App\Http\Controllers\Api\WebSite\Grade\GradeController;
+use App\Http\Controllers\Api\WebSite\GroupDetails\GroupDetailsController;
+use App\Http\Controllers\Api\WebSite\LessonAttachment\LessonAttachmentController;
+use App\Http\Controllers\Api\WebSite\Semester\SemesterController;
 use App\Http\Controllers\Api\WebSite\Subject\SubjectController;
 use App\Http\Controllers\Api\WebSite\Teacher\TeacherController;
-use App\Http\Controllers\Api\Teacher\Exam\ExamAttemptController;
-use App\Http\Controllers\Api\WebSite\Semester\SemesterController;
-use App\Http\Controllers\Api\WebSite\GroupDetails\GroupDetailsController;
-use App\Http\Controllers\Api\WebSite\EducationalStage\EducationalStageController;
-use App\Http\Controllers\Api\WebSite\LessonAttachment\LessonAttachmentController;
+use App\Http\Controllers\Api\Websit\GroupRegister\GroupRegisterController;
+use App\Http\Controllers\Api\Week\WeekController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
     Route::prefix('website')->name('website.')->group(function () {
+//authRoute
+        Route::middleware(['auth:sanctum'])->group(function () {
+            Route::prefix('group-registers')->name('group-registers.')->controller(GroupRegisterController::class)->group(function () {
+                Route::post('/', 'store')->name('store');
+                Route::get('/', 'index')->name('index');
+                Route::get('/{id}', 'show')->name('show');
+            });
+            Route::post('exam-attempts/start/{examId}', [ExamAttemptController::class, 'start']);
+            Route::post('exam-attempts/submit/{examId}', [ExamAttemptController::class, 'submit']);
+        });
+//authRoute
         Route::controller(AuthController::class)->group(function () {
             Route::post('login', 'login');
             Route::post('register', 'register');
@@ -59,7 +69,6 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
             Route::get('/{model}', 'show')->name('show');
         });
         Route::get('details-group/{id}', [GroupDetailsController::class, 'show'])->name('details-group.show');
-        Route::post('exam-attempts/start/{examId}', [ExamAttemptController::class, 'start'])->middleware('auth:sanctum');
-        Route::post('exam-attempts/submit/{examId}', [ExamAttemptController::class, 'submit'])->middleware('auth:sanctum');
+
     });
 });

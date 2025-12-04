@@ -2,14 +2,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
+use App\Models\GroupRegister;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -73,9 +75,12 @@ class User extends Authenticatable
 
     public function userEductionStage()
     {
-        return $this->hasMany(UserEducationalStage::class, 'user_id')->with(['educational_stage','subject','grade']);
+        return $this->hasMany(UserEducationalStage::class, 'user_id')->with(['educational_stage', 'subject', 'grade']);
     }
-
+    public function groupRegisters(): HasMany
+    {
+        return $this->hasMany(GroupRegister::class, 'user_id')->with(['group']);
+    }
     public function scopeFilter(Builder $builder, $filters)
     {
         $builder->when(isset($filters['query']) && $filters['query'] !== '', function ($builder) use ($filters) {

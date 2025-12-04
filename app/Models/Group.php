@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\GroupRegister;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Group extends Model
@@ -39,6 +40,10 @@ class Group extends Model
     public function groupSession(): HasMany
     {
         return $this->hasMany(GroupSession::class, 'group_id')->with(['lesson', 'groupDay','attachmentLesson']);
+    }
+    public function groupRegisters(): HasMany
+    {
+        return $this->hasMany(GroupRegister::class, 'group_id')->with(['user']);
     }
     public function scopeFilter(Builder $builder, array $filters): Builder
     {

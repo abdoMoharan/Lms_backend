@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Group\GroupController;
 use App\Http\Controllers\Api\Meeting\ZoomController;
 use App\Http\Controllers\Api\Answer\AnswerController;
 use App\Http\Controllers\Api\Course\CourseController;
+use App\Http\Controllers\Api\Auth\LoginAuthController;
 use App\Http\Controllers\Api\Auth\SocialAuthController;
 use App\Http\Controllers\Api\Lessons\LessonsController;
 use App\Http\Controllers\Api\Subject\SubjectController;
@@ -29,7 +30,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('logout', 'logout')->middleware('auth:sanctum');
 });
-Route::post('login-social', [SocialAuthController::class, 'login']);
+// Route::post('login-social', [SocialAuthController::class, 'login']);
 Route::get('get-auth-permissions', [PermissionController::class, 'getAuthPermissions'])->name('get-permissions-auth')->middleware('auth:sanctum');
 Route::prefix('{locale}')->middleware('setLocale')->group(function () {
     Route::prefix('admin')->name('admin.')->middleware(['auth:sanctum'])->group(function () {

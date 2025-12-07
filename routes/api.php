@@ -1,35 +1,31 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Answer\AnswerController;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Course\CourseController;
+use App\Http\Controllers\Api\Course\CoursePriceController;
+use App\Http\Controllers\Api\EducationalStage\EducationalStageController;
 use App\Http\Controllers\Api\Exam\ExamController;
-use App\Http\Controllers\Api\Role\RoleController;
-use App\Http\Controllers\Api\Unit\UnitController;
-use App\Http\Controllers\Api\User\UserController;
-use App\Http\Controllers\Api\Week\WeekController;
 use App\Http\Controllers\Api\Grade\GradeController;
 use App\Http\Controllers\Api\Group\GroupController;
-use App\Http\Controllers\Api\Meeting\ZoomController;
-use App\Http\Controllers\Api\Answer\AnswerController;
-use App\Http\Controllers\Api\Course\CourseController;
-use App\Http\Controllers\Api\Auth\LoginAuthController;
-use App\Http\Controllers\Api\Auth\SocialAuthController;
 use App\Http\Controllers\Api\Lessons\LessonsController;
-use App\Http\Controllers\Api\Subject\SubjectController;
-use App\Http\Controllers\Api\Question\QuestionController;
-use App\Http\Controllers\Api\Semester\SemesterController;
-use App\Http\Controllers\Api\Course\CoursePriceController;
-use App\Http\Controllers\Api\Profile\ProfileUserController;
+use App\Http\Controllers\Api\Meeting\ZoomController;
 use App\Http\Controllers\Api\Permission\PermissionController;
-use App\Http\Controllers\Api\Lessons\AttachmentLessonController;
-use App\Http\Controllers\Api\QuestionType\QuestionTypeController;
-use App\Http\Controllers\Api\EducationalStage\EducationalStageController;
-use App\Http\Controllers\Api\WebSite\GroupDetails\GroupDetailsController;
+use App\Http\Controllers\Api\Profile\ProfileUserController;
+use App\Http\Controllers\Api\Question\QuestionController;
+use App\Http\Controllers\Api\Role\RoleController;
+use App\Http\Controllers\Api\Semester\SemesterController;
+use App\Http\Controllers\Api\Subject\SubjectController;
+use App\Http\Controllers\Api\Unit\UnitController;
+use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\WebSite\Payment\PaymentController;
+use Illuminate\Support\Facades\Route;
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('logout', 'logout')->middleware('auth:sanctum');
 });
+
 // Route::post('login-social', [SocialAuthController::class, 'login']);
 Route::get('get-auth-permissions', [PermissionController::class, 'getAuthPermissions'])->name('get-permissions-auth')->middleware('auth:sanctum');
 Route::prefix('{locale}')->middleware('setLocale')->group(function () {
@@ -41,6 +37,7 @@ Route::prefix('{locale}')->middleware('setLocale')->group(function () {
             Route::put('/update/{role}', 'update')->name('update');
             Route::delete('/delete/{role}', 'delete')->name('delete');
         });
+
 
         Route::prefix('permissions')->name('permissions.')->controller(PermissionController::class)->group(function () {
             Route::get('/', 'index')->name('index');

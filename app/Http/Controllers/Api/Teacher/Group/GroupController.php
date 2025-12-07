@@ -44,7 +44,15 @@ class GroupController extends Controller
     {
         try {
             DB::beginTransaction();
+            $user = $request->user();
 
+            if (! $user || $user->user_type !== 'teacher') {
+                return ApiResponse::apiResponse(
+                    JsonResponse::HTTP_FORBIDDEN,
+                    'Only teachers can create groups',
+                    []
+                );
+            }
             $data = $request->getData();
 
             // حفظ البيانات في جدول groups

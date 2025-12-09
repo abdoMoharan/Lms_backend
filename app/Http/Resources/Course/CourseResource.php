@@ -57,6 +57,7 @@ class CourseResource extends JsonResource
             'day_count'        => $this->day_count,
             'educationalStage' => new EducationalStageResource($this->whenLoaded('educationalStage')),
             'semesters'        => SemesterCourseResource::collection($this->whenLoaded('semesters')),
+            'coursePrice'      => CoursePriceResource::collection($this->whenLoaded('coursePrice')),
             'grade'            => new GradeResource($this->whenLoaded('grade')),
             'subject'          => new SubjectResource($this->whenLoaded('subject')),
             'groups'           => GroupResource::collection($this->whenLoaded('groups')),

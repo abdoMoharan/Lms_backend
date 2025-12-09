@@ -25,7 +25,7 @@ class Group extends Model
 
     public function course()
     {
-        return $this->belongsTo(Course::class, 'course_id')->with('transLocale');
+        return $this->belongsTo(Course::class, 'course_id')->with(['transLocale','coursePrice']);
     }
 
     public function teacher()

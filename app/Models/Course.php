@@ -48,10 +48,16 @@ class Course extends Model implements TranslatableContract
     {
         return $this->hasMany(CourseTranslation::class, 'course_id');
     }
+
+    public function coursePrice()
+    {
+        return $this->hasMany(CoursePrice::class, 'course_id');
+    }
     public function subject()
     {
         return $this->belongsTo(Subject::class, 'subject_id')->with('transLocale');
     }
+
     public function units(): HasMany
     {
         return $this->hasMany(Unit::class, 'course_id')->with(['transLocale', 'lessons']);

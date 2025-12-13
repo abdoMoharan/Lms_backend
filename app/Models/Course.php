@@ -51,7 +51,10 @@ class Course extends Model implements TranslatableContract
 
     public function coursePrice()
     {
-        return $this->hasMany(CoursePrice::class, 'course_id');
+        return $this->belongsTo(CoursePrice::class, 'course_id',function(Builder $query){
+            $query->where('stage_id', $this->stage_id);
+            $query->where('grade_id', $this->grade_id);
+        });
     }
     public function subject()
     {

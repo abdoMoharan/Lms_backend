@@ -1,19 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Week\WeekController;
+use App\Http\Controllers\Api\Teacher\Exam\ExamAttemptController;
 use App\Http\Controllers\Api\WebSite\Auth\AuthController;
-use App\Http\Controllers\Api\WebSite\Grade\GradeController;
 use App\Http\Controllers\Api\WebSite\Course\CourseController;
+use App\Http\Controllers\Api\WebSite\EducationalStage\EducationalStageController;
+use App\Http\Controllers\Api\WebSite\Grade\GradeController;
+use App\Http\Controllers\Api\WebSite\GroupDetails\GroupDetailsController;
+use App\Http\Controllers\Api\WebSite\LessonAttachment\LessonAttachmentController;
 use App\Http\Controllers\Api\WebSite\Payment\PaymentController;
+use App\Http\Controllers\Api\WebSite\Semester\SemesterController;
 use App\Http\Controllers\Api\WebSite\Subject\SubjectController;
 use App\Http\Controllers\Api\WebSite\Teacher\TeacherController;
-use App\Http\Controllers\Api\Teacher\Exam\ExamAttemptController;
-use App\Http\Controllers\Api\WebSite\Semester\SemesterController;
-use App\Http\Controllers\Api\WebSite\GroupDetails\GroupDetailsController;
 use App\Http\Controllers\Api\Websit\GroupRegister\GroupRegisterController;
-use App\Http\Controllers\Api\WebSite\EducationalStage\EducationalStageController;
-use App\Http\Controllers\Api\WebSite\LessonAttachment\LessonAttachmentController;
+use App\Http\Controllers\Api\Week\WeekController;
+use Illuminate\Support\Facades\Route;
 
 Route::match(['GET', 'POST'], '/payment/callback', [PaymentController::class, 'callBack']);
 Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
@@ -27,7 +27,7 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
             });
             Route::post('exam-attempts/start/{examId}', [ExamAttemptController::class, 'start']);
             Route::post('exam-attempts/submit/{examId}', [ExamAttemptController::class, 'submit']);
-        Route::post('payment/process', [PaymentController::class, 'paymentProcess']);
+            Route::post('payment/process', [PaymentController::class, 'paymentProcess']);
         });
 //authRoute
         Route::controller(AuthController::class)->group(function () {

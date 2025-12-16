@@ -19,7 +19,8 @@ class GroupDetailsController extends Controller
         if (! $model) {
             return ApiResponse::apiResponse(JsonResponse::HTTP_NOT_FOUND, 'Group not found', []);
         }
-        $model->load(['course','teacher','groupDays','groupSession']);
+        $model->load(['teacher','groupDays','groupDays','groupSession','course']);
+        // $model->load(['course','teacher','groupDays','groupSession']);
         return ApiResponse::apiResponse(JsonResponse::HTTP_OK, 'Group retrieved successfully', new GroupResource($model));
     }
 }

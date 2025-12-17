@@ -27,4 +27,10 @@ class GroupSession extends Model
     {
         return $this->hasMany(LessonsAttachment::class, 'group_session_id');
     }
+    public function exams()
+    {
+        return $this->hasMany(Exam::class, 'group_session_id')->with(['questions','teacher']);
+    }
+
+
 }

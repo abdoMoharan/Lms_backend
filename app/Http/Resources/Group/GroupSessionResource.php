@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Resources\Group;
 
+use App\Http\Resources\Exam\ExamResource;
 use Illuminate\Http\Request;
 use App\Http\Resources\Lessons\LessonsResource;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -22,6 +23,7 @@ class GroupSessionResource extends JsonResource
             'day'     => new GroupDayResource($this->whenLoaded('groupDay')),
             'lesson'     => new LessonsResource($this->whenLoaded('lesson')),
             'attachmentLesson' => AttachmentResource::collection($this->whenLoaded('attachmentLesson')),
+            'exams' => ExamResource::collection($this->whenLoaded('exams')),
         ];
     }
 }

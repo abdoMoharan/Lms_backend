@@ -25,8 +25,8 @@ Route::prefix('{locale}')->middleware(['setLocale'])->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/{id}', 'show')->name('show');
             });
-            Route::post('exam-attempts/start/{examId}', [ExamAttemptController::class, 'start']);
-            Route::post('exam-attempts/submit/{examId}', [ExamAttemptController::class, 'submit']);
+            Route::post('exam-attempts/start/{exam}', [ExamAttemptController::class, 'start']);
+            Route::post('exam-attempts/submit/{exam}', [ExamAttemptController::class, 'submit']);
             Route::post('payment/process', [PaymentController::class, 'paymentProcess']);
         });
 //authRoute

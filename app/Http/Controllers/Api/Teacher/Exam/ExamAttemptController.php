@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class ExamAttemptController extends Controller
 {
-    public function start(Request $request, Exam $exam)
+    public function start($local,Request $request, Exam $exam)
     {
         $user = $request->user();
 
@@ -32,7 +32,7 @@ class ExamAttemptController extends Controller
     }
 
 
-    public function submit(Request $request, Exam $exam)
+    public function submit($local,Request $request, Exam $exam)
     {
         $data = $request->validate([
             'attempt_id'            => 'required|exists:exam_attempts,id',
@@ -41,11 +41,11 @@ class ExamAttemptController extends Controller
             'answers.*.option_id'   => 'required|integer',
         ]);
 
+
         $attempt = ExamAttempt::where('id', $data['attempt_id'])
             ->where('exam_id', $exam->id)
             ->where('user_id', $request->user()->id)
             ->firstOrFail();
-
         $score = 0;
 
         DB::beginTransaction();

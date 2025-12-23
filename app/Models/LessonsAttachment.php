@@ -30,7 +30,7 @@ class LessonsAttachment extends Model
 
     public function group_session(): BelongsTo
     {
-        return $this->belongsTo(GroupSession::class, 'group_session_id')->with(['lesson','group']);
+        return $this->belongsTo(GroupSession::class, 'group_session_id')->with(['lesson','group','exams']);
     }
     public static function getPath($path)
     {
